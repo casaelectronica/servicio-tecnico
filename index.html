@@ -354,10 +354,6 @@
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
-        .btn-pendientes:active {
-            transform: translateY(0);
-        }
-
         .btn-pendientes.active {
             background: var(--status-pendiente);
             color: #fff;
@@ -419,12 +415,6 @@
             display: flex;
             flex-direction: column;
             gap: 1.25rem;
-            animation: fadeInScale 0.3s ease forwards;
-        }
-
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .floating-form-box h3 {
@@ -502,7 +492,7 @@
 
                         <div class="form-group col-3">
                             <label for="claveWeb">CLAVE WEB (CLIENTE)</label>
-                            <input type="text" id="claveWeb" name="claveWeb" readonly style="font-family: var(--font-mono); color: var(--accent-cyan); text-align: center; font-weight: bold;" title="Generada automáticamente por el sistema">
+                            <input type="text" id="claveWeb" name="claveWeb" readonly style="font-family: var(--font-mono); color: var(--accent-cyan); text-align: center; font-weight: bold;">
                         </div>
 
                         <input type="hidden" id="fechaRegistro">
@@ -679,7 +669,7 @@
 
     </div>
 
-    <!-- MODAL ENTRADA -->
+    <!-- MODALES -->
     <div id="modalEntradaOverlay" class="modal-overlay">
         <div class="modal-box">
             <h3>COMPROBANTE DE ENTRADA</h3>
@@ -698,7 +688,6 @@
         </div>
     </div>
 
-    <!-- MODAL SALIDA -->
     <div id="modalSalidaOverlay" class="modal-overlay">
         <div class="modal-box">
             <h3>ORDEN DE SALIDA / FACTURA</h3>
@@ -717,7 +706,6 @@
         </div>
     </div>
 
-    <!-- MODAL TICKET -->
     <div id="modalTicketOverlay" class="modal-overlay">
         <div class="modal-box">
             <h3>SELECCIONAR TICKET</h3>
@@ -733,7 +721,6 @@
         </div>
     </div>
 
-    <!-- MODAL LISTA DE ALIADOS -->
     <div id="modalListaAliadosOverlay" class="modal-overlay">
         <div class="modal-box" style="width: 380px;">
             <h3>SELECCIONAR ALIADO</h3>
@@ -748,7 +735,6 @@
         </div>
     </div>
 
-    <!-- FORMULARIO FLOTANTE MODERNO: AGREGAR ALIADO -->
     <div id="modalFormularioAliadoOverlay" class="modal-overlay">
         <div class="floating-form-box">
             <h3><i data-lucide="user-plus"></i> NUEVO ALIADO COMERCIAL</h3>
@@ -780,11 +766,8 @@
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvImjy9wU74oeq4YLCq1r7ksU0_U9UtZ_oHQ-p6cUj0JMNWHOXhNQ8ohBIQ9LcQjPQ/exec';
 
         let ordenesDB = [];
-        let tecnicosDB = JSON.parse(localStorage.getItem('casaElectronica_tecnicos')) || [];
-        tecnicosDB = tecnicosDB.filter(t => t !== "TÉCNICO PRINCIPAL");
-        localStorage.setItem('casaElectronica_tecnicos', JSON.stringify(tecnicosDB));
-
-        let aliadosDB = JSON.parse(localStorage.getItem('casaElectronica_aliados')) || [];
+        let tecnicosDB = [];
+        let aliadosDB = [];
 
         let currentOrderId = null;
         let activeTab = 'identificacion';
@@ -793,11 +776,9 @@
         document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
             setupUppercaseEnforcement();
-            actualizarSelectTecnicos();
-            actualizarSelectAliadosModal();
 
-            // Sincronizar órdenes desde Google Sheets al abrir la página
-            await cargarOrdenesDesdeSheet();
+            // Sincronizar todo desde Google Sheets al abrir la página
+            await cargarDatosDesdeSheet();
 
             if (!currentOrderId) { nuevoRegistro(); }
 
@@ -806,17 +787,34 @@
             document.getElementById('formReparaciones').addEventListener('submit', (e) => { e.preventDefault(); guardarReparacion(); });
         });
 
-        async function cargarOrdenesDesdeSheet() {
+        async function cargarDatosDesdeSheet() {
             try {
                 const response = await fetch(APPS_SCRIPT_URL);
                 const data = await response.json();
-                if (Array.isArray(data)) {
+                
+                // Si el script devuelve el objeto general con órdenes, técnicos y aliados
+                if (data && !Array.isArray(data) && data.ordenes) {
+                    ordenesDB = data.ordenes || [];
+                    tecnicosDB = data.tecnicos || [];
+                    aliadosDB = data.aliados || [];
+                } else if (Array.isArray(data)) {
+                    // Respaldo por si acaso devolviera solo un array antiguo
                     ordenesDB = data;
-                    localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
                 }
+                
+                // Guardar copias locales actualizadas
+                localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
+                localStorage.setItem('casaElectronica_tecnicos', JSON.stringify(tecnicosDB));
+                localStorage.setItem('casaElectronica_aliados', JSON.stringify(aliadosDB));
             } catch (e) {
+                // Si falla la red, usar respaldos locales
                 ordenesDB = JSON.parse(localStorage.getItem('casaElectronica_ordenes')) || [];
+                tecnicosDB = JSON.parse(localStorage.getItem('casaElectronica_tecnicos')) || [];
+                aliadosDB = JSON.parse(localStorage.getItem('casaElectronica_aliados')) || [];
             }
+
+            actualizarSelectTecnicos();
+            actualizarSelectAliadosModal();
             renderOrdersList();
         }
 
@@ -842,9 +840,11 @@
             if (!nombreTecnico || !nombreTecnico.trim()) return;
             nombreTecnico = nombreTecnico.trim().toUpperCase();
             if (tecnicosDB.includes(nombreTecnico)) { alert("EL TÉCNICO YA EXISTE."); return; }
+            
             tecnicosDB.push(nombreTecnico);
             localStorage.setItem('casaElectronica_tecnicos', JSON.stringify(tecnicosDB));
             actualizarSelectTecnicos();
+
             try {
                 await fetch(APPS_SCRIPT_URL, {
                     method: 'POST', mode: 'no-cors',
@@ -926,10 +926,7 @@
         function usarAliadoSeleccionado() {
             const select = document.getElementById('selectAliadoModal');
             const tel = select.value;
-            if (!tel) {
-                alert("SELECCIONE UN ALIADO VÁLIDO");
-                return;
-            }
+            if (!tel) { alert("SELECCIONE UN ALIADO VÁLIDO"); return; }
             const aliadoEncontrado = aliadosDB.find(a => a.telefono === tel);
             if (aliadoEncontrado) {
                 document.getElementById('nombre').value = aliadoEncontrado.nombre;
@@ -1263,12 +1260,10 @@
             if (tel.length === 10) tel = '57' + tel;
 
             let mensaje = '';
-
-            // CONDICIÓN ESTRICTA SEGÚN EL ESTADO
             if (estado === 'DEVOLUCION') {
                 mensaje = `*CASA ELECTRONICA*\n\n` +
                           `Hola *${nombre}*, lamentamos informarte que el artículo (*${articulo} ${marca}*) correspondiente a la orden *${orden}* no tuvo reparación y está para *DEVOLUCIÓN*.\n\n` +
-                          `Por favor, acércate lo más pronto posible.\n\n` +
+                          `Por favor, acércate a pasar por él lo más pronto posible.\n\n` +
                           `Gracias por su atención.`;
             } else {
                 mensaje = `*CASA ELECTRONICA*\n\n` +
