@@ -83,7 +83,6 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* NAVEGACIÓN SUPERIOR ALINEADA CON EL CONTENEDOR */
         .top-nav {
             display: flex;
             justify-content: space-between;
@@ -304,7 +303,6 @@
         .badge-ENTREGADO-OK { background: var(--status-entregado-ok); }
         .badge-ENTREGADO-MALO { background: var(--status-entregado-malo); color: #fff; }
 
-        /* CONTENEDOR LATERAL Y BUSCADOR MEJORADOS */
         .search-container {
             display: flex;
             flex-direction: column;
@@ -332,7 +330,6 @@
             height: 16px;
         }
 
-        /* BOTÓN PENDIENTES ARRIBA DEL BUSCADOR, COMPLETO Y CON ANIMACIÓN */
         .btn-pendientes {
             background: rgba(239, 68, 68, 0.12);
             border: 1px solid var(--status-pendiente);
@@ -593,11 +590,11 @@
                         <div class="form-group col-6">
                             <label for="repEstado">ESTADO DE LA REPARACIÓN</label>
                             <select id="repEstado" name="repEstado" style="font-weight: bold;" required>
-                                <option value="PENDIENTE">🔴 PENDIENTE</option>
-                                <option value="REPARADO">🔵 REPARADO</option>
-                                <option value="DEVOLUCION">🟠 DEVOLUCION</option>
-                                <option value="ENTREGADO OK">🟢 ENTREGADO OK</option>
-                                <option value="ENTREGADO MALO">🟣 ENTREGADO MALO</option>
+                                <option value="PENDIENTE">PENDIENTE</option>
+                                <option value="REPARADO">REPARADO</option>
+                                <option value="DEVOLUCION">DEVOLUCION</option>
+                                <option value="ENTREGADO OK">ENTREGADO OK</option>
+                                <option value="ENTREGADO MALO">ENTREGADO MALO</option>
                             </select>
                         </div>
 
@@ -667,7 +664,6 @@
                 <span id="orderCount" style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: bold;">0</span>
             </div>
 
-            <!-- PANEL LATERAL CON BOTÓN PENDIENTES ARRIBA Y BUSCADOR ABAJO -->
             <div class="search-container">
                 <button type="button" id="btnFiltroPendientes" class="btn-pendientes" onclick="toggleFiltroPendientes()" title="Filtrar pendientes">
                     <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i> PENDIENTES
@@ -783,7 +779,7 @@
     <script>
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvImjy9wU74oeq4YLCq1r7ksU0_U9UtZ_oHQ-p6cUj0JMNWHOXhNQ8ohBIQ9LcQjPQ/exec';
 
-        let ordenesDB = JSON.parse(localStorage.getItem('casaElectronica_ordenes')) || [];
+        let ordenesDB = [];
         let tecnicosDB = JSON.parse(localStorage.getItem('casaElectronica_tecnicos')) || [];
         tecnicosDB = tecnicosDB.filter(t => t !== "TÉCNICO PRINCIPAL");
         localStorage.setItem('casaElectronica_tecnicos', JSON.stringify(tecnicosDB));
@@ -794,18 +790,36 @@
         let activeTab = 'identificacion';
         let soloPendientesActivo = false;
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
             setupUppercaseEnforcement();
             actualizarSelectTecnicos();
             actualizarSelectAliadosModal();
-            renderOrdersList();
+
+            // Sincronizar órdenes desde Google Sheets al abrir la página
+            await cargarOrdenesDesdeSheet();
+
             if (!currentOrderId) { nuevoRegistro(); }
 
             document.getElementById('searchInput').addEventListener('input', (e) => { renderOrdersList(e.target.value); });
             document.getElementById('formIdentificacion').addEventListener('submit', (e) => { e.preventDefault(); guardarIdentificacion(); });
             document.getElementById('formReparaciones').addEventListener('submit', (e) => { e.preventDefault(); guardarReparacion(); });
         });
+
+        async function cargarOrdenesDesdeSheet() {
+            try {
+                const response = await fetch(APPS_SCRIPT_URL);
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    ordenesDB = data;
+                    localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
+                }
+            } catch (e) {
+                // Si falla el internet o la red, recurre al almacenamiento local de respaldo
+                ordenesDB = JSON.parse(localStorage.getItem('casaElectronica_ordenes')) || [];
+            }
+            renderOrdersList();
+        }
 
         function switchTab(tabName) {
             activeTab = tabName;
@@ -1227,11 +1241,11 @@
             if (!tel) { alert('FALTA TELÉFONO'); return; }
             if (tel.length === 10) tel = '57' + tel;
 
-            const mensaje = `*CASA ELECTRÓNICA* 📺💻\n\n` +
+            const mensaje = `*CASA ELECTRONICA*\n\n` +
                             `Hola *${nombre}*, recibimos tu equipo (*${articulo} ${marca}*). CON SERIAL: *${serie}*\n\n` +
-                            `📋 *Orden:* ${orden}\n` +
-                            `🔑 *Clave web de consulta:* *${clave}*\n\n` +
-                            `🔗 *Consulta el estado aquí:* https://casaelectronica.github.io/consulta/\n\n` +
+                            `*Orden:* ${orden}\n` +
+                            `*Clave web de consulta:* *${clave}*\n\n` +
+                            `*Consulta el estado aquí:* https://casaelectronica.github.io/consulta/\n\n` +
                             `¡Gracias por confiar en nosotros!`;
 
             window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
@@ -1246,7 +1260,7 @@
             if (!tel) { alert('FALTA TELÉFONO'); return; }
             if (tel.length === 10) tel = '57' + tel;
 
-            const mensaje = `*CASA ELECTRÓNICA* 📺💻\n\n` +
+            const mensaje = `*CASA ELECTRONICA*\n\n` +
                             `Hola *${nombre}*, tu equipo (Orden: *${orden}*) está listo para retirar.\n` +
                             `Total a pagar: *$ ${total}*.\n\n` +
                             `¡Gracias por preferirnos!`;
