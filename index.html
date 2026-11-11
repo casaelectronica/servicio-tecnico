@@ -83,6 +83,7 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* NAVEGACIÓN SUPERIOR ALINEADA CON EL CONTENEDOR */
         .top-nav {
             display: flex;
             justify-content: space-between;
@@ -303,6 +304,7 @@
         .badge-ENTREGADO-OK { background: var(--status-entregado-ok); }
         .badge-ENTREGADO-MALO { background: var(--status-entregado-malo); color: #fff; }
 
+        /* CONTENEDOR LATERAL Y BUSCADOR MEJORADOS */
         .search-container {
             display: flex;
             flex-direction: column;
@@ -330,6 +332,7 @@
             height: 16px;
         }
 
+        /* BOTÓN PENDIENTES ARRIBA DEL BUSCADOR, COMPLETO Y CON ANIMACIÓN */
         .btn-pendientes {
             background: rgba(239, 68, 68, 0.12);
             border: 1px solid var(--status-pendiente);
@@ -590,11 +593,11 @@
                         <div class="form-group col-6">
                             <label for="repEstado">ESTADO DE LA REPARACIÓN</label>
                             <select id="repEstado" name="repEstado" style="font-weight: bold;" required>
-                                <option value="PENDIENTE">PENDIENTE</option>
-                                <option value="REPARADO">REPARADO</option>
-                                <option value="DEVOLUCION">DEVOLUCION</option>
-                                <option value="ENTREGADO OK">ENTREGADO OK</option>
-                                <option value="ENTREGADO MALO">ENTREGADO MALO</option>
+                                <option value="PENDIENTE">🔴 PENDIENTE</option>
+                                <option value="REPARADO">🔵 REPARADO</option>
+                                <option value="DEVOLUCION">🟠 DEVOLUCION</option>
+                                <option value="ENTREGADO OK">🟢 ENTREGADO OK</option>
+                                <option value="ENTREGADO MALO">🟣 ENTREGADO MALO</option>
                             </select>
                         </div>
 
@@ -664,6 +667,7 @@
                 <span id="orderCount" style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: bold;">0</span>
             </div>
 
+            <!-- PANEL LATERAL CON BOTÓN PENDIENTES ARRIBA Y BUSCADOR ABAJO -->
             <div class="search-container">
                 <button type="button" id="btnFiltroPendientes" class="btn-pendientes" onclick="toggleFiltroPendientes()" title="Filtrar pendientes">
                     <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i> PENDIENTES
@@ -1223,11 +1227,11 @@
             if (!tel) { alert('FALTA TELÉFONO'); return; }
             if (tel.length === 10) tel = '57' + tel;
 
-            const mensaje = `*CASA ELECTRONICA*\n\n` +
+            const mensaje = `*CASA ELECTRÓNICA* 📺💻\n\n` +
                             `Hola *${nombre}*, recibimos tu equipo (*${articulo} ${marca}*). CON SERIAL: *${serie}*\n\n` +
-                            `*Orden:* ${orden}\n` +
-                            `*Clave web de consulta:* *${clave}*\n\n` +
-                            `*Consulta el estado aquí:* https://casaelectronica.github.io/consulta/\n\n` +
+                            `📋 *Orden:* ${orden}\n` +
+                            `🔑 *Clave web de consulta:* *${clave}*\n\n` +
+                            `🔗 *Consulta el estado aquí:* https://casaelectronica.github.io/consulta/\n\n` +
                             `¡Gracias por confiar en nosotros!`;
 
             window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
@@ -1242,7 +1246,7 @@
             if (!tel) { alert('FALTA TELÉFONO'); return; }
             if (tel.length === 10) tel = '57' + tel;
 
-            const mensaje = `*CASA ELECTRONICA*\n\n` +
+            const mensaje = `*CASA ELECTRÓNICA* 📺💻\n\n` +
                             `Hola *${nombre}*, tu equipo (Orden: *${orden}*) está listo para retirar.\n` +
                             `Total a pagar: *$ ${total}*.\n\n` +
                             `¡Gracias por preferirnos!`;
