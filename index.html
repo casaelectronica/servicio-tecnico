@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa Electrónica - Servicio Técnico</title>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-main: #0b0f17;
+            --bg-card: #151c28;
+            --bg-input: #1f293d;
+            --border-color: #2a364f;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent-cyan: #00f2fe;
+            --accent-blue: #4facfe;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --font-mono: 'Courier New', Courier, monospace;
+
+            --status-pendiente: #ef4444;   
+            --status-reparado: #3b82f6;    
+            --status-devolucion: #f97316;  
+            --status-entregado-ok: #10b981;
+            --status-entregado-malo: #a855f7; 
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            text-transform: uppercase !important;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: rgba(21, 28, 40, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .brand-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #fff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #111722;
+            padding: 0.6rem 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            max-width: 1650px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .nav-tabs-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-tab {
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            background: var(--bg-card);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #000;
+            border-color: transparent;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.5rem;
+            padding: 1.5rem 2.5rem;
+            max-width: 1650px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.25rem;
+        }
+
+        .col-12 { grid-column: span 12; }
+        .col-8  { grid-column: span 8; }
+        .col-6  { grid-column: span 6; }
+        .col-4  { grid-column: span 4; }
+        .col-3  { grid-column: span 3; }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        input, textarea, select {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.65rem 0.8rem;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 242, 254, 0.15);
+        }
+
+        input[readonly] {
+            background-color: rgba(31, 41, 61, 0.5);
+            color: var(--accent-cyan);
+            font-weight: bold;
+            font-family: var(--font-mono);
+            cursor: not-allowed;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .action-bar {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.65rem 1.25rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.25s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-primary { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); color: #000; }
+        .btn-secondary { background: #243047; color: var(--text-main); border-color: var(--border-color); }
+        .btn-success { background: var(--accent-green); color: #000; }
+        .btn-whatsapp { background: #25d366; color: #000; font-weight: bold; }
+        .btn-whatsapp:hover { box-shadow: 0 0 12px rgba(37, 211, 102, 0.5); border-color: #25d366; }
+        .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3); }
+
+        .sidebar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: calc(100vh - 250px);
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        .order-card {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+            border-left-width: 6px !important;
+        }
+
+        .order-card.selected {
+            background: rgba(0, 242, 254, 0.12) !important;
+            border-color: var(--accent-cyan) !important;
+        }
+
+        .order-card.status-PENDIENTE { border-left-color: var(--status-pendiente) !important; }
+        .order-card.status-REPARADO { border-left-color: var(--status-reparado) !important; }
+        .order-card.status-DEVOLUCION { border-left-color: var(--status-devolucion) !important; }
+        .order-card.status-ENTREGADO-OK { border-left-color: var(--status-entregado-ok) !important; }
+        .order-card.status-ENTREGADO-MALO { border-left-color: var(--status-entregado-malo) !important; }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.35rem;
+        }
+
+        .order-number {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+        }
+
+        .order-status-badge {
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #000;
+        }
+
+        .badge-PENDIENTE { background: var(--status-pendiente); color: #fff; }
+        .badge-REPARADO { background: var(--status-reparado); color: #fff; }
+        .badge-DEVOLUCION { background: var(--status-devolucion); color: #fff; }
+        .badge-ENTREGADO-OK { background: var(--status-entregado-ok); }
+        .badge-ENTREGADO-MALO { background: var(--status-entregado-malo); color: #fff; }
+
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding-left: 2.2rem;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-pendientes {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid var(--status-pendiente);
+            color: var(--text-main);
+            width: 100%;
+            height: 38px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            letter-spacing: 0.5px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-pendientes:hover {
+            background: rgba(239, 68, 68, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-pendientes:active {
+            transform: translateY(0);
+        }
+
+        .btn-pendientes.active {
+            background: var(--status-pendiente);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-cyan);
+            color: var(--text-main);
+            padding: 0.8rem 1.25rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1000;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-cyan);
+            padding: 1.5rem;
+            border-radius: 10px;
+            width: 340px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .modal-box h3 {
+            font-size: 0.95rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.2rem;
+        }
+
+        .floating-form-box {
+            background: linear-gradient(145deg, #151c28, #111722);
+            border: 1px solid var(--accent-cyan);
+            padding: 2rem;
+            border-radius: 14px;
+            width: 420px;
+            box-shadow: 0 12px 36px rgba(0, 242, 254, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            animation: fadeInScale 0.3s ease forwards;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .floating-form-box h3 {
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <div class="brand-logo">CE</div>
+            <div class="brand-title">CASA ELECTRÓNICA</div>
+        </div>
+        <div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">SISTEMA DE GESTIÓN DE SERVICIO TÉCNICO</span>
+        </div>
+    </header>
+
+    <div class="top-nav">
+        <div class="nav-tabs-group">
+            <button class="nav-tab active" id="tabIdentificacion" onclick="switchTab('identificacion')">
+                <i data-lucide="user-check"></i> 1. IDENTIFICACIÓN
+            </button>
+            <button class="nav-tab" id="tabReparaciones" onclick="switchTab('reparaciones')">
+                <i data-lucide="wrench"></i> 2. REPARACIONES
+            </button>
+        </div>
+        <div>
+            <button class="btn btn-success" onclick="abrirModalTecnico()" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                <i data-lucide="user-plus"></i> AGREGAR TÉCNICO
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <main class="card">
+            
+            <!-- PESTAÑA 1: IDENTIFICACIÓN -->
+            <div id="sectionIdentificacion" class="tab-content active">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i data-lucide="file-text"></i> DATOS DE IDENTIFICACIÓN Y CLIENTE
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <button type="button" class="btn btn-secondary" onclick="abrirModalListaAliados()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                            <i data-lucide="users"></i> ALIADO
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="abrirFormularioAliado()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                            <i data-lucide="user-plus"></i> AGREGAR ALIADO
+                        </button>
+                        <div id="statusBadgeId" style="font-size: 0.75rem; background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.25rem 0.6rem; border-radius: 4px;">
+                            NUEVA ENTRADA
+                        </div>
+                    </div>
+                </div>
+
+                <form id="formIdentificacion">
+                    <div class="form-grid">
+                        
+                        <div class="form-group col-3">
+                            <label for="orden">ORDEN DE SERVICIO</label>
+                            <input type="text" id="orden" name="orden" readonly required>
+                        </div>
+
+                        <div class="form-group col-3">
+                            <label for="claveWeb">CLAVE WEB (CLIENTE)</label>
+                            <input type="text" id="claveWeb" name="claveWeb" readonly style="font-family: var(--font-mono); color: var(--accent-cyan); text-align: center; font-weight: bold;" title="Generada automáticamente por el sistema">
+                        </div>
+
+                        <input type="hidden" id="fechaRegistro">
+
+                        <div class="form-group col-6">
+                            <label for="nombre">NOMBRE DEL CLIENTE</label>
+                            <input type="text" id="nombre" name="nombre" placeholder="EJ: JUAN PÉREZ" required>
+                        </div>
+
+                        <div class="form-group col-4">
+                            <label for="telefono">TELÉFONO</label>
+                            <input type="text" id="telefono" name="telefono" placeholder="EJ: 3105243350" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        </div>
+
+                        <div class="form-group col-4">
+                            <label for="articulo">ARTÍCULO</label>
+                            <input type="text" id="articulo" name="articulo" placeholder="EJ: LAPTOP, CONSOLA" required>
+                        </div>
+
+                        <div class="form-group col-4">
+                            <label for="marca">MARCA</label>
+                            <input type="text" id="marca" name="marca" placeholder="EJ: LENOVO, SONY" required>
+                        </div>
+
+                        <div class="form-group col-6">
+                            <label for="modelo">MODELO</label>
+                            <input type="text" id="modelo" name="modelo" placeholder="EJ: IDEAPAD 3">
+                        </div>
+
+                        <div class="form-group col-6">
+                            <label for="serie">N° DE SERIE</label>
+                            <input type="text" id="serie" name="serie" placeholder="EJ: DESCONOCIDO">
+                        </div>
+
+                        <div class="form-group col-12">
+                            <label for="contrasena">CONTRASEÑA DEL EQUIPO / PATRÓN</label>
+                            <input type="text" id="contrasena" name="contrasena" placeholder="EJ: 1234 O SIN CLAVE">
+                        </div>
+
+                        <div class="form-group col-6">
+                            <label for="sintomas">SÍNTOMAS REPORTADOS (PROBLEMA)</label>
+                            <textarea id="sintomas" name="sintomas" placeholder="DESCRIPCIÓN DETALLADA DE LA FALLA..." required></textarea>
+                        </div>
+
+                        <div class="form-group col-6">
+                            <label for="notas">NOTAS DE RECEPCIÓN (ACCESORIOS / ESTADO)</label>
+                            <textarea id="notas" name="notas" placeholder="EJ: SIN CARGADOR, RAYONES EN TAPA..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="action-bar">
+                        <button type="submit" class="btn btn-primary" id="btnGuardarId">
+                            <i data-lucide="save"></i> GUARDAR ORDEN
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="imprimirEtiquetaTicket()">
+                            <i data-lucide="tag"></i> IMPRIMIR TICKET (5x3 cm)
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="abrirModalEntrada()">
+                            <i data-lucide="printer"></i> GENERAR ENTRADA
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="nuevoRegistro()">
+                            <i data-lucide="plus-circle"></i> NUEVO
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="eliminarOrdenActual()">
+                            <i data-lucide="trash-2"></i> ELIMINAR
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- PESTAÑA 2: REPARACIONES -->
+            <div id="sectionReparaciones" class="tab-content">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i data-lucide="wrench"></i> MÓDULO DE REPARACIONES
+                    </div>
+                    <div id="repOrderInfo" style="font-size: 0.85rem; color: var(--accent-cyan); font-weight: bold;">
+                        ORDEN SELECCIONADA: NINGUNA
+                    </div>
+                </div>
+
+                <form id="formReparaciones">
+                    <div class="form-grid">
+                        
+                        <div class="form-group col-6">
+                            <label for="repEstado">ESTADO DE LA REPARACIÓN</label>
+                            <select id="repEstado" name="repEstado" style="font-weight: bold;" required>
+                                <option value="PENDIENTE">PENDIENTE</option>
+                                <option value="REPARADO">REPARADO</option>
+                                <option value="DEVOLUCION">DEVOLUCION</option>
+                                <option value="ENTREGADO OK">ENTREGADO OK</option>
+                                <option value="ENTREGADO MALO">ENTREGADO MALO</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-6">
+                            <label for="repTecnico">TÉCNICO ENCARGADO</label>
+                            <select id="repTecnico" style="font-weight: bold;">
+                                <option value="">SELECCIONE TÉCNICO...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-12">
+                            <label for="repDiagnostico">DIAGNÓSTICO Y DATOS DE LA REPARACIÓN</label>
+                            <textarea id="repDiagnostico" style="min-height: 120px;" placeholder="DETALLES TÉCNICOS, COMPONENTES CAMBIADOS O REVISIONES..."></textarea>
+                        </div>
+
+                        <div class="form-group col-8">
+                            <label for="repGarantia">GARANTÍA</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="text" id="repGarantia" placeholder="EJ: 1 MES. A PARTIR DEL..." style="flex: 1;">
+                                <button type="button" class="btn btn-secondary" style="padding: 0.5rem;" onclick="insertarFechaGarantia()" title="Insertar fecha a partir de hoy">
+                                    <i data-lucide="clock"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-4">
+                            <label for="repFechaReparacion">FECHA DE REPARACIÓN</label>
+                            <input type="date" id="repFechaReparacion">
+                        </div>
+
+                        <div class="form-group col-4">
+                            <label for="repTotalPagar">TOTAL A PAGAR ($ COP)</label>
+                            <input type="text" id="repTotalPagar" placeholder="0" onkeyup="formatCurrencyInput(this)">
+                        </div>
+
+                        <div class="form-group col-8">
+                            <label for="repFechaEntrega">FECHA DE ENTREGA</label>
+                            <input type="date" id="repFechaEntrega">
+                        </div>
+
+                    </div>
+
+                    <div class="action-bar">
+                        <button type="submit" class="btn btn-primary" id="btnGuardarRep">
+                            <i data-lucide="save"></i> GUARDAR REPARACIÓN
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="abrirModalTicketReparacion()">
+                            <i data-lucide="tag"></i> IMPRIMIR TICKET (5x3 cm)
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="abrirModalSalida()">
+                            <i data-lucide="file-text"></i> GENERAR FACTURA
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="switchTab('identificacion')">
+                            <i data-lucide="arrow-left"></i> VOLVER A IDENTIFICACIÓN
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </main>
+
+        <aside class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <i data-lucide="list"></i> ÓRDENES REGISTRADAS
+                </div>
+                <span id="orderCount" style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: bold;">0</span>
+            </div>
+
+            <div class="search-container">
+                <button type="button" id="btnFiltroPendientes" class="btn-pendientes" onclick="toggleFiltroPendientes()" title="Filtrar pendientes">
+                    <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i> PENDIENTES
+                </button>
+                <div class="search-box">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="searchInput" placeholder="BUSCAR CLIENTE, ORDEN O TEL...">
+                </div>
+            </div>
+
+            <div class="sidebar-list" id="ordersContainer"></div>
+        </aside>
+
+    </div>
+
+    <!-- MODAL ENTRADA -->
+    <div id="modalEntradaOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <h3>COMPROBANTE DE ENTRADA</h3>
+            <label style="font-size: 0.8rem;">SELECCIONE UNA ACCIÓN:</label>
+            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; justify-content: space-between;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalEntrada(); generarEntradaPDF();" style="flex: 1; justify-content: center;">
+                    <i data-lucide="printer"></i> IMPRIMIR
+                </button>
+                <button type="button" class="btn btn-whatsapp" onclick="cerrarModalEntrada(); enviarEntradaWhatsApp();" style="flex: 1; justify-content: center;">
+                    <i data-lucide="message-circle"></i> WHATSAPP
+                </button>
+            </div>
+            <div style="text-align: right; margin-top: 0.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalEntrada()" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SALIDA -->
+    <div id="modalSalidaOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <h3>ORDEN DE SALIDA / FACTURA</h3>
+            <label style="font-size: 0.8rem;">SELECCIONE UNA ACCIÓN:</label>
+            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; justify-content: space-between;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalSalida(); generarFacturaPDF();" style="flex: 1; justify-content: center;">
+                    <i data-lucide="printer"></i> IMPRIMIR
+                </button>
+                <button type="button" class="btn btn-whatsapp" onclick="cerrarModalSalida(); enviarSalidaWhatsApp();" style="flex: 1; justify-content: center;">
+                    <i data-lucide="message-circle"></i> WHATSAPP
+                </button>
+            </div>
+            <div style="text-align: right; margin-top: 0.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalSalida()" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TICKET -->
+    <div id="modalTicketOverlay" class="modal-overlay">
+        <div class="modal-box">
+            <h3>SELECCIONAR TICKET</h3>
+            <label style="font-size: 0.8rem;">ELIJA LA OPCIÓN A IMPRIMIR:</label>
+            <select id="selectTipoTicket" style="font-weight: bold;">
+                <option value="REPARADO">REPARADO</option>
+                <option value="DEVOLUCION">DEVOLUCIÓN</option>
+            </select>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalTicket()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">CANCELAR</button>
+                <button type="button" class="btn btn-primary" onclick="ejecutarImpresionTicket()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">IMPRIMIR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL LISTA DE ALIADOS -->
+    <div id="modalListaAliadosOverlay" class="modal-overlay">
+        <div class="modal-box" style="width: 380px;">
+            <h3>SELECCIONAR ALIADO</h3>
+            <label style="font-size: 0.8rem;">ALIADOS REGISTRADOS:</label>
+            <select id="selectAliadoModal" style="font-weight: bold; width: 100%;">
+                <option value="">SELECCIONE UN ALIADO...</option>
+            </select>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalListaAliados()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">CANCELAR</button>
+                <button type="button" class="btn btn-primary" onclick="usarAliadoSeleccionado()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">SELECCIONAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORMULARIO FLOTANTE MODERNO: AGREGAR ALIADO -->
+    <div id="modalFormularioAliadoOverlay" class="modal-overlay">
+        <div class="floating-form-box">
+            <h3><i data-lucide="user-plus"></i> NUEVO ALIADO COMERCIAL</h3>
+            <form id="formAgregarAliado" onsubmit="guardarNuevoAliado(event)">
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="inputNombreAliado">NOMBRE DEL ALIADO</label>
+                        <input type="text" id="inputNombreAliado" placeholder="EJ: TECNO SHOP" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputTelefonoAliado">TELÉFONO DEL ALIADO</label>
+                        <input type="text" id="inputTelefonoAliado" placeholder="EJ: 3101234567" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarFormularioAliado()">CANCELAR</button>
+                    <button type="submit" class="btn btn-primary">GUARDAR ALIADO</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast">
+        <i data-lucide="check-circle" style="color: var(--accent-green);"></i>
+        <span id="toastMsg">OPERACIÓN REALIZADA</span>
+    </div>
+
+    <script>
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvImjy9wU74oeq4YLCq1r7ksU0_U9UtZ_oHQ-p6cUj0JMNWHOXhNQ8ohBIQ9LcQjPQ/exec';
+
+        let ordenesDB = JSON.parse(localStorage.getItem('casaElectronica_ordenes')) || [];
+        let tecnicosDB = JSON.parse(localStorage.getItem('casaElectronica_tecnicos')) || [];
+        tecnicosDB = tecnicosDB.filter(t => t !== "TÉCNICO PRINCIPAL");
+        localStorage.setItem('casaElectronica_tecnicos', JSON.stringify(tecnicosDB));
+
+        let aliadosDB = JSON.parse(localStorage.getItem('casaElectronica_aliados')) || [];
+
+        let currentOrderId = null;
+        let activeTab = 'identificacion';
+        let soloPendientesActivo = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            setupUppercaseEnforcement();
+            actualizarSelectTecnicos();
+            actualizarSelectAliadosModal();
+            renderOrdersList();
+            if (!currentOrderId) { nuevoRegistro(); }
+
+            document.getElementById('searchInput').addEventListener('input', (e) => { renderOrdersList(e.target.value); });
+            document.getElementById('formIdentificacion').addEventListener('submit', (e) => { e.preventDefault(); guardarIdentificacion(); });
+            document.getElementById('formReparaciones').addEventListener('submit', (e) => { e.preventDefault(); guardarReparacion(); });
+        });
+
+        function switchTab(tabName) {
+            activeTab = tabName;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            if (tabName === 'identificacion') {
+                document.getElementById('sectionIdentificacion').classList.add('active');
+                document.getElementById('tabIdentificacion').classList.add('active');
+            } else {
+                document.getElementById('sectionReparaciones').classList.add('active');
+                document.getElementById('tabReparaciones').classList.add('active');
+            }
+        }
+
+        function generarClaveHexadecimal() {
+            return Math.floor(Math.random() * 1048576).toString(16).toUpperCase().padStart(5, '0');
+        }
+
+        async function abrirModalTecnico() {
+            let nombreTecnico = prompt("INGRESE EL NOMBRE DEL NUEVO TÉCNICO:");
+            if (!nombreTecnico || !nombreTecnico.trim()) return;
+            nombreTecnico = nombreTecnico.trim().toUpperCase();
+            if (tecnicosDB.includes(nombreTecnico)) { alert("EL TÉCNICO YA EXISTE."); return; }
+            tecnicosDB.push(nombreTecnico);
+            localStorage.setItem('casaElectronica_tecnicos', JSON.stringify(tecnicosDB));
+            actualizarSelectTecnicos();
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tipoAccion: 'TECNICO', nombreTecnico: nombreTecnico })
+                });
+            } catch (e) {}
+            showToast(`TÉCNICO ${nombreTecnico} AGREGADO`);
+        }
+
+        function actualizarSelectTecnicos() {
+            const select = document.getElementById('repTecnico');
+            const val = select.value;
+            select.innerHTML = '<option value="">SELECCIONE TÉCNICO...</option>';
+            tecnicosDB.forEach(tec => {
+                const opt = document.createElement('option');
+                opt.value = tec; opt.textContent = tec;
+                select.appendChild(opt);
+            });
+            select.value = val;
+        }
+
+        function abrirFormularioAliado() {
+            document.getElementById('formAgregarAliado').reset();
+            document.getElementById('modalFormularioAliadoOverlay').style.display = 'flex';
+            setTimeout(() => { document.getElementById('inputNombreAliado').focus(); }, 100);
+        }
+
+        function cerrarFormularioAliado() {
+            document.getElementById('modalFormularioAliadoOverlay').style.display = 'none';
+        }
+
+        async function guardarNuevoAliado(event) {
+            event.preventDefault();
+            const nombreAliado = document.getElementById('inputNombreAliado').value.trim().toUpperCase();
+            const telAliado = document.getElementById('inputTelefonoAliado').value.trim();
+
+            if (!nombreAliado || !telAliado) return;
+
+            let nuevoAliado = { nombre: nombreAliado, telefono: telAliado };
+            aliadosDB.push(nuevoAliado);
+            localStorage.setItem('casaElectronica_aliados', JSON.stringify(aliadosDB));
+            actualizarSelectAliadosModal();
+            cerrarFormularioAliado();
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tipoAccion: 'ALIADO', nombreAliado: nombreAliado, telefonoAliado: telAliado })
+                });
+            } catch (e) {}
+            showToast(`ALIADO ${nombreAliado} AGREGADO`);
+        }
+
+        function abrirModalListaAliados() {
+            if (aliadosDB.length === 0) {
+                alert("NO HAY ALIADOS REGISTRADOS. USE 'AGREGAR ALIADO' PRIMERO.");
+                return;
+            }
+            document.getElementById('modalListaAliadosOverlay').style.display = 'flex';
+        }
+
+        function cerrarModalListaAliados() {
+            document.getElementById('modalListaAliadosOverlay').style.display = 'none';
+        }
+
+        function actualizarSelectAliadosModal() {
+            const select = document.getElementById('selectAliadoModal');
+            select.innerHTML = '<option value="">SELECCIONE UN ALIADO...</option>';
+            aliadosDB.forEach(al => {
+                const opt = document.createElement('option');
+                opt.value = al.telefono;
+                opt.textContent = `${al.nombre} - ${al.telefono}`;
+                select.appendChild(opt);
+            });
+        }
+
+        function usarAliadoSeleccionado() {
+            const select = document.getElementById('selectAliadoModal');
+            const tel = select.value;
+            if (!tel) {
+                alert("SELECCIONE UN ALIADO VÁLIDO");
+                return;
+            }
+            const aliadoEncontrado = aliadosDB.find(a => a.telefono === tel);
+            if (aliadoEncontrado) {
+                document.getElementById('nombre').value = aliadoEncontrado.nombre;
+                document.getElementById('telefono').value = aliadoEncontrado.telefono;
+                showToast(`ALIADO ${aliadoEncontrado.nombre} CARGADO`);
+            }
+            cerrarModalListaAliados();
+        }
+
+        function setupUppercaseEnforcement() {
+            document.querySelectorAll('input[type="text"], textarea').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    if (e.target.id === 'telefono' || e.target.id === 'claveWeb' || e.target.id === 'inputTelefonoAliado') return;
+                    const start = e.target.selectionStart;
+                    const end = e.target.selectionEnd;
+                    e.target.value = e.target.value.toUpperCase();
+                    e.target.setSelectionRange(start, end);
+                });
+            });
+        }
+
+        function formatCurrencyInput(input) {
+            let val = input.value.replace(/\D/g, '');
+            input.value = val ? parseInt(val, 10).toLocaleString('es-CO') : '';
+        }
+
+        function generarNumeroOrden() {
+            const currentYear = new Date().getFullYear();
+            let nextSequence = 931; 
+            if (ordenesDB.length > 0) {
+                const nums = ordenesDB.map(o => {
+                    const p = o.orden.split('-');
+                    return p.length === 2 ? parseInt(p[1], 10) : 0;
+                }).filter(n => !isNaN(n));
+                if (nums.length > 0) {
+                    nextSequence = Math.max(...nums, 930) + 1;
+                }
+            }
+            return `${currentYear}-${String(nextSequence).padStart(4, '0')}`;
+        }
+
+        function nuevoRegistro() {
+            currentOrderId = null;
+            document.getElementById('formIdentificacion').reset();
+            document.getElementById('formReparaciones').reset();
+            
+            const numOrden = generarNumeroOrden();
+            const claveAleatoria = generarClaveHexadecimal();
+
+            document.getElementById('orden').value = numOrden;
+            document.getElementById('claveWeb').value = claveAleatoria;
+            document.getElementById('fechaRegistro').value = new Date().toLocaleString('es-CO');
+            document.getElementById('repOrderInfo').textContent = `ORDEN SELECCIONADA: ${numOrden}`;
+            document.getElementById('statusBadgeId').textContent = 'NUEVA ENTRADA';
+            
+            renderOrdersList();
+            switchTab('identificacion');
+        }
+
+        async function guardarIdentificacion() {
+            const btn = document.getElementById('btnGuardarId');
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader" class="spin"></i> GUARDANDO...`;
+            lucide.createIcons();
+
+            const ordenNum = document.getElementById('orden').value;
+            let claveVal = document.getElementById('claveWeb').value;
+            if (!claveVal) {
+                claveVal = generarClaveHexadecimal();
+                document.getElementById('claveWeb').value = claveVal;
+            }
+
+            const existingIndex = ordenesDB.findIndex(o => o.orden === ordenNum);
+            const estadoActual = existingIndex >= 0 ? (ordenesDB[existingIndex].estado || 'PENDIENTE') : 'PENDIENTE';
+
+            const formData = {
+                tipoAccion: 'IDENTIFICACION',
+                orden: ordenNum,
+                fecha: document.getElementById('fechaRegistro').value || new Date().toLocaleString('es-CO'),
+                nombre: document.getElementById('nombre').value.toUpperCase(),
+                telefono: document.getElementById('telefono').value.toUpperCase(),
+                articulo: document.getElementById('articulo').value.toUpperCase(),
+                marca: document.getElementById('marca').value.toUpperCase(),
+                modelo: document.getElementById('modelo').value.toUpperCase(),
+                serie: document.getElementById('serie').value.toUpperCase() || 'DESCONOCIDO',
+                contrasena: document.getElementById('contrasena').value.toUpperCase() || 'SIN CLAVE',
+                sintomas: document.getElementById('sintomas').value.toUpperCase(),
+                notas: document.getElementById('notas').value.toUpperCase() || 'NINGUNA',
+                estado: estadoActual,
+                claveWeb: claveVal
+            };
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+            } catch (e) {}
+
+            if (existingIndex >= 0) {
+                ordenesDB[existingIndex] = { ...ordenesDB[existingIndex], ...formData };
+                showToast('IDENTIFICACIÓN ACTUALIZADA');
+            } else {
+                ordenesDB.push(formData);
+                showToast('ORDEN GUARDADA CON ÉXITO');
+            }
+
+            localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
+            renderOrdersList();
+            
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="save"></i> GUARDAR ORDEN`;
+            lucide.createIcons();
+
+            nuevoRegistro();
+        }
+
+        async function guardarReparacion() {
+            const numOrden = document.getElementById('orden').value;
+            if (!numOrden) { alert('SELECCIONE UNA ORDEN'); return; }
+
+            const btn = document.getElementById('btnGuardarRep');
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader" class="spin"></i> GUARDANDO...`;
+            lucide.createIcons();
+
+            const repData = {
+                tipoAccion: 'REPARACION',
+                orden: numOrden,
+                estado: document.getElementById('repEstado').value,
+                diagnostico: document.getElementById('repDiagnostico').value.toUpperCase(),
+                garantia: document.getElementById('repGarantia').value.toUpperCase(),
+                tecnico: document.getElementById('repTecnico').value.toUpperCase(),
+                fechaReparacion: document.getElementById('repFechaReparacion').value,
+                totalPagar: document.getElementById('repTotalPagar').value,
+                fechaEntrega: document.getElementById('repFechaEntrega').value
+            };
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(repData)
+                });
+            } catch (e) {}
+
+            const index = ordenesDB.findIndex(o => o.orden === numOrden);
+            if (index >= 0) {
+                ordenesDB[index] = { ...ordenesDB[index], ...repData };
+                localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
+                renderOrdersList();
+                showToast('REPARACIÓN GUARDADA');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="save"></i> GUARDAR REPARACIÓN`;
+            lucide.createIcons();
+        }
+
+        function toggleFiltroPendientes() {
+            soloPendientesActivo = !soloPendientesActivo;
+            const btn = document.getElementById('btnFiltroPendientes');
+            if (soloPendientesActivo) btn.classList.add('active'); else btn.classList.remove('active');
+            renderOrdersList(document.getElementById('searchInput').value);
+        }
+
+        function renderOrdersList(filter = '') {
+            const container = document.getElementById('ordersContainer');
+            container.innerHTML = '';
+
+            const filtered = ordenesDB.filter(o => {
+                const estado = o.estado || 'PENDIENTE';
+                if (soloPendientesActivo && estado !== 'PENDIENTE') return false;
+                const term = filter.toUpperCase();
+                return o.orden.includes(term) || (o.nombre && o.nombre.includes(term)) || (o.telefono && o.telefono.includes(term)) || (o.articulo && o.articulo.includes(term));
+            });
+
+            const sorted = [...filtered].reverse();
+            document.getElementById('orderCount').textContent = sorted.length;
+
+            if (sorted.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem 0; font-size: 0.85rem;">NO SE ENCONTRARON ÓRDENES</div>`;
+                return;
+            }
+
+            sorted.forEach(o => {
+                const card = document.createElement('div');
+                const estado = o.estado || 'PENDIENTE';
+                const estadoClass = estado.replace(/\s+/g, '-');
+                card.className = `order-card status-${estadoClass}`;
+                if (o.orden === currentOrderId) card.classList.add('selected');
+                card.onclick = () => cargarOrden(o.orden);
+                card.innerHTML = `
+                    <div class="order-card-header">
+                        <span class="order-number">${o.orden}</span>
+                        <span class="order-status-badge badge-${estadoClass}">${estado}</span>
+                    </div>
+                    <div class="order-client">${o.nombre || 'SIN NOMBRE'}</div>
+                    <div class="order-device">${o.articulo || ''} ${o.marca ? '- ' + o.marca : ''}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function cargarOrden(numOrden) {
+            const orden = ordenesDB.find(o => o.orden === numOrden);
+            if (!orden) return;
+
+            currentOrderId = orden.orden;
+            document.getElementById('orden').value = orden.orden;
+            document.getElementById('claveWeb').value = orden.claveWeb || '';
+            document.getElementById('fechaRegistro').value = orden.fecha || new Date().toLocaleString('es-CO');
+            document.getElementById('nombre').value = orden.nombre || '';
+            document.getElementById('telefono').value = orden.telefono || '';
+            document.getElementById('articulo').value = orden.articulo || '';
+            document.getElementById('marca').value = orden.marca || '';
+            document.getElementById('modelo').value = orden.modelo || '';
+            document.getElementById('serie').value = orden.serie || '';
+            document.getElementById('contrasena').value = orden.contrasena || '';
+            document.getElementById('sintomas').value = orden.sintomas || '';
+            document.getElementById('notas').value = orden.notas || '';
+
+            document.getElementById('repOrderInfo').textContent = `ORDEN SELECCIONADA: ${orden.orden}`;
+            document.getElementById('repEstado').value = orden.estado || 'PENDIENTE';
+            document.getElementById('repDiagnostico').value = orden.diagnostico || '';
+            document.getElementById('repGarantia').value = orden.garantia || '';
+            document.getElementById('repTecnico').value = orden.tecnico || '';
+            document.getElementById('repFechaReparacion').value = orden.fechaReparacion || '';
+            document.getElementById('repTotalPagar').value = orden.totalPagar || '';
+            document.getElementById('repFechaEntrega').value = orden.fechaEntrega || '';
+
+            renderOrdersList(document.getElementById('searchInput').value);
+        }
+
+        function insertarFechaGarantia() {
+            const input = document.getElementById('repGarantia');
+            input.value = `A PARTIR DEL ${new Date().toLocaleDateString('es-CO')}`;
+            input.focus();
+        }
+
+        async function eliminarOrdenActual() {
+            const ordenNum = document.getElementById('orden').value;
+            const index = ordenesDB.findIndex(o => o.orden === ordenNum);
+            if (index < 0) { showToast('SELECCIONE UNA ORDEN'); return; }
+
+            if (confirm(`¿ELIMINAR ORDEN ${ordenNum}?`)) {
+                try {
+                    await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST', mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ tipoAccion: 'ELIMINAR', orden: ordenNum })
+                    });
+                } catch (e) {}
+                ordenesDB.splice(index, 1);
+                localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
+                showToast('ORDEN ELIMINADA');
+                renderOrdersList();
+                nuevoRegistro();
+            }
+        }
+
+        function imprimirEtiquetaTicket() {
+            const orden = document.getElementById('orden').value;
+            const nombre = document.getElementById('nombre').value;
+            if (!orden || !nombre) { alert('COMPLETE ORDEN Y NOMBRE'); return; }
+
+            const printWindow = window.open('', '_blank', 'width=400,height=300');
+            printWindow.document.write(`
+                <!DOCTYPE html><html><head><title>Ticket - ${orden}</title>
+                <style>@page { size: 50mm 30mm; margin: 0; }
+                body { width: 50mm; height: 30mm; margin: 0; padding: 1mm; box-sizing: border-box; font-family: Arial; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: #fff; color: #000; }
+                .order-num { font-size: 24pt; font-weight: 900; line-height: 1.0; margin-bottom: 1mm; }
+                .client-name { font-size: 14pt; font-weight: bold; line-height: 1.1; overflow: hidden; max-width: 48mm; word-break: break-word; }
+                </style></head><body>
+                <div class="order-num">${orden}</div><div class="client-name">${nombre}</div>
+                <script>window.onload = function() { window.print(); setTimeout(() => window.close(), 500); };<\/script>
+                </body></html>
+            `);
+            printWindow.document.close();
+        }
+
+        function abrirModalEntrada() {
+            if (!document.getElementById('orden').value || !document.getElementById('nombre').value) {
+                alert('COMPLETE LOS DATOS PRINCIPALES'); return;
+            }
+            document.getElementById('modalEntradaOverlay').style.display = 'flex';
+        }
+        function cerrarModalEntrada() { document.getElementById('modalEntradaOverlay').style.display = 'none'; }
+
+        function abrirModalSalida() {
+            if (!document.getElementById('orden').value || !document.getElementById('nombre').value) {
+                alert('SELECCIONE UNA ORDEN VÁLIDA'); return;
+            }
+            document.getElementById('modalSalidaOverlay').style.display = 'flex';
+        }
+        function cerrarModalSalida() { document.getElementById('modalSalidaOverlay').style.display = 'none'; }
+
+        function enviarEntradaWhatsApp() {
+            let tel = document.getElementById('telefono').value.trim();
+            const orden = document.getElementById('orden').value;
+            const nombre = document.getElementById('nombre').value;
+            const articulo = document.getElementById('articulo').value;
+            const marca = document.getElementById('marca').value;
+            const serie = document.getElementById('serie').value.trim() || 'DESCONOCIDO';
+            const clave = document.getElementById('claveWeb').value;
+
+            if (!tel) { alert('FALTA TELÉFONO'); return; }
+            if (tel.length === 10) tel = '57' + tel;
+
+            const mensaje = `*CASA ELECTRONICA*\n\n` +
+                            `Hola *${nombre}*, recibimos tu equipo (*${articulo} ${marca}*). CON SERIAL: *${serie}*\n\n` +
+                            `*Orden:* ${orden}\n` +
+                            `*Clave web de consulta:* *${clave}*\n\n` +
+                            `*Consulta el estado aquí:* https://casaelectronica.github.io/consulta/\n\n` +
+                            `¡Gracias por confiar en nosotros!`;
+
+            window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
+        }
+
+        function enviarSalidaWhatsApp() {
+            let tel = document.getElementById('telefono').value.trim();
+            const orden = document.getElementById('orden').value;
+            const nombre = document.getElementById('nombre').value;
+            const total = document.getElementById('repTotalPagar').value || '0';
+
+            if (!tel) { alert('FALTA TELÉFONO'); return; }
+            if (tel.length === 10) tel = '57' + tel;
+
+            const mensaje = `*CASA ELECTRONICA*\n\n` +
+                            `Hola *${nombre}*, tu equipo (Orden: *${orden}*) está listo para retirar.\n` +
+                            `Total a pagar: *$ ${total}*.\n\n` +
+                            `¡Gracias por preferirnos!`;
+
+            window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
+        }
+
+        function abrirModalTicketReparacion() { document.getElementById('modalTicketOverlay').style.display = 'flex'; }
+        function cerrarModalTicket() { document.getElementById('modalTicketOverlay').style.display = 'none'; }
+
+        function ejecutarImpresionTicket() {
+            cerrarModalTicket();
+            const tipo = document.getElementById('selectTipoTicket').value;
+            const precio = document.getElementById('repTotalPagar').value || '0';
+            const printWindow = window.open('', '_blank', 'width=400,height=300');
+            
+            if (tipo === "REPARADO") {
+                printWindow.document.write(`<html><head><style>@page { size: 50mm 30mm; margin: 0; } body { width: 50mm; height: 30mm; margin: 0; padding: 1mm; font-family: Arial; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }</style></head><body><div style="font-size:16pt;font-weight:bold;">REPARADO</div><div style="font-size:20pt;font-weight:900;">$ ${precio}</div><script>window.onload = function() { window.print(); setTimeout(() => window.close(), 500); };<\/script></body></html>`);
+            } else {
+                printWindow.document.write(`<html><head><style>@page { size: 50mm 30mm; margin: 0; } body { width: 50mm; height: 30mm; margin: 0; padding: 1mm; font-family: Arial; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }</style></head><body><div style="font-size:18pt;font-weight:900;">DEVOLUCIÓN</div><script>window.onload = function() { window.print(); setTimeout(() => window.close(), 500); };<\/script></body></html>`);
+            }
+            printWindow.document.close();
+        }
+
+        function generarEntradaPDF() {
+            const orden = document.getElementById('orden').value;
+            const fecha = document.getElementById('fechaRegistro').value;
+            const nombre = document.getElementById('nombre').value;
+            const tel = document.getElementById('telefono').value;
+            const articulo = document.getElementById('articulo').value;
+            const marca = document.getElementById('marca').value;
+            const modelo = document.getElementById('modelo').value;
+            const serie = document.getElementById('serie').value || 'DESC';
+            const sintomas = document.getElementById('sintomas').value;
+            const notas = document.getElementById('notas').value;
+            const clave = document.getElementById('claveWeb').value;
+            const logoUrl = 'https://lh3.googleusercontent.com/d/1x2-ypgTRlKYcmWTODNmge7TnIxp14xzK=s500';
+
+            const w = window.open('', '_blank', 'width=900,height=700');
+            w.document.write(`<!DOCTYPE html><html><head><title>Entrada - ${orden}</title>
+            <style>
+                @page { size: letter portrait; margin: 15mm; }
+                body { font-family: Arial, sans-serif; font-size: 11pt; text-transform: uppercase; color: #000; background: #fff; }
+                .header-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                .header-left { width: 32%; vertical-align: top; }
+                .header-center { width: 48%; text-align: center; vertical-align: middle; }
+                .header-right { width: 20%; text-align: right; vertical-align: middle; }
+                .header-center-content { display: inline-block; text-align: center; }
+                .header-center h2 { font-size: 18pt; font-weight: bold; margin-bottom: 4px; }
+                .header-center p { font-size: 9.5pt; margin: 2px 0; }
+                .order-box { font-weight: bold; font-size: 10.5pt; margin-bottom: 2px; }
+                .order-num { font-size: 15pt; font-weight: 900; color: #cc0000; margin-bottom: 6px; }
+                .clave-label { font-size: 10.5pt; font-weight: bold; margin-bottom: 2px; }
+                .clave-val { font-size: 14pt; font-weight: 900; color: #0066cc; font-family: monospace; }
+                .logo-img { width: 130px; height: auto; }
+                .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+                .info-table td { padding: 6px 4px; font-size: 10pt; vertical-align: bottom; }
+                .box-section { border: 1px solid #000; padding: 10px; margin-bottom: 12px; }
+                .box-title { font-weight: bold; font-size: 10pt; margin-bottom: 4px; }
+                .box-content { font-size: 10pt; min-height: 35px; }
+                .footer-text { font-size: 7.5pt; text-align: justify; line-height: 1.3; margin-top: 30px; }
+            </style></head>
+            <body>
+            
+            <table class="header-table">
+                <tr>
+                    <td class="header-left">
+                        <div class="order-box">ORDEN DE ENTRADA:</div>
+                        <div class="order-num">${orden}</div>
+                        <div class="clave-label">CLAVE WEB:</div>
+                        <div class="clave-val">${clave}</div>
+                    </td>
+                    <td class="header-center">
+                        <div class="header-center-content">
+                            <h2>CASA ELECTRONICA</h2>
+                            <p>CALLE 77AB # 86A40</p>
+                            <p>3194500736</p>
+                        </div>
+                    </td>
+                    <td class="header-right">
+                        <img src="${logoUrl}" class="logo-img" alt="Logo">
+                    </td>
+                </tr>
+            </table>
+
+            <p style="margin-bottom: 15px; font-weight: bold;">FECHA: ${fecha}</p>
+
+            <table class="info-table">
+                <tr>
+                    <td style="width: 18%; font-weight: bold;">NOMBRE DEL CLIENTE:</td>
+                    <td style="width: 38%; border-bottom: 1px solid #000;">${nombre}</td>
+                    <td style="width: 14%; font-weight: bold; padding-left: 15px;">TELÉFONO:</td>
+                    <td style="width: 30%; border-bottom: 1px solid #000;">${tel}</td>
+                </tr>
+            </table>
+
+            <table class="info-table">
+                <tr>
+                    <td style="width: 12%; font-weight: bold;">ARTÍCULO:</td>
+                    <td style="width: 38%; border-bottom: 1px solid #000;">${articulo}</td>
+                    <td style="width: 14%; font-weight: bold; padding-left: 15px;">MODELO:</td>
+                    <td style="width: 36%; border-bottom: 1px solid #000;">${modelo}</td>
+                </tr>
+            </table>
+
+            <table class="info-table">
+                <tr>
+                    <td style="width: 12%; font-weight: bold;">MARCA:</td>
+                    <td style="width: 38%; border-bottom: 1px solid #000;">${marca}</td>
+                    <td style="width: 14%; font-weight: bold; padding-left: 15px;">SERIE:</td>
+                    <td style="width: 36%; border-bottom: 1px solid #000;">${serie}</td>
+                </tr>
+            </table>
+
+            <div class="box-section">
+                <div class="box-title">PROBLEMA REPORTADO:</div>
+                <div class="box-content">${sintomas}</div>
+            </div>
+
+            <div class="box-section">
+                <div class="box-title">NOTAS:</div>
+                <div class="box-content">${notas}</div>
+            </div>
+
+            <p style="margin-top: 20px; font-size: 10pt;"><b>RESPONSABLE:</b> CASA ELECTRONICA</p>
+
+            <div class="footer-text">
+                AVISO IMPORTANTE: PASADOS 60 DÍAS A PARTIR DE ESTA NOTIFICACIÓN, NUESTRO ESTABLECIMIENTO NO SE RESPONSABILIZARÁ POR SU ARTÍCULO. 
+                DE ACUERDO CON LA LEY 1480 DE 2011 Y EL DECRETO 1413 DE 2018, SI EL BIEN NO ES RETIRADO EN ESTE PLAZO, SE DECLARÁ LEGALMENTE EN ESTADO DE ABANDONO Y EL NEGOCIO DISPONDRÁ DE ÉL PARA CUBRIR LOS COSTOS DE ALMACENAMIENTO Y REPARACIÓN. POR FAVOR, ACÉRQUESE A RETIRAR SU ARTÍCULO LO ANTES POSIBLE.
+            </div>
+
+            <script>window.onload = () => setTimeout(() => window.print(), 500);<\/script>
+            </body></html>`);
+            w.document.close();
+        }
+
+        function generarFacturaPDF() {
+            const orden = document.getElementById('orden').value;
+            const nombre = document.getElementById('nombre').value;
+            const tel = document.getElementById('telefono').value;
+            const articulo = document.getElementById('articulo').value;
+            const marca = document.getElementById('marca').value;
+            const modelo = document.getElementById('modelo').value;
+            const tecnico = document.getElementById('repTecnico').value;
+            const diag = document.getElementById('repDiagnostico').value;
+            const garantia = document.getElementById('repGarantia').value;
+            const total = document.getElementById('repTotalPagar').value || '0';
+            const clave = document.getElementById('claveWeb').value;
+            const logoUrl = 'https://lh3.googleusercontent.com/d/1x2-ypgTRlKYcmWTODNmge7TnIxp14xzK=s500';
+
+            const w = window.open('', '_blank', 'width=900,height=700');
+            w.document.write(`<!DOCTYPE html><html><head><title>Salida - ${orden}</title>
+            <style>
+                @page { size: letter portrait; margin: 15mm; }
+                body { font-family: Arial, sans-serif; font-size: 11pt; text-transform: uppercase; color: #000; background: #fff; }
+                .header-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                .header-left { width: 32%; vertical-align: top; }
+                .header-center { width: 48%; text-align: center; vertical-align: middle; }
+                .header-right { width: 20%; text-align: right; vertical-align: middle; }
+                .header-center-content { display: inline-block; text-align: center; }
+                .header-center h2 { font-size: 18pt; font-weight: bold; margin-bottom: 4px; }
+                .header-center p { font-size: 9.5pt; margin: 2px 0; }
+                .order-box { font-weight: bold; font-size: 10.5pt; margin-bottom: 2px; }
+                .order-num { font-size: 15pt; font-weight: 900; color: #cc0000; margin-bottom: 6px; }
+                .clave-label { font-size: 10.5pt; font-weight: bold; margin-bottom: 2px; }
+                .clave-val { font-size: 14pt; font-weight: 900; color: #0066cc; font-family: monospace; }
+                .logo-img { width: 130px; height: auto; }
+                .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+                .info-table td { padding: 6px 4px; font-size: 10pt; vertical-align: bottom; }
+                .box-section { border: 1px solid #000; padding: 10px; margin-bottom: 12px; }
+                .box-title { font-weight: bold; font-size: 10pt; margin-bottom: 4px; }
+                .box-content { font-size: 10pt; min-height: 45px; }
+            </style></head>
+            <body>
+            
+            <table class="header-table">
+                <tr>
+                    <td class="header-left">
+                        <div class="order-box">ORDEN DE SALIDA:</div>
+                        <div class="order-num">${orden}</div>
+                        <div class="clave-label">CLAVE WEB:</div>
+                        <div class="clave-val">${clave}</div>
+                    </td>
+                    <td class="header-center">
+                        <div class="header-center-content">
+                            <h2>CASA ELECTRONICA</h2>
+                            <p>CALLE 77AB # 86A40</p>
+                            <p>3194500736</p>
+                        </div>
+                    </td>
+                    <td class="header-right">
+                        <img src="${logoUrl}" class="logo-img" alt="Logo">
+                    </td>
+                </tr>
+            </table>
+
+            <table class="info-table" style="margin-top: 20px;">
+                <tr>
+                    <td style="width: 18%; font-weight: bold;">CLIENTE:</td>
+                    <td style="width: 50%; border-bottom: 1px solid #000;">${nombre}</td>
+                    <td style="width: 12%; font-weight: bold; padding-left: 15px;">TEL:</td>
+                    <td style="width: 20%; border-bottom: 1px solid #000;">${tel}</td>
+                </tr>
+            </table>
+
+            <table class="info-table">
+                <tr>
+                    <td style="width: 18%; font-weight: bold;">ARTÍCULO:</td>
+                    <td style="width: 32%; border-bottom: 1px solid #000;">${articulo}</td>
+                    <td style="width: 12%; font-weight: bold; padding-left: 15px;">MARCA:</td>
+                    <td style="width: 38%; border-bottom: 1px solid #000;">${marca} ${modelo}</td>
+                </tr>
+            </table>
+
+            <div class="box-section" style="margin-top: 15px;">
+                <div class="box-title">TRABAJO REALIZADO / DIAGNÓSTICO:</div>
+                <div class="box-content">${diag}</div>
+            </div>
+
+            <div class="box-section">
+                <div class="box-title">GARANTÍA:</div>
+                <div class="box-content" style="min-height: 25px;">${garantia || 'NINGUNA'}</div>
+            </div>
+
+            <table class="info-table" style="margin-top: 20px;">
+                <tr>
+                    <td style="width: 18%; font-weight: bold;">TÉCNICO:</td>
+                    <td style="width: 42%; border-bottom: 1px solid #000;">${tecnico}</td>
+                    <td style="width: 18%; font-weight: bold; padding-left: 15px;">TOTAL A PAGAR:</td>
+                    <td style="width: 22%; border-bottom: 1px solid #000; font-weight: bold; font-size: 12pt;">$ ${total}</td>
+                </tr>
+            </table>
+
+            <script>window.onload = () => setTimeout(() => window.print(), 500);<\/script>
+            </body></html>`);
+            w.document.close();
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            t.style.display = 'flex';
+            setTimeout(() => { t.style.display = 'none'; }, 3000);
+        }
+    </script>
+</body>
+</html>
