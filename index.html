@@ -815,7 +815,6 @@
                     localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
                 }
             } catch (e) {
-                // Si falla el internet o la red, recurre al almacenamiento local de respaldo
                 ordenesDB = JSON.parse(localStorage.getItem('casaElectronica_ordenes')) || [];
             }
             renderOrdersList();
@@ -1255,15 +1254,28 @@
             let tel = document.getElementById('telefono').value.trim();
             const orden = document.getElementById('orden').value;
             const nombre = document.getElementById('nombre').value;
+            const estado = document.getElementById('repEstado').value;
+            const articulo = document.getElementById('articulo').value;
+            const marca = document.getElementById('marca').value;
             const total = document.getElementById('repTotalPagar').value || '0';
 
             if (!tel) { alert('FALTA TELÉFONO'); return; }
             if (tel.length === 10) tel = '57' + tel;
 
-            const mensaje = `*CASA ELECTRONICA*\n\n` +
-                            `Hola *${nombre}*, tu equipo (Orden: *${orden}*) está listo para retirar.\n` +
-                            `Total a pagar: *$ ${total}*.\n\n` +
-                            `¡Gracias por preferirnos!`;
+            let mensaje = '';
+
+            // CONDICIÓN ESTRICTA SEGÚN EL ESTADO
+            if (estado === 'DEVOLUCION') {
+                mensaje = `*CASA ELECTRONICA*\n\n` +
+                          `Hola *${nombre}*, lamentamos informarte que el artículo (*${articulo} ${marca}*) correspondiente a la orden *${orden}* no tuvo reparación y está para *DEVOLUCIÓN*.\n\n` +
+                          `Por favor, acércate a pasar por él lo más pronto posible.\n\n` +
+                          `Gracias por su atención.`;
+            } else {
+                mensaje = `*CASA ELECTRONICA*\n\n` +
+                          `Hola *${nombre}*, tu equipo (Orden: *${orden}*) está listo para retirar.\n` +
+                          `Total a pagar: *$ ${total}*.\n\n` +
+                          `¡Gracias por preferirnos!`;
+            }
 
             window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
         }
