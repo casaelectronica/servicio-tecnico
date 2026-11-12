@@ -188,7 +188,7 @@
             letter-spacing: 0.5px;
         }
 
-        input, textarea, select {
+        input, textarea {
             background-color: var(--bg-input);
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -200,7 +200,7 @@
             width: 100%;
         }
 
-        input:focus, textarea:focus, select:focus {
+        input:focus, textarea:focus {
             border-color: var(--accent-cyan);
             box-shadow: 0 0 0 2px rgba(0, 242, 254, 0.15);
         }
@@ -217,6 +217,97 @@
             resize: vertical;
             min-height: 100px;
         }
+
+        /* ==========================================
+           SISTEMA UNIFICADO DE LISTAS DESPLEGABLES MODERNAS
+           ========================================== */
+        .modern-select-wrapper {
+            position: relative;
+            width: 100%;
+            user-select: none;
+        }
+
+        .modern-select-btn {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.65rem 0.8rem;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            min-height: 41px;
+        }
+
+        .modern-select-btn:hover,
+        .modern-select-wrapper.active .modern-select-btn {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 242, 254, 0.15);
+        }
+
+        .modern-dropdown-options {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background-color: #111722;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+            z-index: 999;
+            display: none;
+            overflow-y: auto;
+            max-height: 220px;
+            backdrop-filter: blur(10px);
+        }
+
+        .modern-select-wrapper.active .modern-dropdown-options {
+            display: block;
+        }
+
+        .modern-option-item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            transition: background 0.2s ease, color 0.2s ease;
+            border-bottom: 1px solid rgba(42, 54, 79, 0.4);
+        }
+
+        .modern-option-item:last-child {
+            border-bottom: none;
+        }
+
+        .modern-option-item:hover {
+            background-color: rgba(0, 242, 254, 0.08);
+            color: var(--accent-cyan);
+        }
+
+        /* Círculos modernos con brillo neón */
+        .modern-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px currentColor;
+            flex-shrink: 0;
+        }
+
+        .dot-pendiente { color: var(--status-pendiente); background-color: var(--status-pendiente); }
+        .dot-reparado { color: var(--status-reparado); background-color: var(--status-reparado); }
+        .dot-devolucion { color: var(--status-devolucion); background-color: var(--status-devolucion); }
+        .dot-ok { color: var(--status-entregado-ok); background-color: var(--status-entregado-ok); }
+        .dot-malo { color: var(--status-entregado-malo); background-color: var(--status-entregado-malo); }
+        .dot-cyan { color: var(--accent-cyan); background-color: var(--accent-cyan); }
+        .dot-green { color: var(--accent-green); background-color: var(--accent-green); }
 
         .action-bar {
             margin-top: 1.5rem;
@@ -379,18 +470,18 @@
             display: none;
             align-items: center;
             gap: 0.5rem;
-            z-index: 1000;
+            z-index: 3000;
         }
 
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.75);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 2000;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(5px);
             padding: 1rem;
         }
 
@@ -398,10 +489,10 @@
             background: var(--bg-card);
             border: 1px solid var(--accent-cyan);
             padding: 1.5rem;
-            border-radius: 10px;
+            border-radius: 12px;
             width: 100%;
-            max-width: 340px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            max-width: 360px;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
             gap: 1rem;
@@ -444,7 +535,7 @@
            ========================================== */
         @media (max-width: 1024px) {
             .container {
-                grid-template-columns: 1fr; /* Cambia a una sola columna vertical */
+                grid-template-columns: 1fr;
                 padding: 1rem;
             }
             
@@ -453,7 +544,7 @@
             }
 
             .col-6, .col-4, .col-3 {
-                grid-column: span 12; /* Todos los campos ocupan todo el ancho en móviles */
+                grid-column: span 12;
             }
         }
 
@@ -497,7 +588,7 @@
             </button>
         </div>
         <div>
-            <button class="btn btn-success" onclick="abrirModalTecnico()" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+            <button class="btn btn-success" onclick="abrirFormularioTecnico()" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
                 <i data-lucide="user-plus"></i> AGREGAR TÉCNICO
             </button>
         </div>
@@ -621,22 +712,50 @@
                 <form id="formReparaciones">
                     <div class="form-grid">
                         
+                        <!-- LISTA MODERNA 1: ESTADO DE LA REPARACIÓN -->
                         <div class="form-group col-6">
-                            <label for="repEstado">ESTADO DE LA REPARACIÓN</label>
-                            <select id="repEstado" name="repEstado" style="font-weight: bold;" required>
-                                <option value="PENDIENTE">PENDIENTE</option>
-                                <option value="REPARADO">REPARADO</option>
-                                <option value="DEVOLUCION">DEVOLUCION</option>
-                                <option value="ENTREGADO OK">ENTREGADO OK</option>
-                                <option value="ENTREGADO MALO">ENTREGADO MALO</option>
-                            </select>
+                            <label>ESTADO DE LA REPARACIÓN</label>
+                            <div class="modern-select-wrapper" id="wrapperRepEstado">
+                                <div class="modern-select-btn" onclick="toggleModernDropdown('wrapperRepEstado')">
+                                    <span id="displayRepEstado" style="display: flex; align-items: center; gap: 0.6rem;">
+                                        <span class="modern-dot dot-pendiente"></span> PENDIENTE
+                                    </span>
+                                    <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
+                                </div>
+                                <div class="modern-dropdown-options" id="listRepEstado">
+                                    <div class="modern-option-item" onclick="selectModernOption('repEstado', 'displayRepEstado', 'wrapperRepEstado', 'PENDIENTE', 'PENDIENTE', 'dot-pendiente')">
+                                        <span class="modern-dot dot-pendiente"></span> PENDIENTE
+                                    </div>
+                                    <div class="modern-option-item" onclick="selectModernOption('repEstado', 'displayRepEstado', 'wrapperRepEstado', 'REPARADO', 'REPARADO', 'dot-reparado')">
+                                        <span class="modern-dot dot-reparado"></span> REPARADO
+                                    </div>
+                                    <div class="modern-option-item" onclick="selectModernOption('repEstado', 'displayRepEstado', 'wrapperRepEstado', 'DEVOLUCION', 'DEVOLUCIÓN', 'dot-devolucion')">
+                                        <span class="modern-dot dot-devolucion"></span> DEVOLUCIÓN
+                                    </div>
+                                    <div class="modern-option-item" onclick="selectModernOption('repEstado', 'displayRepEstado', 'wrapperRepEstado', 'ENTREGADO OK', 'ENTREGADO OK', 'dot-ok')">
+                                        <span class="modern-dot dot-ok"></span> ENTREGADO OK
+                                    </div>
+                                    <div class="modern-option-item" onclick="selectModernOption('repEstado', 'displayRepEstado', 'wrapperRepEstado', 'ENTREGADO MALO', 'ENTREGADO MALO', 'dot-malo')">
+                                        <span class="modern-dot dot-malo"></span> ENTREGADO MALO
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="repEstado" name="repEstado" value="PENDIENTE">
                         </div>
 
+                        <!-- LISTA MODERNA 2: TÉCNICO ENCARGADO -->
                         <div class="form-group col-6">
-                            <label for="repTecnico">TÉCNICO ENCARGADO</label>
-                            <select id="repTecnico" style="font-weight: bold;">
-                                <option value="">SELECCIONE TÉCNICO...</option>
-                            </select>
+                            <label>TÉCNICO ENCARGADO</label>
+                            <div class="modern-select-wrapper" id="wrapperRepTecnico">
+                                <div class="modern-select-btn" onclick="toggleModernDropdown('wrapperRepTecnico')">
+                                    <span id="displayRepTecnico" style="display: flex; align-items: center; gap: 0.6rem; color: var(--text-muted);">
+                                        SELECCIONE TÉCNICO...
+                                    </span>
+                                    <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
+                                </div>
+                                <div class="modern-dropdown-options" id="listRepTecnico"></div>
+                            </div>
+                            <input type="hidden" id="repTecnico" name="repTecnico" value="">
                         </div>
 
                         <div class="form-group col-12">
@@ -750,14 +869,30 @@
         </div>
     </div>
 
+    <!-- MODAL TICKET CON LISTA MODERNA -->
     <div id="modalTicketOverlay" class="modal-overlay">
         <div class="modal-box">
             <h3>SELECCIONAR TICKET</h3>
             <label style="font-size: 0.8rem;">ELIJA LA OPCIÓN A IMPRIMIR:</label>
-            <select id="selectTipoTicket" style="font-weight: bold;">
-                <option value="REPARADO">REPARADO</option>
-                <option value="DEVOLUCION">DEVOLUCIÓN</option>
-            </select>
+            
+            <div class="modern-select-wrapper" id="wrapperTipoTicket">
+                <div class="modern-select-btn" onclick="toggleModernDropdown('wrapperTipoTicket')">
+                    <span id="displayTipoTicket" style="display: flex; align-items: center; gap: 0.6rem;">
+                        <span class="modern-dot dot-reparado"></span> REPARADO
+                    </span>
+                    <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
+                </div>
+                <div class="modern-dropdown-options" id="listTipoTicket">
+                    <div class="modern-option-item" onclick="selectModernOption('selectTipoTicket', 'displayTipoTicket', 'wrapperTipoTicket', 'REPARADO', 'REPARADO', 'dot-reparado')">
+                        <span class="modern-dot dot-reparado"></span> REPARADO
+                    </div>
+                    <div class="modern-option-item" onclick="selectModernOption('selectTipoTicket', 'displayTipoTicket', 'wrapperTipoTicket', 'DEVOLUCION', 'DEVOLUCIÓN', 'dot-devolucion')">
+                        <span class="modern-dot dot-devolucion"></span> DEVOLUCIÓN
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="selectTipoTicket" value="REPARADO">
+
             <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;">
                 <button type="button" class="btn btn-secondary" onclick="cerrarModalTicket()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">CANCELAR</button>
                 <button type="button" class="btn btn-primary" onclick="ejecutarImpresionTicket()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">IMPRIMIR</button>
@@ -765,13 +900,23 @@
         </div>
     </div>
 
+    <!-- MODAL LISTA ALIADOS CON LISTA MODERNA -->
     <div id="modalListaAliadosOverlay" class="modal-overlay">
-        <div class="modal-box" style="width: 380px;">
+        <div class="modal-box" style="max-width: 390px;">
             <h3>SELECCIONAR ALIADO</h3>
             <label style="font-size: 0.8rem;">ALIADOS REGISTRADOS:</label>
-            <select id="selectAliadoModal" style="font-weight: bold; width: 100%;">
-                <option value="">SELECCIONE UN ALIADO...</option>
-            </select>
+            
+            <div class="modern-select-wrapper" id="wrapperAliadoModal">
+                <div class="modern-select-btn" onclick="toggleModernDropdown('wrapperAliadoModal')">
+                    <span id="displayAliadoModal" style="display: flex; align-items: center; gap: 0.6rem; color: var(--text-muted);">
+                        SELECCIONE UN ALIADO...
+                    </span>
+                    <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
+                </div>
+                <div class="modern-dropdown-options" id="listAliadoModal"></div>
+            </div>
+            <input type="hidden" id="selectAliadoModal" value="">
+
             <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;">
                 <button type="button" class="btn btn-secondary" onclick="cerrarModalListaAliados()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">CANCELAR</button>
                 <button type="button" class="btn btn-primary" onclick="usarAliadoSeleccionado()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">SELECCIONAR</button>
@@ -779,6 +924,7 @@
         </div>
     </div>
 
+    <!-- VENTANA EMERGENTE: AGREGAR NUEVO ALIADO -->
     <div id="modalFormularioAliadoOverlay" class="modal-overlay">
         <div class="floating-form-box">
             <h3><i data-lucide="user-plus"></i> NUEVO ALIADO COMERCIAL</h3>
@@ -796,6 +942,25 @@
                 <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
                     <button type="button" class="btn btn-secondary" onclick="cerrarFormularioAliado()">CANCELAR</button>
                     <button type="submit" class="btn btn-primary">GUARDAR ALIADO</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- NUEVA VENTANA EMERGENTE MODERNA: AGREGAR TÉCNICO -->
+    <div id="modalFormularioTecnicoOverlay" class="modal-overlay">
+        <div class="floating-form-box">
+            <h3><i data-lucide="wrench"></i> NUEVO TÉCNICO</h3>
+            <form id="formAgregarTecnico" onsubmit="guardarNuevoTecnico(event)">
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="inputNombreTecnico">NOMBRE DEL TÉCNICO</label>
+                        <input type="text" id="inputNombreTecnico" placeholder="EJ: CARLOS ANDRÉS" required>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarFormularioTecnico()">CANCELAR</button>
+                    <button type="submit" class="btn btn-primary">GUARDAR TÉCNICO</button>
                 </div>
             </form>
         </div>
@@ -830,6 +995,76 @@
             document.getElementById('formReparaciones').addEventListener('submit', (e) => { e.preventDefault(); guardarReparacion(); });
         });
 
+        /* ==========================================
+           CONTROL GLOBAL DE LISTAS MODERNAS
+           ========================================== */
+        function toggleModernDropdown(wrapperId) {
+            const target = document.getElementById(wrapperId);
+            const isOpen = target.classList.contains('active');
+            document.querySelectorAll('.modern-select-wrapper').forEach(el => el.classList.remove('active'));
+            if (!isOpen) {
+                target.classList.add('active');
+            }
+        }
+
+        function selectModernOption(inputId, displayId, wrapperId, value, label, dotClass) {
+            document.getElementById(inputId).value = value;
+            const displayEl = document.getElementById(displayId);
+            displayEl.style.color = 'var(--text-main)';
+            
+            if (dotClass) {
+                displayEl.innerHTML = `<span class="modern-dot ${dotClass}"></span> ${label}`;
+            } else {
+                displayEl.textContent = label;
+            }
+            
+            document.getElementById(wrapperId).classList.remove('active');
+        }
+
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('.modern-select-wrapper')) {
+                document.querySelectorAll('.modern-select-wrapper').forEach(el => el.classList.remove('active'));
+            }
+        });
+
+        function getDotClassForStatus(estado) {
+            switch (estado) {
+                case 'REPARADO': return 'dot-reparado';
+                case 'DEVOLUCION': return 'dot-devolucion';
+                case 'ENTREGADO OK': return 'dot-ok';
+                case 'ENTREGADO MALO': return 'dot-malo';
+                default: return 'dot-pendiente';
+            }
+        }
+
+        function syncStatusUI(estadoText) {
+            const valor = estadoText || 'PENDIENTE';
+            const dotClass = getDotClassForStatus(valor);
+            const labelText = valor === 'DEVOLUCION' ? 'DEVOLUCIÓN' : valor;
+
+            document.getElementById('repEstado').value = valor;
+            document.getElementById('displayRepEstado').innerHTML = `
+                <span class="modern-dot ${dotClass}"></span> ${labelText}
+            `;
+        }
+
+        function syncTecnicoUI(tecnicoVal) {
+            const input = document.getElementById('repTecnico');
+            const display = document.getElementById('displayRepTecnico');
+            input.value = tecnicoVal || '';
+
+            if (tecnicoVal) {
+                display.style.color = 'var(--text-main)';
+                display.innerHTML = `<span class="modern-dot dot-cyan"></span> ${tecnicoVal}`;
+            } else {
+                display.style.color = 'var(--text-muted)';
+                display.textContent = 'SELECCIONE TÉCNICO...';
+            }
+        }
+
+        /* ==========================================
+           DATOS Y LÓGICA DEL SISTEMA
+           ========================================== */
         async function cargarDatosDesdeSheet() {
             try {
                 const response = await fetch(APPS_SCRIPT_URL);
@@ -874,15 +1109,33 @@
             return Math.floor(Math.random() * 1048576).toString(16).toUpperCase().padStart(5, '0');
         }
 
-        async function abrirModalTecnico() {
-            let nombreTecnico = prompt("INGRESE EL NOMBRE DEL NUEVO TÉCNICO:");
-            if (!nombreTecnico || !nombreTecnico.trim()) return;
-            nombreTecnico = nombreTecnico.trim().toUpperCase();
-            if (tecnicosDB.includes(nombreTecnico)) { alert("EL TÉCNICO YA EXISTE."); return; }
+        /* ==========================================
+           GESTIÓN DE TÉCNICOS (CON VENTANA MODERNA)
+           ========================================== */
+        function abrirFormularioTecnico() {
+            document.getElementById('formAgregarTecnico').reset();
+            document.getElementById('modalFormularioTecnicoOverlay').style.display = 'flex';
+            setTimeout(() => { document.getElementById('inputNombreTecnico').focus(); }, 100);
+        }
+
+        function cerrarFormularioTecnico() {
+            document.getElementById('modalFormularioTecnicoOverlay').style.display = 'none';
+        }
+
+        async function guardarNuevoTecnico(event) {
+            event.preventDefault();
+            const nombreTecnico = document.getElementById('inputNombreTecnico').value.trim().toUpperCase();
+            if (!nombreTecnico) return;
+
+            if (tecnicosDB.includes(nombreTecnico)) {
+                alert("EL TÉCNICO YA EXISTE.");
+                return;
+            }
             
             tecnicosDB.push(nombreTecnico);
             localStorage.setItem('casaElectronica_tecnicos', JSON.stringify(tecnicosDB));
             actualizarSelectTecnicos();
+            cerrarFormularioTecnico();
 
             try {
                 await fetch(APPS_SCRIPT_URL, {
@@ -895,17 +1148,29 @@
         }
 
         function actualizarSelectTecnicos() {
-            const select = document.getElementById('repTecnico');
-            const val = select.value;
-            select.innerHTML = '<option value="">SELECCIONE TÉCNICO...</option>';
+            const listContainer = document.getElementById('listRepTecnico');
+            const currentVal = document.getElementById('repTecnico').value;
+            listContainer.innerHTML = '';
+
+            if (tecnicosDB.length === 0) {
+                listContainer.innerHTML = `<div class="modern-option-item" style="color: var(--text-muted); cursor: default;">SIN TÉCNICOS REGISTRADOS</div>`;
+                return;
+            }
+
             tecnicosDB.forEach(tec => {
-                const opt = document.createElement('option');
-                opt.value = tec; opt.textContent = tec;
-                select.appendChild(opt);
+                const item = document.createElement('div');
+                item.className = 'modern-option-item';
+                item.innerHTML = `<span class="modern-dot dot-cyan"></span> ${tec}`;
+                item.onclick = () => selectModernOption('repTecnico', 'displayRepTecnico', 'wrapperRepTecnico', tec, tec, 'dot-cyan');
+                listContainer.appendChild(item);
             });
-            select.value = val;
+
+            syncTecnicoUI(currentVal);
         }
 
+        /* ==========================================
+           GESTIÓN DE ALIADOS (CON LISTA Y VENTANA MODERNA)
+           ========================================== */
         function abrirFormularioAliado() {
             document.getElementById('formAgregarAliado').reset();
             document.getElementById('modalFormularioAliadoOverlay').style.display = 'flex';
@@ -944,6 +1209,10 @@
                 alert("NO HAY ALIADOS REGISTRADOS. USE 'AGREGAR ALIADO' PRIMERO.");
                 return;
             }
+            document.getElementById('selectAliadoModal').value = '';
+            const display = document.getElementById('displayAliadoModal');
+            display.style.color = 'var(--text-muted)';
+            display.textContent = 'SELECCIONE UN ALIADO...';
             document.getElementById('modalListaAliadosOverlay').style.display = 'flex';
         }
 
@@ -952,19 +1221,21 @@
         }
 
         function actualizarSelectAliadosModal() {
-            const select = document.getElementById('selectAliadoModal');
-            select.innerHTML = '<option value="">SELECCIONE UN ALIADO...</option>';
+            const listContainer = document.getElementById('listAliadoModal');
+            listContainer.innerHTML = '';
+
             aliadosDB.forEach(al => {
-                const opt = document.createElement('option');
-                opt.value = al.telefono;
-                opt.textContent = `${al.nombre} - ${al.telefono}`;
-                select.appendChild(opt);
+                const labelText = `${al.nombre} - ${al.telefono}`;
+                const item = document.createElement('div');
+                item.className = 'modern-option-item';
+                item.innerHTML = `<span class="modern-dot dot-green"></span> ${labelText}`;
+                item.onclick = () => selectModernOption('selectAliadoModal', 'displayAliadoModal', 'wrapperAliadoModal', al.telefono, labelText, 'dot-green');
+                listContainer.appendChild(item);
             });
         }
 
         function usarAliadoSeleccionado() {
-            const select = document.getElementById('selectAliadoModal');
-            const tel = select.value;
+            const tel = document.getElementById('selectAliadoModal').value;
             if (!tel) { alert("SELECCIONE UN ALIADO VÁLIDO"); return; }
             const aliadoEncontrado = aliadosDB.find(a => a.telefono === tel);
             if (aliadoEncontrado) {
@@ -1011,6 +1282,8 @@
             currentOrderId = null;
             document.getElementById('formIdentificacion').reset();
             document.getElementById('formReparaciones').reset();
+            syncStatusUI('PENDIENTE');
+            syncTecnicoUI('');
             
             const numOrden = generarNumeroOrden();
             const claveAleatoria = generarClaveHexadecimal();
@@ -1190,10 +1463,10 @@
             document.getElementById('notas').value = orden.notas || '';
 
             document.getElementById('repOrderInfo').textContent = `ORDEN SELECCIONADA: ${orden.orden}`;
-            document.getElementById('repEstado').value = orden.estado || 'PENDIENTE';
+            syncStatusUI(orden.estado || 'PENDIENTE');
+            syncTecnicoUI(orden.tecnico || '');
             document.getElementById('repDiagnostico').value = orden.diagnostico || '';
             document.getElementById('repGarantia').value = orden.garantia || '';
-            document.getElementById('repTecnico').value = orden.tecnico || '';
             document.getElementById('repFechaReparacion').value = orden.fechaReparacion || '';
             document.getElementById('repTotalPagar').value = orden.totalPagar || '';
             document.getElementById('repFechaEntrega').value = orden.fechaEntrega || '';
