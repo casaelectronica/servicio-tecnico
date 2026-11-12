@@ -47,7 +47,7 @@
             background: rgba(21, 28, 40, 0.8);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-color);
-            padding: 0.75rem 2.5rem;
+            padding: 0.75rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -88,11 +88,13 @@
             justify-content: space-between;
             align-items: center;
             background: #111722;
-            padding: 0.6rem 2.5rem;
+            padding: 0.6rem 2rem;
             border-bottom: 1px solid var(--border-color);
             max-width: 1650px;
             margin: 0 auto;
             width: 100%;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .nav-tabs-group {
@@ -121,11 +123,12 @@
             border-color: transparent;
         }
 
+        /* CONTENEDOR PRINCIPAL ADAPTABLE */
         .container {
             display: grid;
             grid-template-columns: 1fr 340px;
             gap: 1.5rem;
-            padding: 1.5rem 2.5rem;
+            padding: 1.5rem 2rem;
             max-width: 1650px;
             margin: 0 auto;
             width: 100%;
@@ -147,6 +150,8 @@
             margin-bottom: 1.5rem;
             padding-bottom: 0.75rem;
             border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 0.75rem;
         }
 
         .card-title {
@@ -192,6 +197,7 @@
             font-size: 0.9rem;
             outline: none;
             transition: all 0.2s ease;
+            width: 100%;
         }
 
         input:focus, textarea:focus, select:focus {
@@ -385,6 +391,7 @@
             align-items: center;
             z-index: 2000;
             backdrop-filter: blur(4px);
+            padding: 1rem;
         }
 
         .modal-box {
@@ -392,7 +399,8 @@
             border: 1px solid var(--accent-cyan);
             padding: 1.5rem;
             border-radius: 10px;
-            width: 340px;
+            width: 100%;
+            max-width: 340px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
@@ -410,7 +418,8 @@
             border: 1px solid var(--accent-cyan);
             padding: 2rem;
             border-radius: 14px;
-            width: 420px;
+            width: 100%;
+            max-width: 420px;
             box-shadow: 0 12px 36px rgba(0, 242, 254, 0.2);
             display: flex;
             flex-direction: column;
@@ -429,6 +438,41 @@
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+
+        /* ==========================================
+           ADAPTACIÓN PARA CELULARES Y TABLETS (RESPONSIVE)
+           ========================================== */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr; /* Cambia a una sola columna vertical */
+                padding: 1rem;
+            }
+            
+            header, .top-nav {
+                padding: 0.75rem 1rem;
+            }
+
+            .col-6, .col-4, .col-3 {
+                grid-column: span 12; /* Todos los campos ocupan todo el ancho en móviles */
+            }
+        }
+
+        @media (max-width: 600px) {
+            .brand-title {
+                font-size: 0.95rem;
+            }
+            .nav-tab {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+            }
+            .action-bar {
+                flex-direction: column;
+            }
+            .action-bar .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -439,7 +483,7 @@
             <div class="brand-title">CASA ELECTRÓNICA</div>
         </div>
         <div>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">SISTEMA DE GESTIÓN DE SERVICIO TÉCNICO</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted); text-align: right; display: block;">SISTEMA TÉCNICO</span>
         </div>
     </header>
 
@@ -469,7 +513,7 @@
                     <div class="card-title">
                         <i data-lucide="file-text"></i> DATOS DE IDENTIFICACIÓN Y CLIENTE
                     </div>
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                         <button type="button" class="btn btn-secondary" onclick="abrirModalListaAliados()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
                             <i data-lucide="users"></i> ALIADO
                         </button>
@@ -777,7 +821,6 @@
             lucide.createIcons();
             setupUppercaseEnforcement();
 
-            // Sincronizar todo desde Google Sheets al abrir la página
             await cargarDatosDesdeSheet();
 
             if (!currentOrderId) { nuevoRegistro(); }
@@ -792,22 +835,18 @@
                 const response = await fetch(APPS_SCRIPT_URL);
                 const data = await response.json();
                 
-                // Si el script devuelve el objeto general con órdenes, técnicos y aliados
                 if (data && !Array.isArray(data) && data.ordenes) {
                     ordenesDB = data.ordenes || [];
                     tecnicosDB = data.tecnicos || [];
                     aliadosDB = data.aliados || [];
                 } else if (Array.isArray(data)) {
-                    // Respaldo por si acaso devolviera solo un array antiguo
                     ordenesDB = data;
                 }
                 
-                // Guardar copias locales actualizadas
                 localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
                 localStorage.setItem('casaElectronica_tecnicos', JSON.stringify(tecnicosDB));
                 localStorage.setItem('casaElectronica_aliados', JSON.stringify(aliadosDB));
             } catch (e) {
-                // Si falla la red, usar respaldos locales
                 ordenesDB = JSON.parse(localStorage.getItem('casaElectronica_ordenes')) || [];
                 tecnicosDB = JSON.parse(localStorage.getItem('casaElectronica_tecnicos')) || [];
                 aliadosDB = JSON.parse(localStorage.getItem('casaElectronica_aliados')) || [];
@@ -1263,7 +1302,7 @@
             if (estado === 'DEVOLUCION') {
                 mensaje = `*CASA ELECTRONICA*\n\n` +
                           `Hola *${nombre}*, lamentamos informarte que el artículo (*${articulo} ${marca}*) correspondiente a la orden *${orden}* no tuvo reparación y está para *DEVOLUCIÓN*.\n\n` +
-                          `Por favor, acércate lo más pronto posible.\n\n` +
+                          `Por favor, acércate a pasar por él lo más pronto posible.\n\n` +
                           `Gracias por su atención.`;
             } else {
                 mensaje = `*CASA ELECTRONICA*\n\n` +
