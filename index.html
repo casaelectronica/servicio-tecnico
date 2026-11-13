@@ -17,6 +17,7 @@
             --accent-cyan: #00f2fe;
             --accent-blue: #4facfe;
             --accent-green: #10b981;
+            --accent-amber: #f59e0b;
             --accent-red: #ef4444;
             --font-mono: 'Courier New', Courier, monospace;
 
@@ -200,7 +201,7 @@
             width: 100%;
         }
 
-        input:focus, textarea:focus {
+        input:focus:not(:disabled), textarea:focus:not(:disabled) {
             border-color: var(--accent-cyan);
             box-shadow: 0 0 0 2px rgba(0, 242, 254, 0.15);
         }
@@ -211,6 +212,14 @@
             font-weight: bold;
             font-family: var(--font-mono);
             cursor: not-allowed;
+        }
+
+        input:disabled, textarea:disabled {
+            background-color: rgba(15, 22, 34, 0.7);
+            border-color: rgba(42, 54, 79, 0.5);
+            color: #cbd5e1;
+            cursor: not-allowed;
+            opacity: 0.85;
         }
 
         textarea {
@@ -241,6 +250,15 @@
             font-weight: bold;
             transition: all 0.2s ease;
             min-height: 41px;
+        }
+
+        .modern-select-wrapper.disabled .modern-select-btn {
+            background-color: rgba(15, 22, 34, 0.7);
+            border-color: rgba(42, 54, 79, 0.5);
+            color: #cbd5e1;
+            cursor: not-allowed;
+            opacity: 0.85;
+            pointer-events: none;
         }
 
         .modern-select-btn:hover,
@@ -329,15 +347,24 @@
             transition: all 0.25s ease;
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
             border-color: var(--accent-cyan);
         }
 
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
         .btn-primary { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); color: #000; }
         .btn-secondary { background: #243047; color: var(--text-main); border-color: var(--border-color); }
         .btn-success { background: var(--accent-green); color: #000; }
+        .btn-warning { background: var(--accent-amber); color: #000; font-weight: 700; }
+        .btn-warning:hover:not(:disabled) { box-shadow: 0 0 12px rgba(245, 158, 11, 0.5); border-color: #fbbf24; }
         .btn-whatsapp { background: #25d366; color: #000; font-weight: bold; }
         .btn-whatsapp:hover { box-shadow: 0 0 12px rgba(37, 211, 102, 0.5); border-color: #25d366; }
         .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3); }
@@ -605,7 +632,7 @@
                         <i data-lucide="file-text"></i> DATOS DE IDENTIFICACIÓN Y CLIENTE
                     </div>
                     <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-                        <button type="button" class="btn btn-secondary" onclick="abrirModalListaAliados()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                        <button type="button" id="btnAliadoLista" class="btn btn-secondary" onclick="abrirModalListaAliados()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
                             <i data-lucide="users"></i> ALIADO
                         </button>
                         <button type="button" class="btn btn-success" onclick="abrirFormularioAliado()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
@@ -682,6 +709,12 @@
                         <button type="submit" class="btn btn-primary" id="btnGuardarId">
                             <i data-lucide="save"></i> GUARDAR ORDEN
                         </button>
+                        <button type="button" class="btn btn-warning" id="btnEditarId" onclick="habilitarEdicionIdentificacion()" style="display: none;">
+                            <i data-lucide="edit-3"></i> EDITAR
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="btnActualizarId" disabled style="display: none;">
+                            <i data-lucide="refresh-cw"></i> ACTUALIZAR ORDEN
+                        </button>
                         <button type="button" class="btn btn-secondary" onclick="imprimirEtiquetaTicket()">
                             <i data-lucide="tag"></i> IMPRIMIR TICKET (5x3 cm)
                         </button>
@@ -704,8 +737,13 @@
                     <div class="card-title">
                         <i data-lucide="wrench"></i> MÓDULO DE REPARACIONES
                     </div>
-                    <div id="repOrderInfo" style="font-size: 0.85rem; color: var(--accent-cyan); font-weight: bold;">
-                        ORDEN SELECCIONADA: NINGUNA
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                        <div id="repOrderInfo" style="font-size: 0.85rem; color: var(--accent-cyan); font-weight: bold;">
+                            ORDEN SELECCIONADA: NINGUNA
+                        </div>
+                        <div id="statusBadgeRep" style="font-size: 0.75rem; background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.25rem 0.6rem; border-radius: 4px;">
+                            NUEVA ENTRADA
+                        </div>
                     </div>
                 </div>
 
@@ -767,7 +805,7 @@
                             <label for="repGarantia">GARANTÍA</label>
                             <div style="display: flex; gap: 0.5rem;">
                                 <input type="text" id="repGarantia" placeholder="EJ: 1 MES. A PARTIR DEL..." style="flex: 1;">
-                                <button type="button" class="btn btn-secondary" style="padding: 0.5rem;" onclick="insertarFechaGarantia()" title="Insertar fecha a partir de hoy">
+                                <button type="button" id="btnRelojGarantia" class="btn btn-secondary" style="padding: 0.5rem;" onclick="insertarFechaGarantia()" title="Insertar fecha a partir de hoy">
                                     <i data-lucide="clock"></i>
                                 </button>
                             </div>
@@ -793,6 +831,12 @@
                     <div class="action-bar">
                         <button type="submit" class="btn btn-primary" id="btnGuardarRep">
                             <i data-lucide="save"></i> GUARDAR REPARACIÓN
+                        </button>
+                        <button type="button" class="btn btn-warning" id="btnEditarRep" onclick="habilitarEdicionReparacion()" style="display: none;">
+                            <i data-lucide="edit-3"></i> EDITAR
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="btnActualizarRep" disabled style="display: none;">
+                            <i data-lucide="refresh-cw"></i> ACTUALIZAR REPARACIÓN
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="abrirModalTicketReparacion()">
                             <i data-lucide="tag"></i> IMPRIMIR TICKET (5x3 cm)
@@ -979,8 +1023,23 @@
         let aliadosDB = [];
 
         let currentOrderId = null;
+        let datosOriginalesIdentificacion = null;
+        let datosOriginalesReparacion = null;
+        
+        let modoEdicionIdActivo = false;
+        let modoEdicionRepActivo = false;
+
         let activeTab = 'identificacion';
         let soloPendientesActivo = false;
+
+        const CAMPOS_IDENTIFICACION = [
+            'nombre', 'telefono', 'articulo', 'marca',
+            'modelo', 'serie', 'contrasena', 'sintomas', 'notas'
+        ];
+
+        const CAMPOS_REPARACION = [
+            'repDiagnostico', 'repGarantia', 'repFechaReparacion', 'repTotalPagar', 'repFechaEntrega'
+        ];
 
         document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
@@ -996,10 +1055,86 @@
         });
 
         /* ==========================================
+           CONTROL DE BLOQUEO Y EDICIÓN (IDENTIFICACIÓN)
+           ========================================== */
+        function setCamposIdentificacionBloqueados(bloqueado) {
+            CAMPOS_IDENTIFICACION.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = bloqueado;
+            });
+            const btnAliado = document.getElementById('btnAliadoLista');
+            if (btnAliado) btnAliado.disabled = bloqueado;
+        }
+
+        function habilitarEdicionIdentificacion() {
+            if (!currentOrderId) return;
+            modoEdicionIdActivo = true;
+            setCamposIdentificacionBloqueados(false);
+
+            const badge = document.getElementById('statusBadgeId');
+            badge.textContent = 'MODO EDICIÓN (IDENTIFICACIÓN)';
+            badge.style.background = 'rgba(245, 158, 11, 0.15)';
+            badge.style.color = 'var(--accent-amber)';
+            badge.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+
+            document.getElementById('btnEditarId').style.display = 'none';
+            const btnActualizar = document.getElementById('btnActualizarId');
+            btnActualizar.style.display = 'inline-flex';
+            btnActualizar.disabled = true;
+
+            document.getElementById('nombre').focus();
+            showToast('IDENTIFICACIÓN DESBLOQUEADA PARA EDICIÓN');
+        }
+
+        /* ==========================================
+           CONTROL DE BLOQUEO Y EDICIÓN (REPARACIONES)
+           ========================================== */
+        function setCamposReparacionBloqueados(bloqueado) {
+            CAMPOS_REPARACION.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = bloqueado;
+            });
+            const wrapperEstado = document.getElementById('wrapperRepEstado');
+            const wrapperTecnico = document.getElementById('wrapperRepTecnico');
+            const btnReloj = document.getElementById('btnRelojGarantia');
+
+            if (bloqueado) {
+                if (wrapperEstado) wrapperEstado.classList.add('disabled');
+                if (wrapperTecnico) wrapperTecnico.classList.add('disabled');
+                if (btnReloj) btnReloj.disabled = true;
+            } else {
+                if (wrapperEstado) wrapperEstado.classList.remove('disabled');
+                if (wrapperTecnico) wrapperTecnico.classList.remove('disabled');
+                if (btnReloj) btnReloj.disabled = false;
+            }
+        }
+
+        function habilitarEdicionReparacion() {
+            if (!currentOrderId) return;
+            modoEdicionRepActivo = true;
+            setCamposReparacionBloqueados(false);
+
+            const badge = document.getElementById('statusBadgeRep');
+            badge.textContent = 'MODO EDICIÓN (REPARACIÓN)';
+            badge.style.background = 'rgba(245, 158, 11, 0.15)';
+            badge.style.color = 'var(--accent-amber)';
+            badge.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+
+            document.getElementById('btnEditarRep').style.display = 'none';
+            const btnActualizar = document.getElementById('btnActualizarRep');
+            btnActualizar.style.display = 'inline-flex';
+            btnActualizar.disabled = true;
+
+            showToast('REPARACIONES DESBLOQUEADAS PARA EDICIÓN');
+        }
+
+        /* ==========================================
            CONTROL GLOBAL DE LISTAS MODERNAS
            ========================================== */
         function toggleModernDropdown(wrapperId) {
             const target = document.getElementById(wrapperId);
+            if (target.classList.contains('disabled')) return;
+            
             const isOpen = target.classList.contains('active');
             document.querySelectorAll('.modern-select-wrapper').forEach(el => el.classList.remove('active'));
             if (!isOpen) {
@@ -1019,6 +1154,7 @@
             }
             
             document.getElementById(wrapperId).classList.remove('active');
+            verificarCambiosReparacion();
         }
 
         window.addEventListener('click', function(e) {
@@ -1161,7 +1297,10 @@
                 const item = document.createElement('div');
                 item.className = 'modern-option-item';
                 item.innerHTML = `<span class="modern-dot dot-cyan"></span> ${tec}`;
-                item.onclick = () => selectModernOption('repTecnico', 'displayRepTecnico', 'wrapperRepTecnico', tec, tec, 'dot-cyan');
+                item.onclick = () => {
+                    selectModernOption('repTecnico', 'displayRepTecnico', 'wrapperRepTecnico', tec, tec, 'dot-cyan');
+                    verificarCambiosReparacion();
+                };
                 listContainer.appendChild(item);
             });
 
@@ -1241,6 +1380,7 @@
             if (aliadoEncontrado) {
                 document.getElementById('nombre').value = aliadoEncontrado.nombre;
                 document.getElementById('telefono').value = aliadoEncontrado.telefono;
+                verificarCambiosIdentificacion();
                 showToast(`ALIADO ${aliadoEncontrado.nombre} CARGADO`);
             }
             cerrarModalListaAliados();
@@ -1249,11 +1389,14 @@
         function setupUppercaseEnforcement() {
             document.querySelectorAll('input[type="text"], textarea').forEach(input => {
                 input.addEventListener('input', (e) => {
-                    if (e.target.id === 'telefono' || e.target.id === 'claveWeb' || e.target.id === 'inputTelefonoAliado') return;
-                    const start = e.target.selectionStart;
-                    const end = e.target.selectionEnd;
-                    e.target.value = e.target.value.toUpperCase();
-                    e.target.setSelectionRange(start, end);
+                    if (e.target.id !== 'telefono' && e.target.id !== 'claveWeb' && e.target.id !== 'inputTelefonoAliado') {
+                        const start = e.target.selectionStart;
+                        const end = e.target.selectionEnd;
+                        e.target.value = e.target.value.toUpperCase();
+                        e.target.setSelectionRange(start, end);
+                    }
+                    verificarCambiosIdentificacion();
+                    verificarCambiosReparacion();
                 });
             });
         }
@@ -1261,6 +1404,7 @@
         function formatCurrencyInput(input) {
             let val = input.value.replace(/\D/g, '');
             input.value = val ? parseInt(val, 10).toLocaleString('es-CO') : '';
+            verificarCambiosReparacion();
         }
 
         function generarNumeroOrden() {
@@ -1280,10 +1424,20 @@
 
         function nuevoRegistro() {
             currentOrderId = null;
+            datosOriginalesIdentificacion = null;
+            datosOriginalesReparacion = null;
+            
+            modoEdicionIdActivo = false;
+            modoEdicionRepActivo = false;
+
             document.getElementById('formIdentificacion').reset();
             document.getElementById('formReparaciones').reset();
+            
             syncStatusUI('PENDIENTE');
             syncTecnicoUI('');
+            
+            setCamposIdentificacionBloqueados(false);
+            setCamposReparacionBloqueados(false);
             
             const numOrden = generarNumeroOrden();
             const claveAleatoria = generarClaveHexadecimal();
@@ -1292,16 +1446,173 @@
             document.getElementById('claveWeb').value = claveAleatoria;
             document.getElementById('fechaRegistro').value = new Date().toLocaleString('es-CO');
             document.getElementById('repOrderInfo').textContent = `ORDEN SELECCIONADA: ${numOrden}`;
-            document.getElementById('statusBadgeId').textContent = 'NUEVA ENTRADA';
+
+            const badgeId = document.getElementById('statusBadgeId');
+            badgeId.textContent = 'NUEVA ENTRADA';
+            badgeId.style.background = 'rgba(16, 185, 129, 0.1)';
+            badgeId.style.color = 'var(--accent-green)';
+            badgeId.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+
+            const badgeRep = document.getElementById('statusBadgeRep');
+            badgeRep.textContent = 'NUEVA ENTRADA';
+            badgeRep.style.background = 'rgba(16, 185, 129, 0.1)';
+            badgeRep.style.color = 'var(--accent-green)';
+            badgeRep.style.borderColor = 'rgba(16, 185, 129, 0.3)';
             
+            const btnGuardarId = document.getElementById('btnGuardarId');
+            btnGuardarId.innerHTML = `<i data-lucide="save"></i> GUARDAR ORDEN`;
+            btnGuardarId.disabled = false;
+
+            const btnGuardarRep = document.getElementById('btnGuardarRep');
+            btnGuardarRep.innerHTML = `<i data-lucide="save"></i> GUARDAR REPARACIÓN`;
+            btnGuardarRep.disabled = false;
+
+            document.getElementById('btnEditarId').style.display = 'none';
+            document.getElementById('btnActualizarId').style.display = 'none';
+            document.getElementById('btnActualizarId').disabled = true;
+
+            document.getElementById('btnEditarRep').style.display = 'none';
+            document.getElementById('btnActualizarRep').style.display = 'none';
+            document.getElementById('btnActualizarRep').disabled = true;
+
+            lucide.createIcons();
+
             renderOrdersList();
             switchTab('identificacion');
         }
 
+        function cargarOrden(numOrden) {
+            const orden = ordenesDB.find(o => o.orden === numOrden);
+            if (!orden) return;
+
+            currentOrderId = orden.orden;
+            modoEdicionIdActivo = false;
+            modoEdicionRepActivo = false;
+
+            // Cargar Identificación
+            document.getElementById('orden').value = orden.orden;
+            document.getElementById('claveWeb').value = orden.claveWeb || '';
+            document.getElementById('fechaRegistro').value = orden.fecha || new Date().toLocaleString('es-CO');
+            document.getElementById('nombre').value = orden.nombre || '';
+            document.getElementById('telefono').value = orden.telefono || '';
+            document.getElementById('articulo').value = orden.articulo || '';
+            document.getElementById('marca').value = orden.marca || '';
+            document.getElementById('modelo').value = orden.modelo || '';
+            document.getElementById('serie').value = orden.serie || '';
+            document.getElementById('contrasena').value = orden.contrasena || '';
+            document.getElementById('sintomas').value = orden.sintomas || '';
+            document.getElementById('notas').value = orden.notas || '';
+
+            datosOriginalesIdentificacion = {
+                nombre: orden.nombre || '',
+                telefono: orden.telefono || '',
+                articulo: orden.articulo || '',
+                marca: orden.marca || '',
+                modelo: orden.modelo || '',
+                serie: orden.serie || '',
+                contrasena: orden.contrasena || '',
+                sintomas: orden.sintomas || '',
+                notas: orden.notas || ''
+            };
+
+            // Cargar Reparaciones
+            syncStatusUI(orden.estado || 'PENDIENTE');
+            syncTecnicoUI(orden.tecnico || '');
+            document.getElementById('repDiagnostico').value = orden.diagnostico || '';
+            document.getElementById('repGarantia').value = orden.garantia || '';
+            document.getElementById('repFechaReparacion').value = orden.fechaReparacion || '';
+            document.getElementById('repTotalPagar').value = orden.totalPagar || '';
+            document.getElementById('repFechaEntrega').value = orden.fechaEntrega || '';
+
+            datosOriginalesReparacion = {
+                estado: orden.estado || 'PENDIENTE',
+                tecnico: orden.tecnico || '',
+                diagnostico: orden.diagnostico || '',
+                garantia: orden.garantia || '',
+                fechaReparacion: orden.fechaReparacion || '',
+                totalPagar: orden.totalPagar || '',
+                fechaEntrega: orden.fechaEntrega || ''
+            };
+
+            // Bloquear ambos formularios por defecto
+            setCamposIdentificacionBloqueados(true);
+            setCamposReparacionBloqueados(true);
+
+            const badgeId = document.getElementById('statusBadgeId');
+            badgeId.textContent = 'REGISTRO GUARDADO';
+            badgeId.style.background = 'rgba(0, 242, 254, 0.1)';
+            badgeId.style.color = 'var(--accent-cyan)';
+            badgeId.style.borderColor = 'rgba(0, 242, 254, 0.3)';
+
+            const badgeRep = document.getElementById('statusBadgeRep');
+            badgeRep.textContent = 'REGISTRO GUARDADO';
+            badgeRep.style.background = 'rgba(0, 242, 254, 0.1)';
+            badgeRep.style.color = 'var(--accent-cyan)';
+            badgeRep.style.borderColor = 'rgba(0, 242, 254, 0.3)';
+
+            document.getElementById('repOrderInfo').textContent = `ORDEN SELECCIONADA: ${orden.orden}`;
+
+            // Configurar botones Identificación
+            const btnGuardarId = document.getElementById('btnGuardarId');
+            btnGuardarId.disabled = true;
+            document.getElementById('btnEditarId').style.display = 'inline-flex';
+            document.getElementById('btnActualizarId').style.display = 'none';
+            document.getElementById('btnActualizarId').disabled = true;
+
+            // Configurar botones Reparación
+            const btnGuardarRep = document.getElementById('btnGuardarRep');
+            btnGuardarRep.disabled = true;
+            document.getElementById('btnEditarRep').style.display = 'inline-flex';
+            document.getElementById('btnActualizarRep').style.display = 'none';
+            document.getElementById('btnActualizarRep').disabled = true;
+
+            lucide.createIcons();
+            renderOrdersList(document.getElementById('searchInput').value);
+        }
+
+        function verificarCambiosIdentificacion() {
+            if (!currentOrderId || !datosOriginalesIdentificacion || !modoEdicionIdActivo) return;
+
+            const actual = {
+                nombre: document.getElementById('nombre').value.toUpperCase(),
+                telefono: document.getElementById('telefono').value.toUpperCase(),
+                articulo: document.getElementById('articulo').value.toUpperCase(),
+                marca: document.getElementById('marca').value.toUpperCase(),
+                modelo: document.getElementById('modelo').value.toUpperCase(),
+                serie: document.getElementById('serie').value.toUpperCase(),
+                contrasena: document.getElementById('contrasena').value.toUpperCase(),
+                sintomas: document.getElementById('sintomas').value.toUpperCase(),
+                notas: document.getElementById('notas').value.toUpperCase()
+            };
+
+            const haCambiado = Object.keys(actual).some(key => actual[key] !== datosOriginalesIdentificacion[key]);
+            document.getElementById('btnActualizarId').disabled = !haCambiado;
+        }
+
+        function verificarCambiosReparacion() {
+            if (!currentOrderId || !datosOriginalesReparacion || !modoEdicionRepActivo) return;
+
+            const actual = {
+                estado: document.getElementById('repEstado').value,
+                tecnico: document.getElementById('repTecnico').value,
+                diagnostico: document.getElementById('repDiagnostico').value.toUpperCase(),
+                garantia: document.getElementById('repGarantia').value.toUpperCase(),
+                fechaReparacion: document.getElementById('repFechaReparacion').value,
+                totalPagar: document.getElementById('repTotalPagar').value,
+                fechaEntrega: document.getElementById('repFechaEntrega').value
+            };
+
+            const haCambiado = Object.keys(actual).some(key => actual[key] !== datosOriginalesReparacion[key]);
+            document.getElementById('btnActualizarRep').disabled = !haCambiado;
+        }
+
         async function guardarIdentificacion() {
-            const btn = document.getElementById('btnGuardarId');
-            btn.disabled = true;
-            btn.innerHTML = `<i data-lucide="loader" class="spin"></i> GUARDANDO...`;
+            const btnActivo = currentOrderId ? document.getElementById('btnActualizarId') : document.getElementById('btnGuardarId');
+            if (btnActivo.disabled) return;
+            if (currentOrderId && !modoEdicionIdActivo) return;
+
+            btnActivo.disabled = true;
+            btnActivo.innerHTML = `<i data-lucide="loader" class="spin"></i> PROCESANDO...`;
             lucide.createIcons();
 
             const ordenNum = document.getElementById('orden').value;
@@ -1349,21 +1660,19 @@
 
             localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
             renderOrdersList();
-            
-            btn.disabled = false;
-            btn.innerHTML = `<i data-lucide="save"></i> GUARDAR ORDEN`;
-            lucide.createIcons();
-
             nuevoRegistro();
         }
 
         async function guardarReparacion() {
+            const btnActivo = currentOrderId ? document.getElementById('btnActualizarRep') : document.getElementById('btnGuardarRep');
+            if (btnActivo.disabled) return;
+            if (currentOrderId && !modoEdicionRepActivo) return;
+
             const numOrden = document.getElementById('orden').value;
             if (!numOrden) { alert('SELECCIONE UNA ORDEN'); return; }
 
-            const btn = document.getElementById('btnGuardarRep');
-            btn.disabled = true;
-            btn.innerHTML = `<i data-lucide="loader" class="spin"></i> GUARDANDO...`;
+            btnActivo.disabled = true;
+            btnActivo.innerHTML = `<i data-lucide="loader" class="spin"></i> PROCESANDO...`;
             lucide.createIcons();
 
             const repData = {
@@ -1394,9 +1703,10 @@
                 showToast('REPARACIÓN GUARDADA');
             }
 
-            btn.disabled = false;
-            btn.innerHTML = `<i data-lucide="save"></i> GUARDAR REPARACIÓN`;
+            btnActivo.disabled = false;
+            btnActivo.innerHTML = `<i data-lucide="save"></i> GUARDAR REPARACIÓN`;
             lucide.createIcons();
+            cargarOrden(numOrden);
         }
 
         function toggleFiltroPendientes() {
@@ -1444,40 +1754,19 @@
             });
         }
 
-        function cargarOrden(numOrden) {
-            const orden = ordenesDB.find(o => o.orden === numOrden);
-            if (!orden) return;
-
-            currentOrderId = orden.orden;
-            document.getElementById('orden').value = orden.orden;
-            document.getElementById('claveWeb').value = orden.claveWeb || '';
-            document.getElementById('fechaRegistro').value = orden.fecha || new Date().toLocaleString('es-CO');
-            document.getElementById('nombre').value = orden.nombre || '';
-            document.getElementById('telefono').value = orden.telefono || '';
-            document.getElementById('articulo').value = orden.articulo || '';
-            document.getElementById('marca').value = orden.marca || '';
-            document.getElementById('modelo').value = orden.modelo || '';
-            document.getElementById('serie').value = orden.serie || '';
-            document.getElementById('contrasena').value = orden.contrasena || '';
-            document.getElementById('sintomas').value = orden.sintomas || '';
-            document.getElementById('notas').value = orden.notas || '';
-
-            document.getElementById('repOrderInfo').textContent = `ORDEN SELECCIONADA: ${orden.orden}`;
-            syncStatusUI(orden.estado || 'PENDIENTE');
-            syncTecnicoUI(orden.tecnico || '');
-            document.getElementById('repDiagnostico').value = orden.diagnostico || '';
-            document.getElementById('repGarantia').value = orden.garantia || '';
-            document.getElementById('repFechaReparacion').value = orden.fechaReparacion || '';
-            document.getElementById('repTotalPagar').value = orden.totalPagar || '';
-            document.getElementById('repFechaEntrega').value = orden.fechaEntrega || '';
-
-            renderOrdersList(document.getElementById('searchInput').value);
-        }
-
         function insertarFechaGarantia() {
             const input = document.getElementById('repGarantia');
-            input.value = `A PARTIR DEL ${new Date().toLocaleDateString('es-CO')}`;
+            const textoActual = input.value.trim();
+            const textoFecha = `A PARTIR DEL ${new Date().toLocaleDateString('es-CO')}`;
+
+            if (textoActual) {
+                input.value = `${textoActual} ${textoFecha}`;
+            } else {
+                input.value = textoFecha;
+            }
+
             input.focus();
+            verificarCambiosReparacion();
         }
 
         async function eliminarOrdenActual() {
@@ -1572,16 +1861,29 @@
             if (tel.length === 10) tel = '57' + tel;
 
             let mensaje = '';
+
             if (estado === 'DEVOLUCION') {
                 mensaje = `*CASA ELECTRONICA*\n\n` +
-                          `Hola *${nombre}*, lamentamos informarte que el artículo (*${articulo} ${marca}*) correspondiente a la orden *${orden}* no tuvo reparación y está para *DEVOLUCIÓN*.\n\n` +
-                          `Por favor, acércate a pasar por él lo más pronto posible.\n\n` +
-                          `Gracias por su atención.`;
+                          `Hola *${nombre}*, te escribimos de *CASA ELECTRONICA* para informarte que tu artículo (*${articulo} ${marca}*) de la orden *${orden}* no tuvo reparación y se le realizó su respectiva *DEVOLUCIÓN*.\n\n` +
+                          `Agradecemos tu confianza y esperamos poder servirte en otra ocasión. ¡Un saludo!`;
+
+            } else if (estado === 'ENTREGADO OK') {
+                mensaje = `*CASA ELECTRONICA*\n\n` +
+                          `Hola *${nombre}*, te confirmamos que tu equipo (*${articulo} ${marca}*) de la orden *${orden}* fue *entregado con éxito* tras completarse su reparación de forma satisfactoria.\n\n` +
+                          `Total cancelado: *$ ${total}*.\n\n` +
+                          `¡Agradecemos mucho haber contado con tu confianza! Quedamos a tu entera disposición.`;
+
+            } else if (estado === 'ENTREGADO MALO') {
+                mensaje = `*CASA ELECTRONICA*\n\n` +
+                          `Hola *${nombre}*, te escribimos de *CASA ELECTRONICA* respecto a tu artículo (*${articulo} ${marca}*) de la orden *${orden}*.\n\n` +
+                          `Te confirmamos la entrega del equipo sin reparación (devolución), tal como se acordó.\n\n` +
+                          `Agradecemos tu tiempo y confianza al visitarnos. ¡Hasta pronto!`;
+
             } else {
                 mensaje = `*CASA ELECTRONICA*\n\n` +
-                          `Hola *${nombre}*, tu equipo (Orden: *${orden}*) está listo para retirar.\n` +
+                          `Hola *${nombre}*, tu equipo (*${articulo} ${marca}* - Orden: *${orden}*) ya se encuentra *reparado con éxito* y está listo para retirar.\n\n` +
                           `Total a pagar: *$ ${total}*.\n\n` +
-                          `¡Gracias por preferirnos!`;
+                          `¡Gracias por preferirnos! Te esperamos en nuestro taller.`;
             }
 
             window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
