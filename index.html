@@ -364,6 +364,10 @@
         .btn-whatsapp:hover { box-shadow: 0 0 12px rgba(37, 211, 102, 0.5); border-color: #25d366; }
         .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3); }
 
+        .btn-right {
+            margin-left: auto;
+        }
+
         .sidebar-list {
             display: flex;
             flex-direction: column;
@@ -580,6 +584,9 @@
                 width: 100%;
                 justify-content: center;
             }
+            .btn-right {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -705,9 +712,6 @@
                         <button type="submit" class="btn btn-primary" id="btnActualizarId" disabled style="display: none;">
                             <i data-lucide="refresh-cw"></i> ACTUALIZAR ORDEN
                         </button>
-                        <button type="button" class="btn btn-whatsapp" id="btnMandarMensajeId" onclick="abrirModalMensajePersonalizado()" style="display: none;">
-                            <i data-lucide="message-square"></i> MANDAR MENSAJE
-                        </button>
                         <button type="button" class="btn btn-secondary" onclick="imprimirEtiquetaTicket()">
                             <i data-lucide="tag"></i> IMPRIMIR TICKET (5x3 cm)
                         </button>
@@ -717,7 +721,10 @@
                         <button type="button" class="btn btn-secondary" onclick="nuevoRegistro()">
                             <i data-lucide="plus-circle"></i> NUEVO
                         </button>
-                        <button type="button" class="btn btn-danger" onclick="eliminarOrdenActual()">
+                        <button type="button" class="btn btn-whatsapp" id="btnMandarMensajeId" onclick="abrirModalMensajePersonalizado()" style="display: none;">
+                            <i data-lucide="message-square"></i> MANDAR MENSAJE
+                        </button>
+                        <button type="button" class="btn btn-danger btn-right" onclick="eliminarOrdenActual()">
                             <i data-lucide="trash-2"></i> ELIMINAR
                         </button>
                     </div>
@@ -829,16 +836,16 @@
                         <button type="submit" class="btn btn-primary" id="btnActualizarRep" disabled style="display: none;">
                             <i data-lucide="refresh-cw"></i> ACTUALIZAR REPARACIÓN
                         </button>
-                        <button type="button" class="btn btn-whatsapp" id="btnMandarMensajeRep" onclick="abrirModalMensajePersonalizado()" style="display: none;">
-                            <i data-lucide="message-square"></i> MANDAR MENSAJE
-                        </button>
                         <button type="button" class="btn btn-secondary" onclick="abrirModalTicketReparacion()">
                             <i data-lucide="tag"></i> IMPRIMIR TICKET (5x3 cm)
                         </button>
                         <button type="button" class="btn btn-success" onclick="abrirModalSalida()">
                             <i data-lucide="file-text"></i> GENERAR FACTURA
                         </button>
-                        <button type="button" class="btn btn-secondary" onclick="switchTab('identificacion')">
+                        <button type="button" class="btn btn-whatsapp" id="btnMandarMensajeRep" onclick="abrirModalMensajePersonalizado()" style="display: none;">
+                            <i data-lucide="message-square"></i> MANDAR MENSAJE
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-right" onclick="switchTab('identificacion')">
                             <i data-lucide="arrow-left"></i> VOLVER A IDENTIFICACIÓN
                         </button>
                     </div>
@@ -1876,14 +1883,17 @@
             const nombre = document.getElementById('nombre').value;
             const articulo = document.getElementById('articulo').value;
             const marca = document.getElementById('marca').value;
+            const modelo = document.getElementById('modelo').value.trim();
             const serie = document.getElementById('serie').value.trim() || 'DESCONOCIDO';
             const clave = document.getElementById('claveWeb').value;
 
             if (!tel) { alert('FALTA TELÉFONO'); return; }
             if (tel.length === 10) tel = '57' + tel;
 
+            const equipoDetalle = [articulo, marca, modelo].filter(Boolean).join(' ');
+
             const mensaje = `*CASA ELECTRONICA*\n\n` +
-                            `Hola *${nombre}*, recibimos tu equipo (*${articulo} ${marca}*). CON SERIAL: *${serie}*\n\n` +
+                            `Hola *${nombre}*, recibimos tu equipo (*${equipoDetalle}*). CON SERIAL: *${serie}*\n\n` +
                             `*Orden:* ${orden}\n` +
                             `*Clave web de consulta:* *${clave}*\n\n` +
                             `*Consulta el estado aquí:* https://casaelectronica.github.io/consulta/\n\n` +
