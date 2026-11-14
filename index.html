@@ -124,7 +124,6 @@
             border-color: transparent;
         }
 
-        /* CONTENEDOR PRINCIPAL ADAPTABLE */
         .container {
             display: grid;
             grid-template-columns: 1fr 340px;
@@ -227,9 +226,6 @@
             min-height: 100px;
         }
 
-        /* ==========================================
-           SISTEMA UNIFICADO DE LISTAS DESPLEGABLES MODERNAS
-           ========================================== */
         .modern-select-wrapper {
             position: relative;
             width: 100%;
@@ -309,7 +305,6 @@
             color: var(--accent-cyan);
         }
 
-        /* Círculos modernos con brillo neón */
         .modern-dot {
             width: 10px;
             height: 10px;
@@ -537,7 +532,7 @@
             padding: 2rem;
             border-radius: 14px;
             width: 100%;
-            max-width: 420px;
+            max-width: 480px;
             box-shadow: 0 12px 36px rgba(0, 242, 254, 0.2);
             display: flex;
             flex-direction: column;
@@ -557,19 +552,14 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* ==========================================
-           ADAPTACIÓN PARA CELULARES Y TABLETS (RESPONSIVE)
-           ========================================== */
         @media (max-width: 1024px) {
             .container {
                 grid-template-columns: 1fr;
                 padding: 1rem;
             }
-            
             header, .top-nav {
                 padding: 0.75rem 1rem;
             }
-
             .col-6, .col-4, .col-3 {
                 grid-column: span 12;
             }
@@ -715,6 +705,9 @@
                         <button type="submit" class="btn btn-primary" id="btnActualizarId" disabled style="display: none;">
                             <i data-lucide="refresh-cw"></i> ACTUALIZAR ORDEN
                         </button>
+                        <button type="button" class="btn btn-whatsapp" id="btnMandarMensajeId" onclick="abrirModalMensajePersonalizado()" style="display: none;">
+                            <i data-lucide="message-square"></i> MANDAR MENSAJE
+                        </button>
                         <button type="button" class="btn btn-secondary" onclick="imprimirEtiquetaTicket()">
                             <i data-lucide="tag"></i> IMPRIMIR TICKET (5x3 cm)
                         </button>
@@ -750,7 +743,6 @@
                 <form id="formReparaciones">
                     <div class="form-grid">
                         
-                        <!-- LISTA MODERNA 1: ESTADO DE LA REPARACIÓN -->
                         <div class="form-group col-6">
                             <label>ESTADO DE LA REPARACIÓN</label>
                             <div class="modern-select-wrapper" id="wrapperRepEstado">
@@ -781,7 +773,6 @@
                             <input type="hidden" id="repEstado" name="repEstado" value="PENDIENTE">
                         </div>
 
-                        <!-- LISTA MODERNA 2: TÉCNICO ENCARGADO -->
                         <div class="form-group col-6">
                             <label>TÉCNICO ENCARGADO</label>
                             <div class="modern-select-wrapper" id="wrapperRepTecnico">
@@ -838,6 +829,9 @@
                         <button type="submit" class="btn btn-primary" id="btnActualizarRep" disabled style="display: none;">
                             <i data-lucide="refresh-cw"></i> ACTUALIZAR REPARACIÓN
                         </button>
+                        <button type="button" class="btn btn-whatsapp" id="btnMandarMensajeRep" onclick="abrirModalMensajePersonalizado()" style="display: none;">
+                            <i data-lucide="message-square"></i> MANDAR MENSAJE
+                        </button>
                         <button type="button" class="btn btn-secondary" onclick="abrirModalTicketReparacion()">
                             <i data-lucide="tag"></i> IMPRIMIR TICKET (5x3 cm)
                         </button>
@@ -874,6 +868,31 @@
             <div class="sidebar-list" id="ordersContainer"></div>
         </aside>
 
+    </div>
+
+    <!-- MODAL: MANDAR MENSAJE PERSONALIZADO WHATSAPP -->
+    <div id="modalMensajeOverlay" class="modal-overlay">
+        <div class="floating-form-box" style="max-width: 500px;">
+            <h3><i data-lucide="message-circle"></i> ENVIAR MENSAJE DE WHATSAPP</h3>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="form-group">
+                    <label>VISTA PREVIA DE LA CABECERA (AUTOMÁTICA):</label>
+                    <div id="previewCabecera" style="background: var(--bg-input); padding: 0.75rem; border-radius: 6px; font-size: 0.85rem; color: var(--text-muted); border: 1px solid var(--border-color); font-family: monospace;">
+                        HOLA [CLIENTE] TE HABLAMOS DE CASA ELECTRONICA PARA INFORMATE SOBRE EL ARTICULO [ARTICULO] CON ORDEN DE SERVICIO [ORDEN].
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputAdicionalMensaje">TEXTO ADICIONAL / OBSERVACIÓN (OPCIONAL)</label>
+                    <textarea id="inputAdicionalMensaje" placeholder="ESCRIBE AQUÍ LOS DETALLES O MENSAJE QUE DESEAS AGREGAR..." style="min-height: 110px;"></textarea>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalMensajePersonalizado()">CANCELAR</button>
+                <button type="button" class="btn btn-whatsapp" onclick="enviarMensajePersonalizadoWhatsApp()">
+                    <i data-lucide="send"></i> ENVIAR WHATSAPP
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- MODALES -->
@@ -1054,9 +1073,6 @@
             document.getElementById('formReparaciones').addEventListener('submit', (e) => { e.preventDefault(); guardarReparacion(); });
         });
 
-        /* ==========================================
-           CONTROL DE BLOQUEO Y EDICIÓN (IDENTIFICACIÓN)
-           ========================================== */
         function setCamposIdentificacionBloqueados(bloqueado) {
             CAMPOS_IDENTIFICACION.forEach(id => {
                 const el = document.getElementById(id);
@@ -1086,9 +1102,6 @@
             showToast('IDENTIFICACIÓN DESBLOQUEADA PARA EDICIÓN');
         }
 
-        /* ==========================================
-           CONTROL DE BLOQUEO Y EDICIÓN (REPARACIONES)
-           ========================================== */
         function setCamposReparacionBloqueados(bloqueado) {
             CAMPOS_REPARACION.forEach(id => {
                 const el = document.getElementById(id);
@@ -1128,9 +1141,6 @@
             showToast('REPARACIONES DESBLOQUEADAS PARA EDICIÓN');
         }
 
-        /* ==========================================
-           CONTROL GLOBAL DE LISTAS MODERNAS
-           ========================================== */
         function toggleModernDropdown(wrapperId) {
             const target = document.getElementById(wrapperId);
             if (target.classList.contains('disabled')) return;
@@ -1198,9 +1208,6 @@
             }
         }
 
-        /* ==========================================
-           DATOS Y LÓGICA DEL SISTEMA
-           ========================================== */
         async function cargarDatosDesdeSheet() {
             try {
                 const response = await fetch(APPS_SCRIPT_URL);
@@ -1245,9 +1252,6 @@
             return Math.floor(Math.random() * 1048576).toString(16).toUpperCase().padStart(5, '0');
         }
 
-        /* ==========================================
-           GESTIÓN DE TÉCNICOS (CON VENTANA MODERNA)
-           ========================================== */
         function abrirFormularioTecnico() {
             document.getElementById('formAgregarTecnico').reset();
             document.getElementById('modalFormularioTecnicoOverlay').style.display = 'flex';
@@ -1307,9 +1311,6 @@
             syncTecnicoUI(currentVal);
         }
 
-        /* ==========================================
-           GESTIÓN DE ALIADOS (CON LISTA Y VENTANA MODERNA)
-           ========================================== */
         function abrirFormularioAliado() {
             document.getElementById('formAgregarAliado').reset();
             document.getElementById('modalFormularioAliadoOverlay').style.display = 'flex';
@@ -1470,10 +1471,12 @@
             document.getElementById('btnEditarId').style.display = 'none';
             document.getElementById('btnActualizarId').style.display = 'none';
             document.getElementById('btnActualizarId').disabled = true;
+            document.getElementById('btnMandarMensajeId').style.display = 'none';
 
             document.getElementById('btnEditarRep').style.display = 'none';
             document.getElementById('btnActualizarRep').style.display = 'none';
             document.getElementById('btnActualizarRep').disabled = true;
+            document.getElementById('btnMandarMensajeRep').style.display = 'none';
 
             lucide.createIcons();
 
@@ -1489,7 +1492,6 @@
             modoEdicionIdActivo = false;
             modoEdicionRepActivo = false;
 
-            // Cargar Identificación
             document.getElementById('orden').value = orden.orden;
             document.getElementById('claveWeb').value = orden.claveWeb || '';
             document.getElementById('fechaRegistro').value = orden.fecha || new Date().toLocaleString('es-CO');
@@ -1515,7 +1517,6 @@
                 notas: orden.notas || ''
             };
 
-            // Cargar Reparaciones
             syncStatusUI(orden.estado || 'PENDIENTE');
             syncTecnicoUI(orden.tecnico || '');
             document.getElementById('repDiagnostico').value = orden.diagnostico || '';
@@ -1534,7 +1535,6 @@
                 fechaEntrega: orden.fechaEntrega || ''
             };
 
-            // Bloquear ambos formularios por defecto
             setCamposIdentificacionBloqueados(true);
             setCamposReparacionBloqueados(true);
 
@@ -1552,19 +1552,19 @@
 
             document.getElementById('repOrderInfo').textContent = `ORDEN SELECCIONADA: ${orden.orden}`;
 
-            // Configurar botones Identificación
             const btnGuardarId = document.getElementById('btnGuardarId');
             btnGuardarId.disabled = true;
             document.getElementById('btnEditarId').style.display = 'inline-flex';
             document.getElementById('btnActualizarId').style.display = 'none';
             document.getElementById('btnActualizarId').disabled = true;
+            document.getElementById('btnMandarMensajeId').style.display = 'inline-flex';
 
-            // Configurar botones Reparación
             const btnGuardarRep = document.getElementById('btnGuardarRep');
             btnGuardarRep.disabled = true;
             document.getElementById('btnEditarRep').style.display = 'inline-flex';
             document.getElementById('btnActualizarRep').style.display = 'none';
             document.getElementById('btnActualizarRep').disabled = true;
+            document.getElementById('btnMandarMensajeRep').style.display = 'inline-flex';
 
             lucide.createIcons();
             renderOrdersList(document.getElementById('searchInput').value);
@@ -1790,6 +1790,50 @@
             }
         }
 
+        function abrirModalMensajePersonalizado() {
+            const orden = document.getElementById('orden').value;
+            const nombre = document.getElementById('nombre').value;
+            const articulo = document.getElementById('articulo').value;
+            const marca = document.getElementById('marca').value;
+
+            if (!orden || !nombre) {
+                alert('SELECCIONE UNA ORDEN VÁLIDA');
+                return;
+            }
+
+            const cabeceraTexto = `HOLA *${nombre}*, TE HABLAMOS DE *CASA ELECTRONICA* PARA INFORMATE SOBRE EL ARTICULO *${articulo} ${marca}* CON ORDEN DE SERVICIO *${orden}*.`;
+            document.getElementById('previewCabecera').textContent = cabeceraTexto;
+            document.getElementById('inputAdicionalMensaje').value = '';
+            document.getElementById('modalMensajeOverlay').style.display = 'flex';
+            setTimeout(() => { document.getElementById('inputAdicionalMensaje').focus(); }, 100);
+        }
+
+        function cerrarModalMensajePersonalizado() {
+            document.getElementById('modalMensajeOverlay').style.display = 'none';
+        }
+
+        function enviarMensajePersonalizadoWhatsApp() {
+            let tel = document.getElementById('telefono').value.trim();
+            const orden = document.getElementById('orden').value;
+            const nombre = document.getElementById('nombre').value;
+            const articulo = document.getElementById('articulo').value;
+            const marca = document.getElementById('marca').value;
+            const textoAdicional = document.getElementById('inputAdicionalMensaje').value.trim();
+
+            if (!tel) { alert('FALTA TELÉFONO DEL CLIENTE'); return; }
+            if (tel.length === 10) tel = '57' + tel;
+
+            let mensaje = `*CASA ELECTRONICA*\n\n` +
+                          `HOLA *${nombre}*, TE HABLAMOS DE *CASA ELECTRONICA* PARA INFORMATE SOBRE EL ARTICULO *${articulo} ${marca}* CON ORDEN DE SERVICIO *${orden}*.`;
+
+            if (textoAdicional) {
+                mensaje += `\n\n${textoAdicional}`;
+            }
+
+            cerrarModalMensajePersonalizado();
+            window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
+        }
+
         function imprimirEtiquetaTicket() {
             const orden = document.getElementById('orden').value;
             const nombre = document.getElementById('nombre').value;
@@ -1895,13 +1939,39 @@
         function ejecutarImpresionTicket() {
             cerrarModalTicket();
             const tipo = document.getElementById('selectTipoTicket').value;
-            const precio = document.getElementById('repTotalPagar').value || '0';
+            const precioRaw = document.getElementById('repTotalPagar').value.replace(/\D/g, '') || '0';
+            const precioFormateado = parseInt(precioRaw, 10).toLocaleString('es-CO');
+
             const printWindow = window.open('', '_blank', 'width=400,height=300');
             
             if (tipo === "REPARADO") {
-                printWindow.document.write(`<html><head><style>@page { size: 50mm 30mm; margin: 0; } body { width: 50mm; height: 30mm; margin: 0; padding: 1mm; font-family: Arial; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }</style></head><body><div style="font-size:16pt;font-weight:bold;">REPARADO</div><div style="font-size:20pt;font-weight:900;">$ ${precio}</div><script>window.onload = function() { window.print(); setTimeout(() => window.close(), 500); };<\/script></body></html>`);
+                printWindow.document.write(`
+                    <!DOCTYPE html><html><head><title>Ticket Reparado</title>
+                    <style>
+                        @page { size: 50mm 30mm; margin: 0; }
+                        body { width: 48mm; height: 28mm; margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: #fff; color: #000; overflow: hidden; }
+                        .title { font-size: 15pt; font-weight: 900; line-height: 1.0; margin-bottom: 2mm; }
+                        .price { font-size: 18pt; font-weight: 900; line-height: 1.0; }
+                    </style></head>
+                    <body>
+                        <div class="title">REPARADO</div>
+                        <div class="price">$ ${precioFormateado}</div>
+                        <script>window.onload = function() { window.print(); setTimeout(() => window.close(), 500); };<\/script>
+                    </body></html>
+                `);
             } else {
-                printWindow.document.write(`<html><head><style>@page { size: 50mm 30mm; margin: 0; } body { width: 50mm; height: 30mm; margin: 0; padding: 1mm; font-family: Arial; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }</style></head><body><div style="font-size:18pt;font-weight:900;">DEVOLUCIÓN</div><script>window.onload = function() { window.print(); setTimeout(() => window.close(), 500); };<\/script></body></html>`);
+                printWindow.document.write(`
+                    <!DOCTYPE html><html><head><title>Ticket Devolución</title>
+                    <style>
+                        @page { size: 50mm 30mm; margin: 0; }
+                        body { width: 48mm; height: 28mm; margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: #fff; color: #000; overflow: hidden; }
+                        .title { font-size: 16pt; font-weight: 900; line-height: 1.0; }
+                    </style></head>
+                    <body>
+                        <div class="title">DEVOLUCIÓN</div>
+                        <script>window.onload = function() { window.print(); setTimeout(() => window.close(), 500); };<\/script>
+                    </body></html>
+                `);
             }
             printWindow.document.close();
         }
