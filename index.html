@@ -103,6 +103,12 @@
             gap: 0.5rem;
         }
 
+        .nav-actions-group {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
         .nav-tab {
             padding: 0.6rem 1.25rem;
             border-radius: 6px;
@@ -188,7 +194,7 @@
             letter-spacing: 0.5px;
         }
 
-        input, textarea {
+        input, textarea, select {
             background-color: var(--bg-input);
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -200,7 +206,7 @@
             width: 100%;
         }
 
-        input:focus:not(:disabled), textarea:focus:not(:disabled) {
+        input:focus:not(:disabled), textarea:focus:not(:disabled), select:focus:not(:disabled) {
             border-color: var(--accent-cyan);
             box-shadow: 0 0 0 2px rgba(0, 242, 254, 0.15);
         }
@@ -502,13 +508,14 @@
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.75);
+            background: rgba(0,0,0,0.78);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 2000;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(6px);
             padding: 1rem;
+            overflow-y: auto;
         }
 
         .modal-box {
@@ -533,14 +540,21 @@
         .floating-form-box {
             background: linear-gradient(145deg, #151c28, #111722);
             border: 1px solid var(--accent-cyan);
-            padding: 2rem;
+            padding: 1.75rem;
             border-radius: 14px;
             width: 100%;
-            max-width: 480px;
+            max-width: 540px;
             box-shadow: 0 12px 36px rgba(0, 242, 254, 0.2);
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            gap: 1.15rem;
+            animation: modalPop 0.22s ease-out;
+            margin: auto;
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .floating-form-box h3 {
@@ -550,7 +564,146 @@
             align-items: center;
             gap: 0.5rem;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.65rem;
+        }
+
+        /* ESTILOS MODAL DE INGRESOS */
+        .ingresos-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            background: #0b0f17;
+            padding: 0.35rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .ingreso-period-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.55rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ingreso-period-btn.active {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #000;
+            box-shadow: 0 2px 10px rgba(0, 242, 254, 0.3);
+        }
+
+        .ingreso-summary-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .ingreso-total-card {
+            background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.16), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            border-radius: 12px;
+            padding: 1rem 0.75rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .ingreso-repuestos-card {
+            background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.16), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(245, 158, 11, 0.45);
+            border-radius: 12px;
+            padding: 1rem 0.75rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .ingreso-neto-card {
+            background: radial-gradient(circle at top right, rgba(0, 242, 254, 0.16), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(0, 242, 254, 0.45);
+            border-radius: 12px;
+            padding: 1rem 0.75rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .ingreso-negocio-card {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.14), rgba(16, 185, 129, 0.12));
+            border: 1px solid rgba(79, 172, 254, 0.5);
+            border-radius: 12px;
+            padding: 0.85rem 1.15rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .ingreso-total-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            letter-spacing: 0.6px;
+            font-weight: 700;
+        }
+
+        .ingreso-total-amount {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: var(--accent-green);
+            font-family: var(--font-mono);
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .ingreso-repuestos-amount {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: var(--accent-amber);
+            font-family: var(--font-mono);
+            text-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .ingreso-neto-amount {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: var(--accent-cyan);
+            font-family: var(--font-mono);
+            text-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        .ingreso-total-sub {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .ingresos-detail-list {
+            max-height: 175px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding-right: 0.25rem;
+        }
+
+        .ingreso-row-item {
+            background: rgba(31, 41, 61, 0.65);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-green);
+            border-radius: 6px;
+            padding: 0.6rem 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
         }
 
         .tab-content { display: none; }
@@ -566,6 +719,12 @@
             }
             .col-6, .col-4, .col-3 {
                 grid-column: span 12;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .ingreso-summary-grid-3 {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -611,7 +770,10 @@
                 <i data-lucide="wrench"></i> 2. REPARACIONES
             </button>
         </div>
-        <div>
+        <div class="nav-actions-group">
+            <button class="btn btn-primary" onclick="abrirModalIngresos()" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                <i data-lucide="dollar-sign"></i> INGRESOS
+            </button>
             <button class="btn btn-success" onclick="abrirFormularioTecnico()" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
                 <i data-lucide="user-plus"></i> AGREGAR TÉCNICO
             </button>
@@ -800,7 +962,7 @@
                         </div>
 
                         <div class="form-group col-8">
-                            <label for="repGarantia">GARANTÍA</label>
+                            <label for="repGarantia">GARANTÍA (OPCIONAL - DEJAR VACÍO SI NO APLICA)</label>
                             <div style="display: flex; gap: 0.5rem;">
                                 <input type="text" id="repGarantia" placeholder="EJ: 1 MES. A PARTIR DEL..." style="flex: 1;">
                                 <button type="button" id="btnRelojGarantia" class="btn btn-secondary" style="padding: 0.5rem;" onclick="insertarFechaGarantia()" title="Insertar fecha a partir de hoy">
@@ -811,17 +973,32 @@
 
                         <div class="form-group col-4">
                             <label for="repFechaReparacion">FECHA DE REPARACIÓN</label>
-                            <input type="date" id="repFechaReparacion">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="date" id="repFechaReparacion" style="flex: 1;">
+                                <button type="button" id="btnRelojFechaRep" class="btn btn-secondary" style="padding: 0.5rem;" onclick="insertarFechaHoy('repFechaReparacion')" title="Poner fecha de hoy">
+                                    <i data-lucide="clock"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="form-group col-4">
                             <label for="repTotalPagar">TOTAL A PAGAR ($ COP)</label>
-                            <input type="text" id="repTotalPagar" placeholder="0" onkeyup="formatCurrencyInput(this)">
+                            <input type="text" id="repTotalPagar" inputmode="numeric" placeholder="0" oninput="formatCurrencyInput(this)" onchange="formatCurrencyInput(this)">
                         </div>
 
-                        <div class="form-group col-8">
+                        <div class="form-group col-4">
+                            <label for="repValorRepuesto">VALOR REPUESTO ($ COP)</label>
+                            <input type="text" id="repValorRepuesto" inputmode="numeric" placeholder="0" oninput="formatCurrencyInput(this)" onchange="formatCurrencyInput(this)">
+                        </div>
+
+                        <div class="form-group col-4">
                             <label for="repFechaEntrega">FECHA DE ENTREGA</label>
-                            <input type="date" id="repFechaEntrega">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="date" id="repFechaEntrega" style="flex: 1;">
+                                <button type="button" id="btnRelojFechaEnt" class="btn btn-secondary" style="padding: 0.5rem;" onclick="insertarFechaHoy('repFechaEntrega')" title="Poner fecha de hoy">
+                                    <i data-lucide="clock"></i>
+                                </button>
+                            </div>
                         </div>
 
                     </div>
@@ -875,6 +1052,108 @@
             <div class="sidebar-list" id="ordersContainer"></div>
         </aside>
 
+    </div>
+
+    <!-- MODAL MODERNO: REPORTE DE INGRESOS (DÍA / MES / AÑO + TÉCNICO + TOTAL NEGOCIO) -->
+    <div id="modalIngresosOverlay" class="modal-overlay">
+        <div class="floating-form-box" style="max-width: 680px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.65rem;">
+                <h3 style="border-bottom: none; padding-bottom: 0; margin: 0;">
+                    <i data-lucide="trending-up"></i> REPORTE DE INGRESOS Y GANANCIAS
+                </h3>
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalIngresos()" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
+                    <i data-lucide="x" style="width: 15px; height: 15px;"></i>
+                </button>
+            </div>
+
+            <div class="ingresos-tabs">
+                <button type="button" class="ingreso-period-btn active" id="btnPeriodoDia" onclick="cambiarPeriodoIngresos('DIA')">
+                    POR DÍA
+                </button>
+                <button type="button" class="ingreso-period-btn" id="btnPeriodoMes" onclick="cambiarPeriodoIngresos('MES')">
+                    POR MES
+                </button>
+                <button type="button" class="ingreso-period-btn" id="btnPeriodoAnio" onclick="cambiarPeriodoIngresos('ANIO')">
+                    POR AÑO
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="form-group" id="contenedorSelectorDia">
+                    <label for="filtroFechaDia">SELECCIONE EL DÍA:</label>
+                    <input type="date" id="filtroFechaDia" onchange="calcularIngresos()">
+                </div>
+
+                <div class="form-group" id="contenedorSelectorMes" style="display: none;">
+                    <label for="filtroFechaMes">SELECCIONE EL MES:</label>
+                    <input type="month" id="filtroFechaMes" onchange="calcularIngresos()">
+                </div>
+
+                <div class="form-group" id="contenedorSelectorAnio" style="display: none;">
+                    <label for="filtroFechaAnio">SELECCIONE EL AÑO:</label>
+                    <select id="filtroFechaAnio" onchange="calcularIngresos()"></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="filtroTecnicoIngreso">FILTRAR POR TÉCNICO:</label>
+                    <select id="filtroTecnicoIngreso" onchange="calcularIngresos()">
+                        <option value="TODOS">TODOS LOS TÉCNICOS</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 3 TARJETAS: INGRESO BRUTO | VALOR REPUESTOS | GANANCIA NETA REAL -->
+            <div class="ingreso-summary-grid-3">
+                <div class="ingreso-total-card">
+                    <span class="ingreso-total-label" id="lblTituloIngreso">INGRESOS BRUTOS</span>
+                    <div class="ingreso-total-amount" id="lblMontoTotalIngreso">$ 0</div>
+                    <span class="ingreso-total-sub" id="lblCantidadOrdenesIngreso">0 ÓRDENES</span>
+                </div>
+
+                <div class="ingreso-repuestos-card">
+                    <span class="ingreso-total-label">VALOR REPUESTOS</span>
+                    <div class="ingreso-repuestos-amount" id="lblTotalRepuestosCard">$ 0</div>
+                    <span class="ingreso-total-sub">COSTO INSUMOS</span>
+                </div>
+
+                <div class="ingreso-neto-card">
+                    <span class="ingreso-total-label">GANANCIA NETA REAL</span>
+                    <div class="ingreso-neto-amount" id="lblMontoNetoIngreso">$ 0</div>
+                    <span class="ingreso-total-sub" id="lblSubNetoTecnico">LIBRE DE REPUESTOS</span>
+                </div>
+            </div>
+
+            <!-- RESUMEN TOTAL DEL NEGOCIO (TODOS LOS TÉCNICOS DEL PERÍODO) -->
+            <div class="ingreso-negocio-card">
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                    <span style="font-size: 0.72rem; font-weight: 800; color: var(--accent-blue); letter-spacing: 0.6px;">
+                        TOTAL ENTRADA AL NEGOCIO (TODOS LOS TÉCNICOS)
+                    </span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);" id="lblSubTotalNegocio">
+                        SUMA GENERAL DEL PERÍODO SELECCIONADO
+                    </span>
+                </div>
+                <div style="display: flex; gap: 1.25rem; align-items: center;">
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.65rem; color: var(--text-muted);">BRUTO TOTAL</div>
+                        <div style="font-size: 1.15rem; font-weight: 900; color: var(--accent-green); font-family: var(--font-mono);" id="lblTotalNegocioBruto">$ 0</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.65rem; color: var(--text-muted);">NETO TOTAL</div>
+                        <div style="font-size: 1.15rem; font-weight: 900; color: var(--accent-cyan); font-family: var(--font-mono);" id="lblTotalNegocioNeto">$ 0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label style="display: block; margin-bottom: 0.5rem;">DETALLE DE ÓRDENES DEL PERÍODO:</label>
+                <div class="ingresos-detail-list" id="listaDetalleIngresos"></div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 0.25rem;">
+                <button type="button" class="btn btn-primary" onclick="cerrarModalIngresos()">CERRAR</button>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL: MANDAR MENSAJE PERSONALIZADO WHATSAPP -->
@@ -996,7 +1275,7 @@
 
     <!-- VENTANA EMERGENTE: AGREGAR NUEVO ALIADO -->
     <div id="modalFormularioAliadoOverlay" class="modal-overlay">
-        <div class="floating-form-box">
+        <div class="floating-form-box" style="max-width: 480px;">
             <h3><i data-lucide="user-plus"></i> NUEVO ALIADO COMERCIAL</h3>
             <form id="formAgregarAliado" onsubmit="guardarNuevoAliado(event)">
                 <div style="display: flex; flex-direction: column; gap: 1rem;">
@@ -1019,7 +1298,7 @@
 
     <!-- NUEVA VENTANA EMERGENTE MODERNA: AGREGAR TÉCNICO -->
     <div id="modalFormularioTecnicoOverlay" class="modal-overlay">
-        <div class="floating-form-box">
+        <div class="floating-form-box" style="max-width: 480px;">
             <h3><i data-lucide="wrench"></i> NUEVO TÉCNICO</h3>
             <form id="formAgregarTecnico" onsubmit="guardarNuevoTecnico(event)">
                 <div style="display: flex; flex-direction: column; gap: 1rem;">
@@ -1057,6 +1336,7 @@
 
         let activeTab = 'identificacion';
         let soloPendientesActivo = false;
+        let periodoIngresoActual = 'DIA';
 
         const CAMPOS_IDENTIFICACION = [
             'nombre', 'telefono', 'articulo', 'marca',
@@ -1064,7 +1344,7 @@
         ];
 
         const CAMPOS_REPARACION = [
-            'repDiagnostico', 'repGarantia', 'repFechaReparacion', 'repTotalPagar', 'repFechaEntrega'
+            'repDiagnostico', 'repGarantia', 'repFechaReparacion', 'repTotalPagar', 'repValorRepuesto', 'repFechaEntrega'
         ];
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -1079,6 +1359,50 @@
             document.getElementById('formIdentificacion').addEventListener('submit', (e) => { e.preventDefault(); guardarIdentificacion(); });
             document.getElementById('formReparaciones').addEventListener('submit', (e) => { e.preventDefault(); guardarReparacion(); });
         });
+
+        function formatearMilesCOP(valor) {
+            const digits = String(valor || '').replace(/\D/g, '');
+            if (!digits) return '';
+            return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        function formatCurrencyInput(input) {
+            const formatted = formatearMilesCOP(input.value);
+            input.value = formatted;
+            verificarCambiosReparacion();
+        }
+
+        function formatearFechaParaInput(fechaStr) {
+            if (!fechaStr) return '';
+            const clean = String(fechaStr).trim();
+            if (/^\d{4}-\d{2}-\d{2}/.test(clean)) {
+                return clean.substring(0, 10);
+            }
+            const matchDMY = clean.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+            if (matchDMY) {
+                const dia = matchDMY[1].padStart(2, '0');
+                const mes = matchDMY[2].padStart(2, '0');
+                const anio = matchDMY[3];
+                return `${anio}-${mes}-${dia}`;
+            }
+            const d = new Date(clean);
+            if (!isNaN(d.getTime())) {
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            }
+            return '';
+        }
+
+        function insertarFechaHoy(inputId) {
+            const hoy = new Date();
+            const y = hoy.getFullYear();
+            const m = String(hoy.getMonth() + 1).padStart(2, '0');
+            const d = String(hoy.getDate()).padStart(2, '0');
+            document.getElementById(inputId).value = `${y}-${m}-${d}`;
+            verificarCambiosReparacion();
+        }
 
         function setCamposIdentificacionBloqueados(bloqueado) {
             CAMPOS_IDENTIFICACION.forEach(id => {
@@ -1116,16 +1440,22 @@
             });
             const wrapperEstado = document.getElementById('wrapperRepEstado');
             const wrapperTecnico = document.getElementById('wrapperRepTecnico');
-            const btnReloj = document.getElementById('btnRelojGarantia');
+            const btnRelojGarantia = document.getElementById('btnRelojGarantia');
+            const btnRelojFechaRep = document.getElementById('btnRelojFechaRep');
+            const btnRelojFechaEnt = document.getElementById('btnRelojFechaEnt');
 
             if (bloqueado) {
                 if (wrapperEstado) wrapperEstado.classList.add('disabled');
                 if (wrapperTecnico) wrapperTecnico.classList.add('disabled');
-                if (btnReloj) btnReloj.disabled = true;
+                if (btnRelojGarantia) btnRelojGarantia.disabled = true;
+                if (btnRelojFechaRep) btnRelojFechaRep.disabled = true;
+                if (btnRelojFechaEnt) btnRelojFechaEnt.disabled = true;
             } else {
                 if (wrapperEstado) wrapperEstado.classList.remove('disabled');
                 if (wrapperTecnico) wrapperTecnico.classList.remove('disabled');
-                if (btnReloj) btnReloj.disabled = false;
+                if (btnRelojGarantia) btnRelojGarantia.disabled = false;
+                if (btnRelojFechaRep) btnRelojFechaRep.disabled = false;
+                if (btnRelojFechaEnt) btnRelojFechaEnt.disabled = false;
             }
         }
 
@@ -1258,6 +1588,193 @@
         function generarClaveHexadecimal() {
             return Math.floor(Math.random() * 1048576).toString(16).toUpperCase().padStart(5, '0');
         }
+
+        /* ================= MÓDULO DE INGRESOS ================= */
+        function obtenerFechaLocalISO() {
+            const hoy = new Date();
+            const y = hoy.getFullYear();
+            const m = String(hoy.getMonth() + 1).padStart(2, '0');
+            const d = String(hoy.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function normalizarFechaAISO(fechaStr) {
+            if (!fechaStr) return '';
+            const clean = String(fechaStr).trim();
+            if (/^\d{4}-\d{2}-\d{2}/.test(clean)) {
+                return clean.substring(0, 10);
+            }
+            const matchDMY = clean.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+            if (matchDMY) {
+                const dia = matchDMY[1].padStart(2, '0');
+                const mes = matchDMY[2].padStart(2, '0');
+                const anio = matchDMY[3];
+                return `${anio}-${mes}-${dia}`;
+            }
+            return '';
+        }
+
+        function poblarSelectorAniosIngresos() {
+            const selectAnio = document.getElementById('filtroFechaAnio');
+            const anioActual = new Date().getFullYear();
+            const aniosSet = new Set([anioActual, anioActual - 1]);
+
+            ordenesDB.forEach(o => {
+                const f = normalizarFechaAISO(o.fechaEntrega || o.fechaReparacion || o.fecha);
+                if (f) {
+                    const y = parseInt(f.substring(0, 4), 10);
+                    if (!isNaN(y)) aniosSet.add(y);
+                }
+            });
+
+            const aniosOrdenados = Array.from(aniosSet).sort((a, b) => b - a);
+            selectAnio.innerHTML = aniosOrdenados.map(y => `<option value="${y}">${y}</option>`).join('');
+            selectAnio.value = String(anioActual);
+        }
+
+        function actualizarFiltroTecnicosIngresos() {
+            const selectTec = document.getElementById('filtroTecnicoIngreso');
+            const valorActual = selectTec.value;
+            
+            let html = `<option value="TODOS">TODOS LOS TÉCNICOS</option>`;
+            tecnicosDB.forEach(tec => {
+                html += `<option value="${tec}">${tec}</option>`;
+            });
+            selectTec.innerHTML = html;
+            selectTec.value = tecnicosDB.includes(valorActual) || valorActual === 'TODOS' ? valorActual : 'TODOS';
+        }
+
+        function abrirModalIngresos() {
+            const hoyISO = obtenerFechaLocalISO();
+            document.getElementById('filtroFechaDia').value = hoyISO;
+            document.getElementById('filtroFechaMes').value = hoyISO.substring(0, 7);
+            poblarSelectorAniosIngresos();
+            actualizarFiltroTecnicosIngresos();
+
+            cambiarPeriodoIngresos('DIA');
+            document.getElementById('modalIngresosOverlay').style.display = 'flex';
+            lucide.createIcons();
+        }
+
+        function cerrarModalIngresos() {
+            document.getElementById('modalIngresosOverlay').style.display = 'none';
+        }
+
+        function cambiarPeriodoIngresos(periodo) {
+            periodoIngresoActual = periodo;
+
+            document.getElementById('btnPeriodoDia').classList.toggle('active', periodo === 'DIA');
+            document.getElementById('btnPeriodoMes').classList.toggle('active', periodo === 'MES');
+            document.getElementById('btnPeriodoAnio').classList.toggle('active', periodo === 'ANIO');
+
+            document.getElementById('contenedorSelectorDia').style.display = periodo === 'DIA' ? 'flex' : 'none';
+            document.getElementById('contenedorSelectorMes').style.display = periodo === 'MES' ? 'flex' : 'none';
+            document.getElementById('contenedorSelectorAnio').style.display = periodo === 'ANIO' ? 'flex' : 'none';
+
+            calcularIngresos();
+        }
+
+        function calcularIngresos() {
+            const diaVal = document.getElementById('filtroFechaDia').value;
+            const mesVal = document.getElementById('filtroFechaMes').value;
+            const anioVal = document.getElementById('filtroFechaAnio').value;
+            const tecnicoFiltro = document.getElementById('filtroTecnicoIngreso').value;
+
+            const lblTitulo = document.getElementById('lblTituloIngreso');
+            const lblMonto = document.getElementById('lblMontoTotalIngreso');
+            const lblRepuestosCard = document.getElementById('lblTotalRepuestosCard');
+            const lblNeto = document.getElementById('lblMontoNetoIngreso');
+            const lblCantidad = document.getElementById('lblCantidadOrdenesIngreso');
+            const lblNegocioBruto = document.getElementById('lblTotalNegocioBruto');
+            const lblNegocioNeto = document.getElementById('lblTotalNegocioNeto');
+            const lblSubNegocio = document.getElementById('lblSubTotalNegocio');
+            const listaDetalle = document.getElementById('listaDetalleIngresos');
+
+            let totalRecaudadoBruto = 0;
+            let totalRepuestosSuma = 0;
+
+            let totalNegocioBruto = 0;
+            let totalNegocioRepuestos = 0;
+            let totalOrdenesNegocio = 0;
+
+            const ordenesFiltradas = [];
+
+            ordenesDB.forEach(o => {
+                const estadoActual = (o.estado || 'PENDIENTE').trim().toUpperCase();
+                if (estadoActual !== 'ENTREGADO OK') return;
+
+                const montoNum = parseInt(String(o.totalPagar || '').replace(/\D/g, ''), 10) || 0;
+                const repuestoNum = parseInt(String(o.valorRepuesto || '').replace(/\D/g, ''), 10) || 0;
+                
+                const fechaRef = normalizarFechaAISO(o.fechaEntrega || o.fechaReparacion || o.fecha);
+                if (!fechaRef) return;
+
+                let coincideFecha = false;
+                if (periodoIngresoActual === 'DIA' && diaVal) {
+                    coincideFecha = (fechaRef === diaVal);
+                } else if (periodoIngresoActual === 'MES' && mesVal) {
+                    coincideFecha = fechaRef.startsWith(mesVal);
+                } else if (periodoIngresoActual === 'ANIO' && anioVal) {
+                    coincideFecha = fechaRef.startsWith(anioVal);
+                }
+
+                if (!coincideFecha) return;
+
+                totalNegocioBruto += montoNum;
+                totalNegocioRepuestos += repuestoNum;
+                totalOrdenesNegocio++;
+
+                if (tecnicoFiltro !== 'TODOS') {
+                    const tecOrden = (o.tecnico || '').trim().toUpperCase();
+                    if (tecOrden !== tecnicoFiltro.trim().toUpperCase()) return;
+                }
+
+                totalRecaudadoBruto += montoNum;
+                totalRepuestosSuma += repuestoNum;
+                const netoOrden = montoNum - repuestoNum;
+                ordenesFiltradas.push({ ...o, montoNum, repuestoNum, netoOrden, fechaRef });
+            });
+
+            const totalNetoReal = totalRecaudadoBruto - totalRepuestosSuma;
+            const totalNegocioNetoReal = totalNegocioBruto - totalNegocioRepuestos;
+
+            if (periodoIngresoActual === 'DIA') {
+                lblTitulo.textContent = diaVal ? `INGRESOS (${diaVal})` : 'INGRESOS DÍA';
+            } else if (periodoIngresoActual === 'MES') {
+                lblTitulo.textContent = mesVal ? `INGRESOS (${mesVal})` : 'INGRESOS MES';
+            } else {
+                lblTitulo.textContent = anioVal ? `INGRESOS (${anioVal})` : 'INGRESOS AÑO';
+            }
+
+            lblMonto.textContent = `$ ${formatearMilesCOP(totalRecaudadoBruto) || '0'}`;
+            lblRepuestosCard.textContent = `$ ${formatearMilesCOP(totalRepuestosSuma) || '0'}`;
+            lblNeto.textContent = `$ ${formatearMilesCOP(totalNetoReal) || '0'}`;
+            lblCantidad.textContent = `${ordenesFiltradas.length} ${ordenesFiltradas.length === 1 ? 'ORDEN' : 'ÓRDENES'}`;
+
+            lblNegocioBruto.textContent = `$ ${formatearMilesCOP(totalNegocioBruto) || '0'}`;
+            lblNegocioNeto.textContent = `$ ${formatearMilesCOP(totalNegocioNetoReal) || '0'}`;
+            lblSubNegocio.textContent = `${totalOrdenesNegocio} ${totalOrdenesNegocio === 1 ? 'ORDEN ENTREGADA' : 'ÓRDENES ENTREGADAS'} · REPUESTOS: $ ${formatearMilesCOP(totalNegocioRepuestos) || '0'}`;
+
+            if (ordenesFiltradas.length === 0) {
+                listaDetalle.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 1.25rem; font-size: 0.8rem; background: rgba(15,23,42,0.5); border-radius: 8px;">NO HAY INGRESOS REGISTRADOS CON ESTOS FILTROS</div>`;
+                return;
+            }
+
+            listaDetalle.innerHTML = ordenesFiltradas.reverse().map(item => `
+                <div class="ingreso-row-item">
+                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                        <span style="font-weight: 700; color: var(--accent-cyan); font-family: var(--font-mono);">${item.orden} · <span style="color: var(--text-main); font-family: inherit;">${item.nombre || 'SIN NOMBRE'}</span></span>
+                        <span style="font-size: 0.72rem; color: var(--text-muted);">${item.articulo || ''} ${item.marca || ''} | TEC: ${item.tecnico || 'N/A'} (ENTREGA: ${item.fechaRef})</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+                        <span style="font-weight: 800; color: var(--accent-green); font-family: var(--font-mono); white-space: nowrap;">BRUTO: $ ${formatearMilesCOP(item.montoNum) || '0'}</span>
+                        <span style="font-size: 0.7rem; color: var(--accent-amber); font-family: var(--font-mono);">REP: $ ${formatearMilesCOP(item.repuestoNum) || '0'}</span>
+                        <span style="font-size: 0.72rem; color: var(--accent-cyan); font-family: var(--font-mono); font-weight: 700;">NETO: $ ${formatearMilesCOP(item.netoOrden) || '0'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        /* ======================================================================== */
 
         function abrirFormularioTecnico() {
             document.getElementById('formAgregarTecnico').reset();
@@ -1397,6 +1914,10 @@
         function setupUppercaseEnforcement() {
             document.querySelectorAll('input[type="text"], textarea').forEach(input => {
                 input.addEventListener('input', (e) => {
+                    if (e.target.id === 'repTotalPagar' || e.target.id === 'repValorRepuesto') {
+                        formatCurrencyInput(e.target);
+                        return;
+                    }
                     if (e.target.id !== 'telefono' && e.target.id !== 'claveWeb' && e.target.id !== 'inputTelefonoAliado') {
                         const start = e.target.selectionStart;
                         const end = e.target.selectionEnd;
@@ -1407,12 +1928,6 @@
                     verificarCambiosReparacion();
                 });
             });
-        }
-
-        function formatCurrencyInput(input) {
-            let val = input.value.replace(/\D/g, '');
-            input.value = val ? parseInt(val, 10).toLocaleString('es-CO') : '';
-            verificarCambiosReparacion();
         }
 
         function generarNumeroOrden() {
@@ -1524,22 +2039,29 @@
                 notas: orden.notas || ''
             };
 
+            const totalFormateado = formatearMilesCOP(orden.totalPagar);
+            const repuestoFormateado = formatearMilesCOP(orden.valorRepuesto);
+            const fechaRepFormateada = formatearFechaParaInput(orden.fechaReparacion);
+            const fechaEntFormateada = formatearFechaParaInput(orden.fechaEntrega);
+
             syncStatusUI(orden.estado || 'PENDIENTE');
             syncTecnicoUI(orden.tecnico || '');
             document.getElementById('repDiagnostico').value = orden.diagnostico || '';
             document.getElementById('repGarantia').value = orden.garantia || '';
-            document.getElementById('repFechaReparacion').value = orden.fechaReparacion || '';
-            document.getElementById('repTotalPagar').value = orden.totalPagar || '';
-            document.getElementById('repFechaEntrega').value = orden.fechaEntrega || '';
+            document.getElementById('repFechaReparacion').value = fechaRepFormateada;
+            document.getElementById('repTotalPagar').value = totalFormateado;
+            document.getElementById('repValorRepuesto').value = repuestoFormateado;
+            document.getElementById('repFechaEntrega').value = fechaEntFormateada;
 
             datosOriginalesReparacion = {
                 estado: orden.estado || 'PENDIENTE',
                 tecnico: orden.tecnico || '',
                 diagnostico: orden.diagnostico || '',
                 garantia: orden.garantia || '',
-                fechaReparacion: orden.fechaReparacion || '',
-                totalPagar: orden.totalPagar || '',
-                fechaEntrega: orden.fechaEntrega || ''
+                fechaReparacion: fechaRepFormateada,
+                totalPagar: totalFormateado,
+                valorRepuesto: repuestoFormateado,
+                fechaEntrega: fechaEntFormateada
             };
 
             setCamposIdentificacionBloqueados(true);
@@ -1606,6 +2128,7 @@
                 garantia: document.getElementById('repGarantia').value.toUpperCase(),
                 fechaReparacion: document.getElementById('repFechaReparacion').value,
                 totalPagar: document.getElementById('repTotalPagar').value,
+                valorRepuesto: document.getElementById('repValorRepuesto').value,
                 fechaEntrega: document.getElementById('repFechaEntrega').value
             };
 
@@ -1682,6 +2205,9 @@
             btnActivo.innerHTML = `<i data-lucide="loader" class="spin"></i> PROCESANDO...`;
             lucide.createIcons();
 
+            const totalFormateado = formatearMilesCOP(document.getElementById('repTotalPagar').value);
+            const repuestoFormateado = formatearMilesCOP(document.getElementById('repValorRepuesto').value);
+
             const repData = {
                 tipoAccion: 'REPARACION',
                 orden: numOrden,
@@ -1690,7 +2216,8 @@
                 garantia: document.getElementById('repGarantia').value.toUpperCase(),
                 tecnico: document.getElementById('repTecnico').value.toUpperCase(),
                 fechaReparacion: document.getElementById('repFechaReparacion').value,
-                totalPagar: document.getElementById('repTotalPagar').value,
+                totalPagar: totalFormateado,
+                valorRepuesto: repuestoFormateado,
                 fechaEntrega: document.getElementById('repFechaEntrega').value
             };
 
@@ -1907,13 +2434,17 @@
             const orden = document.getElementById('orden').value;
             const nombre = document.getElementById('nombre').value;
             const estado = document.getElementById('repEstado').value;
-            const articulo = document.getElementById('articulo').value;
-            const marca = document.getElementById('marca').value;
-            const total = document.getElementById('repTotalPagar').value || '0';
+            const articulo = document.getElementById('articulo').value.trim();
+            const marca = document.getElementById('marca').value.trim();
+            const modelo = document.getElementById('modelo').value.trim();
+            const diagnostico = document.getElementById('repDiagnostico').value.trim();
+            const garantia = document.getElementById('repGarantia').value.trim();
+            const total = formatearMilesCOP(document.getElementById('repTotalPagar').value) || '0';
 
             if (!tel) { alert('FALTA TELÉFONO'); return; }
             if (tel.length === 10) tel = '57' + tel;
 
+            const equipoConModelo = [articulo, marca, modelo].filter(Boolean).join(' ');
             let mensaje = '';
 
             if (estado === 'DEVOLUCION') {
@@ -1922,8 +2453,13 @@
                           `Agradecemos tu confianza y esperamos poder servirte en otra ocasión. ¡Un saludo!`;
 
             } else if (estado === 'ENTREGADO OK') {
+                const bloqueDiagnostico = diagnostico ? `*Diagnóstico / Trabajo realizado:* ${diagnostico}\n` : '';
+                const bloqueGarantia = garantia ? `*Garantía:* ${garantia}\n` : '';
+
                 mensaje = `*CASA ELECTRONICA*\n\n` +
-                          `Hola *${nombre}*, te confirmamos que tu equipo (*${articulo} ${marca}*) de la orden *${orden}* fue *entregado con éxito* tras completarse su reparación de forma satisfactoria.\n\n` +
+                          `Hola *${nombre}*, te confirmamos que tu equipo (*${equipoConModelo}*) de la orden *${orden}* fue *entregado con éxito* tras completarse su reparación de forma satisfactoria.\n\n` +
+                          `${bloqueDiagnostico}` +
+                          `${bloqueGarantia}` +
                           `Total cancelado: *$ ${total}*.\n\n` +
                           `¡Agradecemos mucho haber contado con tu confianza! Quedamos a tu entera disposición.`;
 
@@ -1949,8 +2485,7 @@
         function ejecutarImpresionTicket() {
             cerrarModalTicket();
             const tipo = document.getElementById('selectTipoTicket').value;
-            const precioRaw = document.getElementById('repTotalPagar').value.replace(/\D/g, '') || '0';
-            const precioFormateado = parseInt(precioRaw, 10).toLocaleString('es-CO');
+            const precioFormateado = formatearMilesCOP(document.getElementById('repTotalPagar').value) || '0';
 
             const printWindow = window.open('', '_blank', 'width=400,height=300');
             
@@ -2108,7 +2643,7 @@
             const tecnico = document.getElementById('repTecnico').value;
             const diag = document.getElementById('repDiagnostico').value;
             const garantia = document.getElementById('repGarantia').value;
-            const total = document.getElementById('repTotalPagar').value || '0';
+            const total = formatearMilesCOP(document.getElementById('repTotalPagar').value) || '0';
             const clave = document.getElementById('claveWeb').value;
             const logoUrl = 'https://lh3.googleusercontent.com/d/1x2-ypgTRlKYcmWTODNmge7TnIxp14xzK=s500';
 
