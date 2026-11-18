@@ -26,6 +26,8 @@
             --status-devolucion: #f97316;  
             --status-entregado-ok: #10b981;
             --status-entregado-malo: #a855f7; 
+            --status-mismo-estado: #ffffff;
+            --status-entregado-sin-pagar: #f59e0b;
         }
 
         * {
@@ -139,6 +141,10 @@
             margin: 0 auto;
             width: 100%;
             flex: 1;
+        }
+
+        .container.full-width {
+            grid-template-columns: 1fr;
         }
 
         .card {
@@ -285,6 +291,11 @@
             backdrop-filter: blur(10px);
         }
 
+        .modern-dropdown-options.no-scroll {
+            max-height: none !important;
+            overflow-y: visible !important;
+        }
+
         .modern-select-wrapper.active .modern-dropdown-options {
             display: block;
         }
@@ -325,27 +336,48 @@
         .dot-devolucion { color: var(--status-devolucion); background-color: var(--status-devolucion); }
         .dot-ok { color: var(--status-entregado-ok); background-color: var(--status-entregado-ok); }
         .dot-malo { color: var(--status-entregado-malo); background-color: var(--status-entregado-malo); }
+        .dot-mismo-estado { color: var(--status-mismo-estado); background-color: var(--status-mismo-estado); }
+        .dot-entregado-sin-pagar { color: var(--status-entregado-sin-pagar); background-color: var(--status-entregado-sin-pagar); }
         .dot-cyan { color: var(--accent-cyan); background-color: var(--accent-cyan); }
         .dot-green { color: var(--accent-green); background-color: var(--accent-green); }
 
         .action-bar {
-            margin-top: 1.5rem;
+            margin-top: 1.75rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border-color);
             display: flex;
+            align-items: center;
+            justify-content: space-between;
             gap: 0.75rem;
             flex-wrap: wrap;
         }
 
+        .action-group-left {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+
+        .action-group-right {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
         .btn {
-            padding: 0.65rem 1.25rem;
+            padding: 0.65rem 1.15rem;
             border-radius: 6px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             cursor: pointer;
             border: 1px solid transparent;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             transition: all 0.25s ease;
+            white-space: nowrap;
         }
 
         .btn:hover:not(:disabled) {
@@ -370,10 +402,6 @@
         .btn-whatsapp:hover { box-shadow: 0 0 12px rgba(37, 211, 102, 0.5); border-color: #25d366; }
         .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3); }
 
-        .btn-right {
-            margin-left: auto;
-        }
-
         .sidebar-list {
             display: flex;
             flex-direction: column;
@@ -391,6 +419,7 @@
             transition: all 0.2s ease;
             border: 1px solid var(--border-color);
             border-left-width: 6px !important;
+            position: relative;
         }
 
         .order-card.selected {
@@ -403,6 +432,8 @@
         .order-card.status-DEVOLUCION { border-left-color: var(--status-devolucion) !important; }
         .order-card.status-ENTREGADO-OK { border-left-color: var(--status-entregado-ok) !important; }
         .order-card.status-ENTREGADO-MALO { border-left-color: var(--status-entregado-malo) !important; }
+        .order-card.status-MISMO-ESTADO { border-left-color: var(--status-mismo-estado) !important; }
+        .order-card.status-ENTREGADO-SIN-PAGAR { border-left-color: var(--status-entregado-sin-pagar) !important; }
 
         .order-card-header {
             display: flex;
@@ -431,6 +462,29 @@
         .badge-DEVOLUCION { background: var(--status-devolucion); color: #fff; }
         .badge-ENTREGADO-OK { background: var(--status-entregado-ok); }
         .badge-ENTREGADO-MALO { background: var(--status-entregado-malo); color: #fff; }
+        .badge-MISMO-ESTADO { background: var(--status-mismo-estado); color: #000; }
+        .badge-ENTREGADO-SIN-PAGAR { background: var(--status-entregado-sin-pagar); color: #000; }
+
+        .alerta-mes-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.6rem;
+            font-weight: 800;
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-amber);
+            border: 1px solid var(--accent-amber);
+            padding: 1px 5px;
+            border-radius: 4px;
+            margin-top: 4px;
+            animation: pulseAlerta 1.5s infinite;
+        }
+
+        @keyframes pulseAlerta {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
 
         .search-container {
             display: flex;
@@ -457,36 +511,6 @@
             color: var(--text-muted);
             width: 16px;
             height: 16px;
-        }
-
-        .btn-pendientes {
-            background: rgba(239, 68, 68, 0.12);
-            border: 1px solid var(--status-pendiente);
-            color: var(--text-main);
-            width: 100%;
-            height: 38px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            letter-spacing: 0.5px;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-pendientes:hover {
-            background: rgba(239, 68, 68, 0.25);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-pendientes.active {
-            background: var(--status-pendiente);
-            color: #fff;
-            box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
         }
 
         #toast {
@@ -565,6 +589,190 @@
             gap: 0.5rem;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 0.65rem;
+        }
+
+        /* ESTILOS MÓDULO STICKERS INTEGRADO */
+        .sizes-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .size-btn-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-size {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-size:hover {
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-size.selected {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #000;
+            border-color: transparent;
+        }
+
+        .btn-delete-size {
+            background-color: var(--border-color);
+            color: var(--text-main);
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: -8px;
+            margin-top: -22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-delete-size:hover {
+            background-color: var(--accent-red);
+        }
+
+        .btn-add-size {
+            background-color: transparent;
+            color: var(--accent-cyan);
+            border: 1px dashed var(--accent-cyan);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-add-size:hover {
+            background-color: rgba(0, 242, 254, 0.1);
+        }
+
+        .new-size-form {
+            display: none;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .new-size-form.active {
+            display: flex;
+        }
+
+        .sticker-editor {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .preview-wrapper {
+            background-color: #000;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .preview-badge {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        #sticker-canvas {
+            background-color: #ffffff;
+            color: #000000;
+            width: 50mm;
+            height: 30mm;
+            padding: 1mm 1.5mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px dashed #999;
+            overflow: hidden;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .stk-header {
+            width: 100%;
+            border-bottom: 1.2px solid #000;
+            padding-bottom: 0.5mm;
+            font-weight: 900;
+            font-size: 8pt;
+            letter-spacing: 0.3px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .stk-main {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            line-height: 1;
+        }
+
+        .stk-status {
+            font-weight: 900;
+            text-transform: uppercase;
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        .stk-status.modo-libre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.05;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stk-price {
+            font-weight: 900;
+            text-transform: uppercase;
+            white-space: nowrap;
+            line-height: 1;
+            margin-top: 0.5mm;
         }
 
         /* ESTILOS MODAL DE INGRESOS */
@@ -709,6 +917,25 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
+        /* INDICADOR DE RED OFFLINE / ONLINE */
+        #networkStatusBadge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .net-online { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
+        .net-offline { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid var(--accent-red); }
+
+        @media print {
+            body * { visibility: hidden; }
+            #sticker-canvas, #sticker-canvas * { visibility: visible; }
+            #sticker-canvas { position: absolute; left: 0; top: 0; border: none !important; margin: 0 !important; }
+        }
+
         @media (max-width: 1024px) {
             .container {
                 grid-template-columns: 1fr;
@@ -721,32 +948,9 @@
                 grid-column: span 12;
             }
         }
-
-        @media (max-width: 720px) {
-            .ingreso-summary-grid-3 {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .brand-title {
-                font-size: 0.95rem;
-            }
-            .nav-tab {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.75rem;
-            }
-            .action-bar {
-                flex-direction: column;
-            }
-            .action-bar .btn {
-                width: 100%;
-                justify-content: center;
-            }
-            .btn-right {
-                margin-left: 0;
-            }
-        }
+    </style>
+    <style id="dynamic-page-size">
+        @page { size: 50mm 30mm; margin: 0; }
     </style>
 </head>
 <body>
@@ -756,7 +960,8 @@
             <div class="brand-logo">CE</div>
             <div class="brand-title">CASA ELECTRÓNICA</div>
         </div>
-        <div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div id="networkStatusBadge" class="net-online">ONLINE</div>
             <span style="font-size: 0.75rem; color: var(--text-muted); text-align: right; display: block;">SISTEMA TÉCNICO</span>
         </div>
     </header>
@@ -769,6 +974,9 @@
             <button class="nav-tab" id="tabReparaciones" onclick="switchTab('reparaciones')">
                 <i data-lucide="wrench"></i> 2. REPARACIONES
             </button>
+            <button class="nav-tab" id="tabStickers" onclick="switchTab('stickers')">
+                <i data-lucide="tag"></i> 3. STICKERS
+            </button>
         </div>
         <div class="nav-actions-group">
             <button class="btn btn-primary" onclick="abrirModalIngresos()" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
@@ -780,7 +988,7 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" id="mainContainerLayout">
         
         <main class="card">
             
@@ -791,6 +999,9 @@
                         <i data-lucide="file-text"></i> DATOS DE IDENTIFICACIÓN Y CLIENTE
                     </div>
                     <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-secondary" onclick="nuevoRegistro()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                            <i data-lucide="plus-circle"></i> NUEVO
+                        </button>
                         <button type="button" id="btnAliadoLista" class="btn btn-secondary" onclick="abrirModalListaAliados()" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
                             <i data-lucide="users"></i> ALIADO
                         </button>
@@ -864,31 +1075,33 @@
                         </div>
                     </div>
 
+                    <!-- BARRA DE ACCIONES REORGANIZADA (IDENTIFICACIÓN) -->
                     <div class="action-bar">
-                        <button type="submit" class="btn btn-primary" id="btnGuardarId">
-                            <i data-lucide="save"></i> GUARDAR ORDEN
-                        </button>
-                        <button type="button" class="btn btn-warning" id="btnEditarId" onclick="habilitarEdicionIdentificacion()" style="display: none;">
-                            <i data-lucide="edit-3"></i> EDITAR
-                        </button>
-                        <button type="submit" class="btn btn-primary" id="btnActualizarId" disabled style="display: none;">
-                            <i data-lucide="refresh-cw"></i> ACTUALIZAR ORDEN
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="imprimirEtiquetaTicket()">
-                            <i data-lucide="tag"></i> IMPRIMIR TICKET (5x3 cm)
-                        </button>
-                        <button type="button" class="btn btn-success" onclick="abrirModalEntrada()">
-                            <i data-lucide="printer"></i> GENERAR ENTRADA
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="nuevoRegistro()">
-                            <i data-lucide="plus-circle"></i> NUEVO
-                        </button>
-                        <button type="button" class="btn btn-whatsapp" id="btnMandarMensajeId" onclick="abrirModalMensajePersonalizado()" style="display: none;">
-                            <i data-lucide="message-square"></i> MANDAR MENSAJE
-                        </button>
-                        <button type="button" class="btn btn-danger btn-right" onclick="eliminarOrdenActual()">
-                            <i data-lucide="trash-2"></i> ELIMINAR
-                        </button>
+                        <div class="action-group-left">
+                            <button type="submit" class="btn btn-primary" id="btnGuardarId">
+                                <i data-lucide="save"></i> GUARDAR
+                            </button>
+                            <button type="button" class="btn btn-warning" id="btnEditarId" onclick="habilitarEdicionGeneral()" style="display: none;">
+                                <i data-lucide="edit-3"></i> EDITAR
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="btnActualizarId" disabled style="display: none;">
+                                <i data-lucide="refresh-cw"></i> ACTUALIZAR
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="imprimirEtiquetaTicket()">
+                                <i data-lucide="tag"></i> TICKET (5X3)
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="abrirModalEntrada()">
+                                <i data-lucide="printer"></i> ENTRADA
+                            </button>
+                            <button type="button" class="btn btn-whatsapp" id="btnMandarMensajeId" onclick="abrirModalMensajePersonalizado()" style="display: none;">
+                                <i data-lucide="message-square"></i> MENSAJE
+                            </button>
+                        </div>
+                        <div class="action-group-right">
+                            <button type="button" class="btn btn-danger" onclick="eliminarOrdenActual()">
+                                <i data-lucide="trash-2"></i> ELIMINAR
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -936,6 +1149,12 @@
                                     </div>
                                     <div class="modern-option-item" onclick="selectModernOption('repEstado', 'displayRepEstado', 'wrapperRepEstado', 'ENTREGADO MALO', 'ENTREGADO MALO', 'dot-malo')">
                                         <span class="modern-dot dot-malo"></span> ENTREGADO MALO
+                                    </div>
+                                    <div class="modern-option-item" onclick="selectModernOption('repEstado', 'displayRepEstado', 'wrapperRepEstado', 'MISMO ESTADO', 'MISMO ESTADO', 'dot-mismo-estado')">
+                                        <span class="modern-dot dot-mismo-estado"></span> MISMO ESTADO
+                                    </div>
+                                    <div class="modern-option-item" onclick="selectModernOption('repEstado', 'displayRepEstado', 'wrapperRepEstado', 'ENTREGADO SIN PAGAR', 'ENTREGADO SIN PAGAR', 'dot-entregado-sin-pagar')">
+                                        <span class="modern-dot dot-entregado-sin-pagar"></span> ENTREGADO SIN PAGAR
                                     </div>
                                 </div>
                             </div>
@@ -1003,35 +1222,120 @@
 
                     </div>
 
+                    <!-- BARRA DE ACCIONES REORGANIZADA (REPARACIONES) -->
                     <div class="action-bar">
-                        <button type="submit" class="btn btn-primary" id="btnGuardarRep">
-                            <i data-lucide="save"></i> GUARDAR REPARACIÓN
-                        </button>
-                        <button type="button" class="btn btn-warning" id="btnEditarRep" onclick="habilitarEdicionReparacion()" style="display: none;">
-                            <i data-lucide="edit-3"></i> EDITAR
-                        </button>
-                        <button type="submit" class="btn btn-primary" id="btnActualizarRep" disabled style="display: none;">
-                            <i data-lucide="refresh-cw"></i> ACTUALIZAR REPARACIÓN
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="abrirModalTicketReparacion()">
-                            <i data-lucide="tag"></i> IMPRIMIR TICKET (5x3 cm)
-                        </button>
-                        <button type="button" class="btn btn-success" onclick="abrirModalSalida()">
-                            <i data-lucide="file-text"></i> GENERAR FACTURA
-                        </button>
-                        <button type="button" class="btn btn-whatsapp" id="btnMandarMensajeRep" onclick="abrirModalMensajePersonalizado()" style="display: none;">
-                            <i data-lucide="message-square"></i> MANDAR MENSAJE
-                        </button>
-                        <button type="button" class="btn btn-secondary btn-right" onclick="switchTab('identificacion')">
-                            <i data-lucide="arrow-left"></i> VOLVER A IDENTIFICACIÓN
-                        </button>
+                        <div class="action-group-left">
+                            <button type="submit" class="btn btn-primary" id="btnGuardarRep">
+                                <i data-lucide="save"></i> GUARDAR
+                            </button>
+                            <button type="button" class="btn btn-warning" id="btnEditarRep" onclick="habilitarEdicionGeneral()" style="display: none;">
+                                <i data-lucide="edit-3"></i> EDITAR
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="btnActualizarRep" disabled style="display: none;">
+                                <i data-lucide="refresh-cw"></i> ACTUALIZAR
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="abrirModalTicketReparacion()">
+                                <i data-lucide="tag"></i> TICKET (5X3)
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="abrirModalSalida()">
+                                <i data-lucide="file-text"></i> FACTURA
+                            </button>
+                            <button type="button" class="btn btn-whatsapp" id="btnMandarMensajeRep" onclick="abrirModalMensajePersonalizado()" style="display: none;">
+                                <i data-lucide="message-square"></i> MENSAJE
+                            </button>
+                        </div>
+                        <div class="action-group-right">
+                            <button type="button" class="btn btn-secondary" onclick="switchTab('identificacion')">
+                                <i data-lucide="arrow-left"></i> VOLVER
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
 
+            <!-- PESTAÑA 3: GENERADOR DE STICKERS -->
+            <div id="sectionStickers" class="tab-content">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i data-lucide="tag"></i> GENERADOR Y EDITOR DE STICKERS
+                    </div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">COMPATIBLE MARKLIFE D100</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">1. SELECCIONA O AGREGA MEDIDA (ANCHO X ALTO EN MM):</label>
+                    <div class="sizes-container" id="sizesContainer"></div>
+
+                    <div class="new-size-form" id="newSizeForm">
+                        <div class="form-group" style="flex: 1;">
+                            <label>ANCHO (MM)</label>
+                            <input type="number" id="inputAncho" placeholder="EJ: 50" min="10" max="100">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>ALTO (MM)</label>
+                            <input type="number" id="inputAlto" placeholder="EJ: 30" min="10" max="150">
+                        </div>
+                        <button class="btn btn-primary" onclick="guardarNuevaMedida()" style="height: 41px;">GUARDAR</button>
+                    </div>
+
+                    <div class="sticker-editor">
+                        <label style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">2. DATOS DE LA ETIQUETA:</label>
+                        
+                        <div class="form-group">
+                            <label>ENCABEZADO / TALLER</label>
+                            <input type="text" id="txtTitulo" value="CASA ELECTRÓNICA" oninput="actualizarVistaSticker()">
+                        </div>
+
+                        <div class="row-2" id="rowEstadoPrecio">
+                            <div class="form-group">
+                                <label>ESTADO / OPCIÓN</label>
+                                <select id="selEstadoSticker" onchange="cambiarEstadoSticker()">
+                                    <option value="LISTO">LISTO</option>
+                                    <option value="DEVOLUCION">DEVOLUCIÓN</option>
+                                    <option value="LIBRE">LIBRE</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="grupoPrecioSticker">
+                                <label>VALOR / PRECIO</label>
+                                <input type="text" id="txtPrecioSticker" placeholder="EJ: 50000" oninput="formatearYActualizarSticker()">
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="grupoTextoLibre" style="display: none;">
+                            <label>TEXTO PERSONALIZADO (PUEDES USAR ENTER)</label>
+                            <textarea id="txtLibre" placeholder="ESCRIBE O PEGA AQUÍ LO QUE QUIERAS..." oninput="actualizarVistaSticker()"></textarea>
+                        </div>
+
+                        <div class="form-group" id="grupoZoomLibre" style="display: none;">
+                            <label>AJUSTE DE TAMAÑO (AUTOMÁTICO / MANUAL)</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="range" id="rangeZoom" min="8" max="80" value="30" oninput="actualizarVistaSticker()" style="flex: 1; cursor: pointer;">
+                                <button class="btn btn-secondary" onclick="resetearZoom()" style="padding: 8px 12px; font-size: 11px;">AUTO</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="preview-wrapper">
+                        <span class="preview-badge" id="labelMedidaActual">VISTA PREVIA: 50 MM X 30 MM</span>
+                        <div id="sticker-canvas">
+                            <div class="stk-header" id="prevTitulo">CASA ELECTRÓNICA</div>
+                            <div class="stk-main" id="stkMain">
+                                <div class="stk-status" id="prevEstado">LISTO</div>
+                                <div class="stk-price" id="prevPrecio">$ 0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="imprimirSticker()" style="justify-content: center; padding: 12px; font-size: 0.95rem;">
+                        <i data-lucide="printer"></i> IMPRIMIR EN MARKLIFE D100
+                    </button>
+                </div>
+            </div>
+
         </main>
 
-        <aside class="card">
+        <aside class="card" id="sidebarContainer">
             <div class="card-header">
                 <div class="card-title">
                     <i data-lucide="list"></i> ÓRDENES REGISTRADAS
@@ -1040,9 +1344,43 @@
             </div>
 
             <div class="search-container">
-                <button type="button" id="btnFiltroPendientes" class="btn-pendientes" onclick="toggleFiltroPendientes()" title="Filtrar pendientes">
-                    <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i> PENDIENTES
-                </button>
+                <!-- Buscador de Estado sin corredera (no-scroll) -->
+                <div class="modern-select-wrapper" id="wrapperFiltroEstado">
+                    <div class="modern-select-btn" onclick="toggleModernDropdown('wrapperFiltroEstado')" style="height: 38px; min-height: 38px; font-size: 0.8rem;">
+                        <span id="displayFiltroEstado" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i data-lucide="filter" style="width: 14px; height: 14px; color: var(--accent-cyan);"></i> TODOS LOS ESTADOS
+                        </span>
+                        <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
+                    </div>
+                    <div class="modern-dropdown-options no-scroll" id="listFiltroEstado">
+                        <div class="modern-option-item" onclick="seleccionarFiltroEstado('TODOS', 'TODOS LOS ESTADOS', 'dot-cyan')">
+                            <span class="modern-dot dot-cyan"></span> TODOS LOS ESTADOS
+                        </div>
+                        <div class="modern-option-item" onclick="seleccionarFiltroEstado('PENDIENTE', 'PENDIENTE', 'dot-pendiente')">
+                            <span class="modern-dot dot-pendiente"></span> PENDIENTE
+                        </div>
+                        <div class="modern-option-item" onclick="seleccionarFiltroEstado('REPARADO', 'REPARADO', 'dot-reparado')">
+                            <span class="modern-dot dot-reparado"></span> REPARADO
+                        </div>
+                        <div class="modern-option-item" onclick="seleccionarFiltroEstado('DEVOLUCION', 'DEVOLUCIÓN', 'dot-devolucion')">
+                            <span class="modern-dot dot-devolucion"></span> DEVOLUCIÓN
+                        </div>
+                        <div class="modern-option-item" onclick="seleccionarFiltroEstado('MISMO ESTADO', 'MISMO ESTADO', 'dot-mismo-estado')">
+                            <span class="modern-dot dot-mismo-estado"></span> MISMO ESTADO
+                        </div>
+                        <div class="modern-option-item" onclick="seleccionarFiltroEstado('ENTREGADO SIN PAGAR', 'ENTREGADO SIN PAGAR', 'dot-entregado-sin-pagar')">
+                            <span class="modern-dot dot-entregado-sin-pagar"></span> ENTREGADO SIN PAGAR
+                        </div>
+                        <div class="modern-option-item" onclick="seleccionarFiltroEstado('ENTREGADO OK', 'ENTREGADO OK', 'dot-ok')">
+                            <span class="modern-dot dot-ok"></span> ENTREGADO OK
+                        </div>
+                        <div class="modern-option-item" onclick="seleccionarFiltroEstado('ENTREGADO MALO', 'ENTREGADO MALO', 'dot-malo')">
+                            <span class="modern-dot dot-malo"></span> ENTREGADO MALO
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="filtroEstadoActual" value="TODOS">
+
                 <div class="search-box">
                     <i data-lucide="search"></i>
                     <input type="text" id="searchInput" placeholder="BUSCAR CLIENTE, ORDEN O TEL...">
@@ -1054,7 +1392,7 @@
 
     </div>
 
-    <!-- MODAL MODERNO: REPORTE DE INGRESOS (DÍA / MES / AÑO + TÉCNICO + TOTAL NEGOCIO) -->
+    <!-- MODALES VARIOS -->
     <div id="modalIngresosOverlay" class="modal-overlay">
         <div class="floating-form-box" style="max-width: 680px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.65rem;">
@@ -1067,15 +1405,9 @@
             </div>
 
             <div class="ingresos-tabs">
-                <button type="button" class="ingreso-period-btn active" id="btnPeriodoDia" onclick="cambiarPeriodoIngresos('DIA')">
-                    POR DÍA
-                </button>
-                <button type="button" class="ingreso-period-btn" id="btnPeriodoMes" onclick="cambiarPeriodoIngresos('MES')">
-                    POR MES
-                </button>
-                <button type="button" class="ingreso-period-btn" id="btnPeriodoAnio" onclick="cambiarPeriodoIngresos('ANIO')">
-                    POR AÑO
-                </button>
+                <button type="button" class="ingreso-period-btn active" id="btnPeriodoDia" onclick="cambiarPeriodoIngresos('DIA')">POR DÍA</button>
+                <button type="button" class="ingreso-period-btn" id="btnPeriodoMes" onclick="cambiarPeriodoIngresos('MES')">POR MES</button>
+                <button type="button" class="ingreso-period-btn" id="btnPeriodoAnio" onclick="cambiarPeriodoIngresos('ANIO')">POR AÑO</button>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
@@ -1083,17 +1415,14 @@
                     <label for="filtroFechaDia">SELECCIONE EL DÍA:</label>
                     <input type="date" id="filtroFechaDia" onchange="calcularIngresos()">
                 </div>
-
                 <div class="form-group" id="contenedorSelectorMes" style="display: none;">
                     <label for="filtroFechaMes">SELECCIONE EL MES:</label>
                     <input type="month" id="filtroFechaMes" onchange="calcularIngresos()">
                 </div>
-
                 <div class="form-group" id="contenedorSelectorAnio" style="display: none;">
                     <label for="filtroFechaAnio">SELECCIONE EL AÑO:</label>
                     <select id="filtroFechaAnio" onchange="calcularIngresos()"></select>
                 </div>
-
                 <div class="form-group">
                     <label for="filtroTecnicoIngreso">FILTRAR POR TÉCNICO:</label>
                     <select id="filtroTecnicoIngreso" onchange="calcularIngresos()">
@@ -1102,36 +1431,28 @@
                 </div>
             </div>
 
-            <!-- 3 TARJETAS: INGRESO BRUTO | VALOR REPUESTOS | GANANCIA NETA REAL -->
             <div class="ingreso-summary-grid-3">
                 <div class="ingreso-total-card">
                     <span class="ingreso-total-label" id="lblTituloIngreso">INGRESOS BRUTOS</span>
                     <div class="ingreso-total-amount" id="lblMontoTotalIngreso">$ 0</div>
                     <span class="ingreso-total-sub" id="lblCantidadOrdenesIngreso">0 ÓRDENES</span>
                 </div>
-
                 <div class="ingreso-repuestos-card">
                     <span class="ingreso-total-label">VALOR REPUESTOS</span>
                     <div class="ingreso-repuestos-amount" id="lblTotalRepuestosCard">$ 0</div>
-                    <span class="ingreso-total-sub">COSTO INSUMOS</span>
+                    <span class="ingreso-total-sub">COSTO Insumos</span>
                 </div>
-
                 <div class="ingreso-neto-card">
                     <span class="ingreso-total-label">GANANCIA NETA REAL</span>
                     <div class="ingreso-neto-amount" id="lblMontoNetoIngreso">$ 0</div>
-                    <span class="ingreso-total-sub" id="lblSubNetoTecnico">LIBRE DE REPUESTOS</span>
+                    <span class="ingreso-total-sub">LIBRE DE REPUESTOS</span>
                 </div>
             </div>
 
-            <!-- RESUMEN TOTAL DEL NEGOCIO (TODOS LOS TÉCNICOS DEL PERÍODO) -->
             <div class="ingreso-negocio-card">
                 <div style="display: flex; flex-direction: column; gap: 2px;">
-                    <span style="font-size: 0.72rem; font-weight: 800; color: var(--accent-blue); letter-spacing: 0.6px;">
-                        TOTAL ENTRADA AL NEGOCIO (TODOS LOS TÉCNICOS)
-                    </span>
-                    <span style="font-size: 0.7rem; color: var(--text-muted);" id="lblSubTotalNegocio">
-                        SUMA GENERAL DEL PERÍODO SELECCIONADO
-                    </span>
+                    <span style="font-size: 0.72rem; font-weight: 800; color: var(--accent-blue);">TOTAL ENTRADA AL NEGOCIO</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);" id="lblSubTotalNegocio">SUMA GENERAL</span>
                 </div>
                 <div style="display: flex; gap: 1.25rem; align-items: center;">
                     <div style="text-align: right;">
@@ -1146,33 +1467,31 @@
             </div>
 
             <div>
-                <label style="display: block; margin-bottom: 0.5rem;">DETALLE DE ÓRDENES DEL PERÍODO:</label>
+                <label style="display: block; margin-bottom: 0.5rem;">DETALLE DE ÓRDENES:</label>
                 <div class="ingresos-detail-list" id="listaDetalleIngresos"></div>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; margin-top: 0.25rem;">
+            <div style="display: flex; justify-content: flex-end;">
                 <button type="button" class="btn btn-primary" onclick="cerrarModalIngresos()">CERRAR</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: MANDAR MENSAJE PERSONALIZADO WHATSAPP -->
+    <!-- MODAL WHATSAPP CON RECUADRO LIBRE (BOTÓN MENSAJE GENERAL) -->
     <div id="modalMensajeOverlay" class="modal-overlay">
         <div class="floating-form-box" style="max-width: 500px;">
             <h3><i data-lucide="message-circle"></i> ENVIAR MENSAJE DE WHATSAPP</h3>
             <div style="display: flex; flex-direction: column; gap: 1rem;">
                 <div class="form-group">
-                    <label>VISTA PREVIA DE LA CABECERA (AUTOMÁTICA):</label>
-                    <div id="previewCabecera" style="background: var(--bg-input); padding: 0.75rem; border-radius: 6px; font-size: 0.85rem; color: var(--text-muted); border: 1px solid var(--border-color); font-family: monospace;">
-                        HOLA [CLIENTE] TE HABLAMOS DE CASA ELECTRONICA PARA INFORMATE SOBRE EL ARTICULO [ARTICULO] CON ORDEN DE SERVICIO [ORDEN].
-                    </div>
+                    <label>VISTA PREVIA DE LA CABECERA:</label>
+                    <div id="previewCabecera" style="background: var(--bg-input); padding: 0.75rem; border-radius: 6px; font-size: 0.85rem; color: var(--text-muted); border: 1px solid var(--border-color); font-family: monospace;"></div>
                 </div>
                 <div class="form-group">
                     <label for="inputAdicionalMensaje">TEXTO ADICIONAL / OBSERVACIÓN (OPCIONAL)</label>
-                    <textarea id="inputAdicionalMensaje" placeholder="ESCRIBE AQUÍ LOS DETALLES O MENSAJE QUE DESEAS AGREGAR..." style="min-height: 110px;"></textarea>
+                    <textarea id="inputAdicionalMensaje" placeholder="ESCRIBE AQUÍ..." style="min-height: 110px;"></textarea>
                 </div>
             </div>
-            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem;">
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.0rem;">
                 <button type="button" class="btn btn-secondary" onclick="cerrarModalMensajePersonalizado()">CANCELAR</button>
                 <button type="button" class="btn btn-whatsapp" onclick="enviarMensajePersonalizadoWhatsApp()">
                     <i data-lucide="send"></i> ENVIAR WHATSAPP
@@ -1181,49 +1500,33 @@
         </div>
     </div>
 
-    <!-- MODALES -->
+    <!-- MODAL SALIDA / FACTURA -->
+    <div id="modalSalidaOverlay" class="modal-overlay">
+        <div class="modal-box" style="max-width: 400px;">
+            <h3>ORDEN DE SALIDA / FACTURA</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">SELECCIONA CÓMO DESEAS GENERAR LA SALIDA DEL EQUIPO:</p>
+            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalSalida(); generarFacturaPDF();" style="flex: 1; justify-content: center;"><i data-lucide="printer"></i> IMPRIMIR</button>
+                <button type="button" class="btn btn-whatsapp" onclick="cerrarModalSalida(); enviarSalidaEstadoWhatsApp();" style="flex: 1; justify-content: center;"><i data-lucide="message-circle"></i> WHATSAPP</button>
+            </div>
+            <div style="text-align: right; margin-top: 0.5rem;"><button type="button" class="btn btn-secondary" onclick="cerrarModalSalida()" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">CANCELAR</button></div>
+        </div>
+    </div>
+
     <div id="modalEntradaOverlay" class="modal-overlay">
         <div class="modal-box">
             <h3>COMPROBANTE DE ENTRADA</h3>
-            <label style="font-size: 0.8rem;">SELECCIONE UNA ACCIÓN:</label>
-            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; justify-content: space-between;">
-                <button type="button" class="btn btn-secondary" onclick="cerrarModalEntrada(); generarEntradaPDF();" style="flex: 1; justify-content: center;">
-                    <i data-lucide="printer"></i> IMPRIMIR
-                </button>
-                <button type="button" class="btn btn-whatsapp" onclick="cerrarModalEntrada(); enviarEntradaWhatsApp();" style="flex: 1; justify-content: center;">
-                    <i data-lucide="message-circle"></i> WHATSAPP
-                </button>
+            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalEntrada(); generarEntradaPDF();" style="flex: 1; justify-content: center;"><i data-lucide="printer"></i> IMPRIMIR</button>
+                <button type="button" class="btn btn-whatsapp" onclick="cerrarModalEntrada(); enviarEntradaWhatsApp();" style="flex: 1; justify-content: center;"><i data-lucide="message-circle"></i> WHATSAPP</button>
             </div>
-            <div style="text-align: right; margin-top: 0.5rem;">
-                <button type="button" class="btn btn-secondary" onclick="cerrarModalEntrada()" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">CANCELAR</button>
-            </div>
+            <div style="text-align: right; margin-top: 0.5rem;"><button type="button" class="btn btn-secondary" onclick="cerrarModalEntrada()" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">CANCELAR</button></div>
         </div>
     </div>
 
-    <div id="modalSalidaOverlay" class="modal-overlay">
-        <div class="modal-box">
-            <h3>ORDEN DE SALIDA / FACTURA</h3>
-            <label style="font-size: 0.8rem;">SELECCIONE UNA ACCIÓN:</label>
-            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; justify-content: space-between;">
-                <button type="button" class="btn btn-secondary" onclick="cerrarModalSalida(); generarFacturaPDF();" style="flex: 1; justify-content: center;">
-                    <i data-lucide="printer"></i> IMPRIMIR
-                </button>
-                <button type="button" class="btn btn-whatsapp" onclick="cerrarModalSalida(); enviarSalidaWhatsApp();" style="flex: 1; justify-content: center;">
-                    <i data-lucide="message-circle"></i> WHATSAPP
-                </button>
-            </div>
-            <div style="text-align: right; margin-top: 0.5rem;">
-                <button type="button" class="btn btn-secondary" onclick="cerrarModalSalida()" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL TICKET CON LISTA MODERNA -->
     <div id="modalTicketOverlay" class="modal-overlay">
         <div class="modal-box">
             <h3>SELECCIONAR TICKET</h3>
-            <label style="font-size: 0.8rem;">ELIJA LA OPCIÓN A IMPRIMIR:</label>
-            
             <div class="modern-select-wrapper" id="wrapperTipoTicket">
                 <div class="modern-select-btn" onclick="toggleModernDropdown('wrapperTipoTicket')">
                     <span id="displayTipoTicket" style="display: flex; align-items: center; gap: 0.6rem;">
@@ -1232,48 +1535,36 @@
                     <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
                 </div>
                 <div class="modern-dropdown-options" id="listTipoTicket">
-                    <div class="modern-option-item" onclick="selectModernOption('selectTipoTicket', 'displayTipoTicket', 'wrapperTipoTicket', 'REPARADO', 'REPARADO', 'dot-reparado')">
-                        <span class="modern-dot dot-reparado"></span> REPARADO
-                    </div>
-                    <div class="modern-option-item" onclick="selectModernOption('selectTipoTicket', 'displayTipoTicket', 'wrapperTipoTicket', 'DEVOLUCION', 'DEVOLUCIÓN', 'dot-devolucion')">
-                        <span class="modern-dot dot-devolucion"></span> DEVOLUCIÓN
-                    </div>
+                    <div class="modern-option-item" onclick="selectModernOption('selectTipoTicket', 'displayTipoTicket', 'wrapperTipoTicket', 'REPARADO', 'REPARADO', 'dot-reparado')"><span class="modern-dot dot-reparado"></span> REPARADO</div>
+                    <div class="modern-option-item" onclick="selectModernOption('selectTipoTicket', 'displayTipoTicket', 'wrapperTipoTicket', 'DEVOLUCION', 'DEVOLUCIÓN', 'dot-devolucion')"><span class="modern-dot dot-devolucion"></span> DEVOLUCIÓN</div>
                 </div>
             </div>
             <input type="hidden" id="selectTipoTicket" value="REPARADO">
-
             <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;">
-                <button type="button" class="btn btn-secondary" onclick="cerrarModalTicket()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">CANCELAR</button>
-                <button type="button" class="btn btn-primary" onclick="ejecutarImpresionTicket()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">IMPRIMIR</button>
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalTicket()">CANCELAR</button>
+                <button type="button" class="btn btn-primary" onclick="ejecutarImpresionTicket()">IMPRIMIR</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL LISTA ALIADOS CON LISTA MODERNA -->
     <div id="modalListaAliadosOverlay" class="modal-overlay">
         <div class="modal-box" style="max-width: 390px;">
             <h3>SELECCIONAR ALIADO</h3>
-            <label style="font-size: 0.8rem;">ALIADOS REGISTRADOS:</label>
-            
             <div class="modern-select-wrapper" id="wrapperAliadoModal">
                 <div class="modern-select-btn" onclick="toggleModernDropdown('wrapperAliadoModal')">
-                    <span id="displayAliadoModal" style="display: flex; align-items: center; gap: 0.6rem; color: var(--text-muted);">
-                        SELECCIONE UN ALIADO...
-                    </span>
+                    <span id="displayAliadoModal" style="color: var(--text-muted);">SELECCIONE UN ALIADO...</span>
                     <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
                 </div>
                 <div class="modern-dropdown-options" id="listAliadoModal"></div>
             </div>
             <input type="hidden" id="selectAliadoModal" value="">
-
             <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;">
-                <button type="button" class="btn btn-secondary" onclick="cerrarModalListaAliados()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">CANCELAR</button>
-                <button type="button" class="btn btn-primary" onclick="usarAliadoSeleccionado()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">SELECCIONAR</button>
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalListaAliados()">CANCELAR</button>
+                <button type="button" class="btn btn-primary" onclick="usarAliadoSeleccionado()">SELECCIONAR</button>
             </div>
         </div>
     </div>
 
-    <!-- VENTANA EMERGENTE: AGREGAR NUEVO ALIADO -->
     <div id="modalFormularioAliadoOverlay" class="modal-overlay">
         <div class="floating-form-box" style="max-width: 480px;">
             <h3><i data-lucide="user-plus"></i> NUEVO ALIADO COMERCIAL</h3>
@@ -1284,7 +1575,7 @@
                         <input type="text" id="inputNombreAliado" placeholder="EJ: TECNO SHOP" required>
                     </div>
                     <div class="form-group">
-                        <label for="inputTelefonoAliado">TELÉFONO DEL ALIADO</label>
+                        <label for="inputTelefonoAliado">TELÉFONO</label>
                         <input type="text" id="inputTelefonoAliado" placeholder="EJ: 3101234567" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                     </div>
                 </div>
@@ -1296,7 +1587,6 @@
         </div>
     </div>
 
-    <!-- NUEVA VENTANA EMERGENTE MODERNA: AGREGAR TÉCNICO -->
     <div id="modalFormularioTecnicoOverlay" class="modal-overlay">
         <div class="floating-form-box" style="max-width: 480px;">
             <h3><i data-lucide="wrench"></i> NUEVO TÉCNICO</h3>
@@ -1326,6 +1616,7 @@
         let ordenesDB = [];
         let tecnicosDB = [];
         let aliadosDB = [];
+        let colaOffline = JSON.parse(localStorage.getItem('casaElectronica_colaOffline')) || [];
 
         let currentOrderId = null;
         let datosOriginalesIdentificacion = null;
@@ -1333,32 +1624,72 @@
         
         let modoEdicionIdActivo = false;
         let modoEdicionRepActivo = false;
-
         let activeTab = 'identificacion';
-        let soloPendientesActivo = false;
         let periodoIngresoActual = 'DIA';
 
-        const CAMPOS_IDENTIFICACION = [
-            'nombre', 'telefono', 'articulo', 'marca',
-            'modelo', 'serie', 'contrasena', 'sintomas', 'notas'
-        ];
+        // Variables para el módulo de Stickers
+        let medidasSticker = JSON.parse(localStorage.getItem('marklife_medidas')) || [{ ancho: 50, alto: 30, fija: true }];
+        let medidaSeleccionadaSticker = medidasSticker[0];
+        let zoomManualSticker = false;
 
-        const CAMPOS_REPARACION = [
-            'repDiagnostico', 'repGarantia', 'repFechaReparacion', 'repTotalPagar', 'repValorRepuesto', 'repFechaEntrega'
-        ];
+        const CAMPOS_IDENTIFICACION = ['nombre', 'telefono', 'articulo', 'marca', 'modelo', 'serie', 'contrasena', 'sintomas', 'notas'];
+        const CAMPOS_REPARACION = ['repDiagnostico', 'repGarantia', 'repFechaReparacion', 'repTotalPagar', 'repValorRepuesto', 'repFechaEntrega'];
 
         document.addEventListener('DOMContentLoaded', async () => {
             lucide.createIcons();
             setupUppercaseEnforcement();
+            window.addEventListener('online', actualizarEstadoRed);
+            window.addEventListener('offline', actualizarEstadoRed);
+            actualizarEstadoRed();
 
             await cargarDatosDesdeSheet();
-
             if (!currentOrderId) { nuevoRegistro(); }
 
             document.getElementById('searchInput').addEventListener('input', (e) => { renderOrdersList(e.target.value); });
             document.getElementById('formIdentificacion').addEventListener('submit', (e) => { e.preventDefault(); guardarIdentificacion(); });
             document.getElementById('formReparaciones').addEventListener('submit', (e) => { e.preventDefault(); guardarReparacion(); });
+
+            // Inicializar stickers
+            renderizarBotonesMedidasSticker();
+            cambiarEstadoSticker();
         });
+
+        function actualizarEstadoRed() {
+            const badge = document.getElementById('networkStatusBadge');
+            if (navigator.onLine) {
+                badge.className = 'net-online';
+                badge.innerHTML = '<i data-lucide="wifi" style="width:12px;height:12px;"></i> ONLINE';
+                sincronizarColaOffline();
+            } else {
+                badge.className = 'net-offline';
+                badge.innerHTML = '<i data-lucide="wifi-off" style="width:12px;height:12px;"></i> OFFLINE';
+            }
+            lucide.createIcons();
+        }
+
+        async function sincronizarColaOffline() {
+            if (colaOffline.length === 0) return;
+            showToast(`SINCRONIZANDO ${colaOffline.length} ACCIONES PENDIENTES...`);
+            const pendientes = [...colaOffline];
+            colaOffline = [];
+            localStorage.setItem('casaElectronica_colaOffline', JSON.stringify(colaOffline));
+
+            for (let payload of pendientes) {
+                try {
+                    await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST', mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                } catch(e) {
+                    colaOffline.push(payload);
+                }
+            }
+            localStorage.setItem('casaElectronica_colaOffline', JSON.stringify(colaOffline));
+            if (colaOffline.length === 0) {
+                showToast('SINCRONIZACIÓN EXITOSA CON LA NUBE');
+            }
+        }
 
         function formatearMilesCOP(valor) {
             const digits = String(valor || '').replace(/\D/g, '');
@@ -1367,77 +1698,35 @@
         }
 
         function formatCurrencyInput(input) {
-            const formatted = formatearMilesCOP(input.value);
-            input.value = formatted;
+            input.value = formatearMilesCOP(input.value);
             verificarCambiosReparacion();
         }
 
         function formatearFechaParaInput(fechaStr) {
             if (!fechaStr) return '';
             const clean = String(fechaStr).trim();
-            if (/^\d{4}-\d{2}-\d{2}/.test(clean)) {
-                return clean.substring(0, 10);
-            }
+            if (/^\d{4}-\d{2}-\d{2}/.test(clean)) return clean.substring(0, 10);
             const matchDMY = clean.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-            if (matchDMY) {
-                const dia = matchDMY[1].padStart(2, '0');
-                const mes = matchDMY[2].padStart(2, '0');
-                const anio = matchDMY[3];
-                return `${anio}-${mes}-${dia}`;
-            }
+            if (matchDMY) return `${matchDMY[3]}-${matchDMY[2].padStart(2,'0')}-${matchDMY[1].padStart(2,'0')}`;
             const d = new Date(clean);
-            if (!isNaN(d.getTime())) {
-                const y = d.getFullYear();
-                const m = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                return `${y}-${m}-${day}`;
-            }
+            if (!isNaN(d.getTime())) return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
             return '';
         }
 
         function insertarFechaHoy(inputId) {
             const hoy = new Date();
-            const y = hoy.getFullYear();
-            const m = String(hoy.getMonth() + 1).padStart(2, '0');
-            const d = String(hoy.getDate()).padStart(2, '0');
-            document.getElementById(inputId).value = `${y}-${m}-${d}`;
+            document.getElementById(inputId).value = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
             verificarCambiosReparacion();
         }
 
         function setCamposIdentificacionBloqueados(bloqueado) {
-            CAMPOS_IDENTIFICACION.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.disabled = bloqueado;
-            });
+            CAMPOS_IDENTIFICACION.forEach(id => { const el = document.getElementById(id); if (el) el.disabled = bloqueado; });
             const btnAliado = document.getElementById('btnAliadoLista');
             if (btnAliado) btnAliado.disabled = bloqueado;
         }
 
-        function habilitarEdicionIdentificacion() {
-            if (!currentOrderId) return;
-            modoEdicionIdActivo = true;
-            setCamposIdentificacionBloqueados(false);
-
-            const badge = document.getElementById('statusBadgeId');
-            badge.textContent = 'MODO EDICIÓN (IDENTIFICACIÓN)';
-            badge.style.background = 'rgba(245, 158, 11, 0.15)';
-            badge.style.color = 'var(--accent-amber)';
-            badge.style.borderColor = 'rgba(245, 158, 11, 0.4)';
-
-            document.getElementById('btnEditarId').style.display = 'none';
-            const btnActualizar = document.getElementById('btnActualizarId');
-            btnActualizar.style.display = 'inline-flex';
-            btnActualizar.disabled = true;
-
-            document.getElementById('nombre').focus();
-            showToast('IDENTIFICACIÓN DESBLOQUEADA PARA EDICIÓN');
-        }
-
         function setCamposReparacionBloqueados(bloqueado) {
-            CAMPOS_REPARACION.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.disabled = bloqueado;
-            });
+            CAMPOS_REPARACION.forEach(id => { const el = document.getElementById(id); if (el) el.disabled = bloqueado; });
             const wrapperEstado = document.getElementById('wrapperRepEstado');
             const wrapperTecnico = document.getElementById('wrapperRepTecnico');
             const btnRelojGarantia = document.getElementById('btnRelojGarantia');
@@ -1459,49 +1748,66 @@
             }
         }
 
-        function habilitarEdicionReparacion() {
+        function habilitarEdicionGeneral() {
             if (!currentOrderId) return;
+            modoEdicionIdActivo = true;
             modoEdicionRepActivo = true;
+            setCamposIdentificacionBloqueados(false);
             setCamposReparacionBloqueados(false);
 
-            const badge = document.getElementById('statusBadgeRep');
-            badge.textContent = 'MODO EDICIÓN (REPARACIÓN)';
-            badge.style.background = 'rgba(245, 158, 11, 0.15)';
-            badge.style.color = 'var(--accent-amber)';
-            badge.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+            const badgeId = document.getElementById('statusBadgeId');
+            badgeId.textContent = 'MODO EDICIÓN';
+            badgeId.style.background = 'rgba(245, 158, 11, 0.15)';
+            badgeId.style.color = 'var(--accent-amber)';
+
+            const badgeRep = document.getElementById('statusBadgeRep');
+            badgeRep.textContent = 'MODO EDICIÓN';
+            badgeRep.style.background = 'rgba(245, 158, 11, 0.15)';
+            badgeRep.style.color = 'var(--accent-amber)';
+
+            document.getElementById('btnEditarId').style.display = 'none';
+            document.getElementById('btnActualizarId').style.display = 'inline-flex';
+            document.getElementById('btnActualizarId').disabled = true;
 
             document.getElementById('btnEditarRep').style.display = 'none';
-            const btnActualizar = document.getElementById('btnActualizarRep');
-            btnActualizar.style.display = 'inline-flex';
-            btnActualizar.disabled = true;
-
-            showToast('REPARACIONES DESBLOQUEADAS PARA EDICIÓN');
+            document.getElementById('btnActualizarRep').style.display = 'inline-flex';
+            document.getElementById('btnActualizarRep').disabled = true;
+            document.getElementById('nombre').focus();
+            showToast('ORDEN DESBLOQUEADA PARA EDICIÓN');
         }
 
         function toggleModernDropdown(wrapperId) {
             const target = document.getElementById(wrapperId);
             if (target.classList.contains('disabled')) return;
-            
             const isOpen = target.classList.contains('active');
             document.querySelectorAll('.modern-select-wrapper').forEach(el => el.classList.remove('active'));
-            if (!isOpen) {
-                target.classList.add('active');
-            }
+            if (!isOpen) target.classList.add('active');
         }
 
         function selectModernOption(inputId, displayId, wrapperId, value, label, dotClass) {
             document.getElementById(inputId).value = value;
             const displayEl = document.getElementById(displayId);
             displayEl.style.color = 'var(--text-main)';
-            
             if (dotClass) {
                 displayEl.innerHTML = `<span class="modern-dot ${dotClass}"></span> ${label}`;
             } else {
                 displayEl.textContent = label;
             }
-            
             document.getElementById(wrapperId).classList.remove('active');
             verificarCambiosReparacion();
+        }
+
+        function seleccionarFiltroEstado(valor, label, dotClass) {
+            document.getElementById('filtroEstadoActual').value = valor;
+            const displayEl = document.getElementById('displayFiltroEstado');
+            if (valor === 'TODOS') {
+                displayEl.innerHTML = `<i data-lucide="filter" style="width: 14px; height: 14px; color: var(--accent-cyan);"></i> ${label}`;
+            } else {
+                displayEl.innerHTML = `<span class="modern-dot ${dotClass}"></span> ${label}`;
+            }
+            document.getElementById('wrapperFiltroEstado').classList.remove('active');
+            lucide.createIcons();
+            renderOrdersList(document.getElementById('searchInput').value);
         }
 
         window.addEventListener('click', function(e) {
@@ -1516,6 +1822,8 @@
                 case 'DEVOLUCION': return 'dot-devolucion';
                 case 'ENTREGADO OK': return 'dot-ok';
                 case 'ENTREGADO MALO': return 'dot-malo';
+                case 'MISMO ESTADO': return 'dot-mismo-estado';
+                case 'ENTREGADO SIN PAGAR': return 'dot-entregado-sin-pagar';
                 default: return 'dot-pendiente';
             }
         }
@@ -1523,19 +1831,16 @@
         function syncStatusUI(estadoText) {
             const valor = estadoText || 'PENDIENTE';
             const dotClass = getDotClassForStatus(valor);
-            const labelText = valor === 'DEVOLUCION' ? 'DEVOLUCIÓN' : valor;
-
+            let labelText = valor;
+            if (valor === 'DEVOLUCION') labelText = 'DEVOLUCIÓN';
             document.getElementById('repEstado').value = valor;
-            document.getElementById('displayRepEstado').innerHTML = `
-                <span class="modern-dot ${dotClass}"></span> ${labelText}
-            `;
+            document.getElementById('displayRepEstado').innerHTML = `<span class="modern-dot ${dotClass}"></span> ${labelText}`;
         }
 
         function syncTecnicoUI(tecnicoVal) {
             const input = document.getElementById('repTecnico');
             const display = document.getElementById('displayRepTecnico');
             input.value = tecnicoVal || '';
-
             if (tecnicoVal) {
                 display.style.color = 'var(--text-main)';
                 display.innerHTML = `<span class="modern-dot dot-cyan"></span> ${tecnicoVal}`;
@@ -1549,7 +1854,6 @@
             try {
                 const response = await fetch(APPS_SCRIPT_URL);
                 const data = await response.json();
-                
                 if (data && !Array.isArray(data) && data.ordenes) {
                     ordenesDB = data.ordenes || [];
                     tecnicosDB = data.tecnicos || [];
@@ -1557,7 +1861,6 @@
                 } else if (Array.isArray(data)) {
                     ordenesDB = data;
                 }
-                
                 localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
                 localStorage.setItem('casaElectronica_tecnicos', JSON.stringify(tecnicosDB));
                 localStorage.setItem('casaElectronica_aliados', JSON.stringify(aliadosDB));
@@ -1566,7 +1869,6 @@
                 tecnicosDB = JSON.parse(localStorage.getItem('casaElectronica_tecnicos')) || [];
                 aliadosDB = JSON.parse(localStorage.getItem('casaElectronica_aliados')) || [];
             }
-
             actualizarSelectTecnicos();
             actualizarSelectAliadosModal();
             renderOrdersList();
@@ -1576,12 +1878,26 @@
             activeTab = tabName;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            
+            const containerLayout = document.getElementById('mainContainerLayout');
+            const sidebarContainer = document.getElementById('sidebarContainer');
+
             if (tabName === 'identificacion') {
                 document.getElementById('sectionIdentificacion').classList.add('active');
                 document.getElementById('tabIdentificacion').classList.add('active');
-            } else {
+                sidebarContainer.style.display = 'block';
+                containerLayout.classList.remove('full-width');
+            } else if (tabName === 'reparaciones') {
                 document.getElementById('sectionReparaciones').classList.add('active');
                 document.getElementById('tabReparaciones').classList.add('active');
+                sidebarContainer.style.display = 'block';
+                containerLayout.classList.remove('full-width');
+            } else if (tabName === 'stickers') {
+                document.getElementById('sectionStickers').classList.add('active');
+                document.getElementById('tabStickers').classList.add('active');
+                sidebarContainer.style.display = 'none';
+                containerLayout.classList.add('full-width');
+                actualizarVistaSticker();
             }
         }
 
@@ -1589,28 +1905,199 @@
             return Math.floor(Math.random() * 1048576).toString(16).toUpperCase().padStart(5, '0');
         }
 
-        /* ================= MÓDULO DE INGRESOS ================= */
+        /* ================= MÓDULO STICKERS JAVASCRIPT ================= */
+        function renderizarBotonesMedidasSticker() {
+            const container = document.getElementById('sizesContainer');
+            container.innerHTML = '';
+
+            medidasSticker.forEach((m, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'size-btn-wrapper';
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-size' + (medidaSeleccionadaSticker.ancho === m.ancho && medidaSeleccionadaSticker.alto === m.alto ? ' selected' : '');
+                btn.textContent = `${m.ancho} X ${m.alto} MM`;
+                btn.onclick = () => seleccionarMedidaSticker(m);
+                wrapper.appendChild(btn);
+
+                if (!m.fija) {
+                    const btnDel = document.createElement('button');
+                    btnDel.className = 'btn-delete-size';
+                    btnDel.textContent = '×';
+                    btnDel.title = 'ELIMINAR MEDIDA';
+                    btnDel.onclick = (e) => { e.stopPropagation(); eliminarMedidaSticker(index); };
+                    wrapper.appendChild(btnDel);
+                }
+                container.appendChild(wrapper);
+            });
+
+            const btnAdd = document.createElement('button');
+            btnAdd.className = 'btn-add-size';
+            btnAdd.textContent = '+ AGREGAR MEDIDA';
+            btnAdd.onclick = toggleFormNuevaMedidaSticker;
+            container.appendChild(btnAdd);
+        }
+
+        function seleccionarMedidaSticker(medida) {
+            medidaSeleccionadaSticker = medida;
+            const canvas = document.getElementById('sticker-canvas');
+            canvas.style.width = `${medida.ancho}mm`;
+            canvas.style.height = `${medida.alto}mm`;
+
+            document.getElementById('prevTitulo').style.fontSize = Math.max(6, Math.min(10, medida.ancho * 0.15)) + 'pt';
+            document.getElementById('dynamic-page-size').innerHTML = `@page { size: ${medida.ancho}mm ${medida.alto}mm; margin: 0; }`;
+            document.getElementById('labelMedidaActual').textContent = `VISTA PREVIA: ${medida.ancho} MM X ${medida.alto} MM`;
+            renderizarBotonesMedidasSticker();
+            actualizarVistaSticker();
+        }
+
+        function toggleFormNuevaMedidaSticker() {
+            const form = document.getElementById('newSizeForm');
+            form.classList.toggle('active');
+            if (form.classList.contains('active')) document.getElementById('inputAncho').focus();
+        }
+
+        function guardarNuevaMedida() {
+            const ancho = parseInt(document.getElementById('inputAncho').value);
+            const alto = parseInt(document.getElementById('inputAlto').value);
+            if (!ancho || !alto || ancho <= 0 || alto <= 0) {
+                alert('INGRESA UN ANCHO Y ALTO VÁLIDOS EN MILÍMETROS.');
+                return;
+            }
+            const existe = medidasSticker.some(m => m.ancho === ancho && m.alto === alto);
+            if (!existe) {
+                const nueva = { ancho, alto, fija: false };
+                medidasSticker.push(nueva);
+                localStorage.setItem('marklife_medidas', JSON.stringify(medidasSticker));
+                seleccionarMedidaSticker(nueva);
+            } else {
+                seleccionarMedidaSticker({ ancho, alto });
+            }
+            document.getElementById('inputAncho').value = '';
+            document.getElementById('inputAlto').value = '';
+            document.getElementById('newSizeForm').classList.remove('active');
+        }
+
+        function eliminarMedidaSticker(index) {
+            medidasSticker.splice(index, 1);
+            localStorage.setItem('marklife_medidas', JSON.stringify(medidasSticker));
+            seleccionarMedidaSticker(medidasSticker[0]);
+        }
+
+        function cambiarEstadoSticker() {
+            const estado = document.getElementById('selEstadoSticker').value;
+            const grupoPrecio = document.getElementById('grupoPrecioSticker');
+            const grupoTextoLibre = document.getElementById('grupoTextoLibre');
+            const grupoZoomLibre = document.getElementById('grupoZoomLibre');
+            const rowEstadoPrecio = document.getElementById('rowEstadoPrecio');
+
+            if (estado === 'LISTO') {
+                grupoPrecio.style.display = 'flex';
+                grupoTextoLibre.style.display = 'none';
+                grupoZoomLibre.style.display = 'none';
+                rowEstadoPrecio.style.gridTemplateColumns = '1fr 1fr';
+            } else if (estado === 'LIBRE') {
+                grupoPrecio.style.display = 'none';
+                grupoTextoLibre.style.display = 'flex';
+                grupoZoomLibre.style.display = 'flex';
+                rowEstadoPrecio.style.gridTemplateColumns = '1fr';
+                zoomManualSticker = false;
+            } else {
+                grupoPrecio.style.display = 'none';
+                grupoTextoLibre.style.display = 'none';
+                grupoZoomLibre.style.display = 'none';
+                rowEstadoPrecio.style.gridTemplateColumns = '1fr';
+            }
+            actualizarVistaSticker();
+        }
+
+        function formatearYActualizarSticker() {
+            const input = document.getElementById('txtPrecioSticker');
+            input.value = formatearMilesCOP(input.value);
+            actualizarVistaSticker();
+        }
+
+        function resetearZoom() {
+            zoomManualSticker = false;
+            actualizarVistaSticker();
+        }
+
+        function ajustarTamanoTexto(elemento, maxAnchoPx, maxAltoPx) {
+            let fontSize = maxAltoPx;
+            elemento.style.fontSize = fontSize + 'px';
+            while ((elemento.scrollWidth > maxAnchoPx || elemento.scrollHeight > maxAltoPx) && fontSize > 6) {
+                fontSize -= 0.5;
+                elemento.style.fontSize = fontSize + 'px';
+            }
+        }
+
+        function actualizarVistaSticker() {
+            const titulo = document.getElementById('txtTitulo').value.toUpperCase() || 'CASA ELECTRÓNICA';
+            document.getElementById('prevTitulo').textContent = titulo;
+
+            const estado = document.getElementById('selEstadoSticker').value;
+            const prevEstado = document.getElementById('prevEstado');
+            const prevPrecio = document.getElementById('prevPrecio');
+            const stkMain = document.getElementById('stkMain');
+
+            const anchoDisponible = stkMain.clientWidth - 2;
+            const altoDisponible = stkMain.clientHeight - 2;
+            prevEstado.classList.remove('modo-libre');
+
+            if (estado === 'DEVOLUCION') {
+                prevEstado.textContent = 'DEVOLUCIÓN';
+                prevPrecio.style.display = 'none';
+                ajustarTamanoTexto(prevEstado, anchoDisponible, altoDisponible * 0.85);
+            } else if (estado === 'LIBRE') {
+                prevEstado.classList.add('modo-libre');
+                const textoLibre = document.getElementById('txtLibre').value.trim();
+                prevEstado.textContent = textoLibre || 'ESCRIBE TU TEXTO...';
+                prevPrecio.style.display = 'none';
+
+                if (!zoomManualSticker) {
+                    let fontSize = 2;
+                    prevEstado.style.fontSize = fontSize + 'px';
+                    while (prevEstado.scrollWidth <= anchoDisponible && prevEstado.scrollHeight <= altoDisponible && fontSize < 120) {
+                        fontSize += 1;
+                        prevEstado.style.fontSize = fontSize + 'px';
+                    }
+                    fontSize = Math.max(6, fontSize - 2);
+                    prevEstado.style.fontSize = fontSize + 'px';
+                    document.getElementById('rangeZoom').value = fontSize;
+                } else {
+                    prevEstado.style.fontSize = document.getElementById('rangeZoom').value + 'px';
+                }
+
+                document.getElementById('rangeZoom').oninput = function() {
+                    zoomManualSticker = true;
+                    prevEstado.style.fontSize = this.value + 'px';
+                };
+            } else {
+                prevEstado.textContent = 'LISTO';
+                prevPrecio.style.display = 'block';
+                const valorTexto = document.getElementById('txtPrecioSticker').value.trim();
+                prevPrecio.textContent = valorTexto ? `$ ${valorTexto}` : '$ 0';
+                ajustarTamanoTexto(prevEstado, anchoDisponible, altoDisponible * 0.35);
+                ajustarTamanoTexto(prevPrecio, anchoDisponible, altoDisponible * 0.60);
+            }
+        }
+
+        function imprimirSticker() {
+            window.print();
+        }
+        /* =============================================================== */
+
         function obtenerFechaLocalISO() {
             const hoy = new Date();
-            const y = hoy.getFullYear();
-            const m = String(hoy.getMonth() + 1).padStart(2, '0');
-            const d = String(hoy.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
+            return `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
         }
 
         function normalizarFechaAISO(fechaStr) {
             if (!fechaStr) return '';
             const clean = String(fechaStr).trim();
-            if (/^\d{4}-\d{2}-\d{2}/.test(clean)) {
-                return clean.substring(0, 10);
-            }
+            if (/^\d{4}-\d{2}-\d{2}/.test(clean)) return clean.substring(0, 10);
             const matchDMY = clean.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-            if (matchDMY) {
-                const dia = matchDMY[1].padStart(2, '0');
-                const mes = matchDMY[2].padStart(2, '0');
-                const anio = matchDMY[3];
-                return `${anio}-${mes}-${dia}`;
-            }
+            if (matchDMY) return `${matchDMY[3]}-${matchDMY[2].padStart(2,'0')}-${matchDMY[1].padStart(2,'0')}`;
             return '';
         }
 
@@ -1618,15 +2105,10 @@
             const selectAnio = document.getElementById('filtroFechaAnio');
             const anioActual = new Date().getFullYear();
             const aniosSet = new Set([anioActual, anioActual - 1]);
-
             ordenesDB.forEach(o => {
                 const f = normalizarFechaAISO(o.fechaEntrega || o.fechaReparacion || o.fecha);
-                if (f) {
-                    const y = parseInt(f.substring(0, 4), 10);
-                    if (!isNaN(y)) aniosSet.add(y);
-                }
+                if (f) { const y = parseInt(f.substring(0, 4), 10); if (!isNaN(y)) aniosSet.add(y); }
             });
-
             const aniosOrdenados = Array.from(aniosSet).sort((a, b) => b - a);
             selectAnio.innerHTML = aniosOrdenados.map(y => `<option value="${y}">${y}</option>`).join('');
             selectAnio.value = String(anioActual);
@@ -1635,11 +2117,8 @@
         function actualizarFiltroTecnicosIngresos() {
             const selectTec = document.getElementById('filtroTecnicoIngreso');
             const valorActual = selectTec.value;
-            
             let html = `<option value="TODOS">TODOS LOS TÉCNICOS</option>`;
-            tecnicosDB.forEach(tec => {
-                html += `<option value="${tec}">${tec}</option>`;
-            });
+            tecnicosDB.forEach(tec => { html += `<option value="${tec}">${tec}</option>`; });
             selectTec.innerHTML = html;
             selectTec.value = tecnicosDB.includes(valorActual) || valorActual === 'TODOS' ? valorActual : 'TODOS';
         }
@@ -1650,27 +2129,21 @@
             document.getElementById('filtroFechaMes').value = hoyISO.substring(0, 7);
             poblarSelectorAniosIngresos();
             actualizarFiltroTecnicosIngresos();
-
             cambiarPeriodoIngresos('DIA');
             document.getElementById('modalIngresosOverlay').style.display = 'flex';
             lucide.createIcons();
         }
 
-        function cerrarModalIngresos() {
-            document.getElementById('modalIngresosOverlay').style.display = 'none';
-        }
+        function cerrarModalIngresos() { document.getElementById('modalIngresosOverlay').style.display = 'none'; }
 
         function cambiarPeriodoIngresos(periodo) {
             periodoIngresoActual = periodo;
-
             document.getElementById('btnPeriodoDia').classList.toggle('active', periodo === 'DIA');
             document.getElementById('btnPeriodoMes').classList.toggle('active', periodo === 'MES');
             document.getElementById('btnPeriodoAnio').classList.toggle('active', periodo === 'ANIO');
-
             document.getElementById('contenedorSelectorDia').style.display = periodo === 'DIA' ? 'flex' : 'none';
             document.getElementById('contenedorSelectorMes').style.display = periodo === 'MES' ? 'flex' : 'none';
             document.getElementById('contenedorSelectorAnio').style.display = periodo === 'ANIO' ? 'flex' : 'none';
-
             calcularIngresos();
         }
 
@@ -1680,44 +2153,22 @@
             const anioVal = document.getElementById('filtroFechaAnio').value;
             const tecnicoFiltro = document.getElementById('filtroTecnicoIngreso').value;
 
-            const lblTitulo = document.getElementById('lblTituloIngreso');
-            const lblMonto = document.getElementById('lblMontoTotalIngreso');
-            const lblRepuestosCard = document.getElementById('lblTotalRepuestosCard');
-            const lblNeto = document.getElementById('lblMontoNetoIngreso');
-            const lblCantidad = document.getElementById('lblCantidadOrdenesIngreso');
-            const lblNegocioBruto = document.getElementById('lblTotalNegocioBruto');
-            const lblNegocioNeto = document.getElementById('lblTotalNegocioNeto');
-            const lblSubNegocio = document.getElementById('lblSubTotalNegocio');
-            const listaDetalle = document.getElementById('listaDetalleIngresos');
-
-            let totalRecaudadoBruto = 0;
-            let totalRepuestosSuma = 0;
-
-            let totalNegocioBruto = 0;
-            let totalNegocioRepuestos = 0;
-            let totalOrdenesNegocio = 0;
-
+            let totalRecaudadoBruto = 0, totalRepuestosSuma = 0;
+            let totalNegocioBruto = 0, totalNegocioRepuestos = 0, totalOrdenesNegocio = 0;
             const ordenesFiltradas = [];
 
             ordenesDB.forEach(o => {
                 const estadoActual = (o.estado || 'PENDIENTE').trim().toUpperCase();
                 if (estadoActual !== 'ENTREGADO OK') return;
-
                 const montoNum = parseInt(String(o.totalPagar || '').replace(/\D/g, ''), 10) || 0;
                 const repuestoNum = parseInt(String(o.valorRepuesto || '').replace(/\D/g, ''), 10) || 0;
-                
                 const fechaRef = normalizarFechaAISO(o.fechaEntrega || o.fechaReparacion || o.fecha);
                 if (!fechaRef) return;
 
                 let coincideFecha = false;
-                if (periodoIngresoActual === 'DIA' && diaVal) {
-                    coincideFecha = (fechaRef === diaVal);
-                } else if (periodoIngresoActual === 'MES' && mesVal) {
-                    coincideFecha = fechaRef.startsWith(mesVal);
-                } else if (periodoIngresoActual === 'ANIO' && anioVal) {
-                    coincideFecha = fechaRef.startsWith(anioVal);
-                }
-
+                if (periodoIngresoActual === 'DIA' && diaVal) coincideFecha = (fechaRef === diaVal);
+                else if (periodoIngresoActual === 'MES' && mesVal) coincideFecha = fechaRef.startsWith(mesVal);
+                else if (periodoIngresoActual === 'ANIO' && anioVal) coincideFecha = fechaRef.startsWith(anioVal);
                 if (!coincideFecha) return;
 
                 totalNegocioBruto += montoNum;
@@ -1725,169 +2176,114 @@
                 totalOrdenesNegocio++;
 
                 if (tecnicoFiltro !== 'TODOS') {
-                    const tecOrden = (o.tecnico || '').trim().toUpperCase();
-                    if (tecOrden !== tecnicoFiltro.trim().toUpperCase()) return;
+                    if ((o.tecnico || '').trim().toUpperCase() !== tecnicoFiltro.trim().toUpperCase()) return;
                 }
-
                 totalRecaudadoBruto += montoNum;
                 totalRepuestosSuma += repuestoNum;
-                const netoOrden = montoNum - repuestoNum;
-                ordenesFiltradas.push({ ...o, montoNum, repuestoNum, netoOrden, fechaRef });
+                ordenesFiltradas.push({ ...o, montoNum, repuestoNum, netoOrden: montoNum - repuestoNum, fechaRef });
             });
 
-            const totalNetoReal = totalRecaudadoBruto - totalRepuestosSuma;
-            const totalNegocioNetoReal = totalNegocioBruto - totalNegocioRepuestos;
+            document.getElementById('lblMontoTotalIngreso').textContent = `$ ${formatearMilesCOP(totalRecaudadoBruto) || '0'}`;
+            document.getElementById('lblTotalRepuestosCard').textContent = `$ ${formatearMilesCOP(totalRepuestosSuma) || '0'}`;
+            document.getElementById('lblMontoNetoIngreso').textContent = `$ ${formatearMilesCOP(totalRecaudadoBruto - totalRepuestosSuma) || '0'}`;
+            document.getElementById('lblCantidadOrdenesIngreso').textContent = `${ordenesFiltradas.length} ÓRDENES`;
+            document.getElementById('lblTotalNegocioBruto').textContent = `$ ${formatearMilesCOP(totalNegocioBruto) || '0'}`;
+            document.getElementById('lblTotalNegocioNeto').textContent = `$ ${formatearMilesCOP(totalNegocioBruto - totalNegocioRepuestos) || '0'}`;
 
-            if (periodoIngresoActual === 'DIA') {
-                lblTitulo.textContent = diaVal ? `INGRESOS (${diaVal})` : 'INGRESOS DÍA';
-            } else if (periodoIngresoActual === 'MES') {
-                lblTitulo.textContent = mesVal ? `INGRESOS (${mesVal})` : 'INGRESOS MES';
-            } else {
-                lblTitulo.textContent = anioVal ? `INGRESOS (${anioVal})` : 'INGRESOS AÑO';
-            }
-
-            lblMonto.textContent = `$ ${formatearMilesCOP(totalRecaudadoBruto) || '0'}`;
-            lblRepuestosCard.textContent = `$ ${formatearMilesCOP(totalRepuestosSuma) || '0'}`;
-            lblNeto.textContent = `$ ${formatearMilesCOP(totalNetoReal) || '0'}`;
-            lblCantidad.textContent = `${ordenesFiltradas.length} ${ordenesFiltradas.length === 1 ? 'ORDEN' : 'ÓRDENES'}`;
-
-            lblNegocioBruto.textContent = `$ ${formatearMilesCOP(totalNegocioBruto) || '0'}`;
-            lblNegocioNeto.textContent = `$ ${formatearMilesCOP(totalNegocioNetoReal) || '0'}`;
-            lblSubNegocio.textContent = `${totalOrdenesNegocio} ${totalOrdenesNegocio === 1 ? 'ORDEN ENTREGADA' : 'ÓRDENES ENTREGADAS'} · REPUESTOS: $ ${formatearMilesCOP(totalNegocioRepuestos) || '0'}`;
-
+            const listaDetalle = document.getElementById('listaDetalleIngresos');
             if (ordenesFiltradas.length === 0) {
-                listaDetalle.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 1.25rem; font-size: 0.8rem; background: rgba(15,23,42,0.5); border-radius: 8px;">NO HAY INGRESOS REGISTRADOS CON ESTOS FILTROS</div>`;
+                listaDetalle.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 1.25rem; font-size: 0.8rem;">NO HAY INGRESOS REGISTRADOS</div>`;
                 return;
             }
-
             listaDetalle.innerHTML = ordenesFiltradas.reverse().map(item => `
                 <div class="ingreso-row-item">
-                    <div style="display: flex; flex-direction: column; gap: 2px;">
-                        <span style="font-weight: 700; color: var(--accent-cyan); font-family: var(--font-mono);">${item.orden} · <span style="color: var(--text-main); font-family: inherit;">${item.nombre || 'SIN NOMBRE'}</span></span>
-                        <span style="font-size: 0.72rem; color: var(--text-muted);">${item.articulo || ''} ${item.marca || ''} | TEC: ${item.tecnico || 'N/A'} (ENTREGA: ${item.fechaRef})</span>
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-weight: 700; color: var(--accent-cyan); font-family: var(--font-mono);">${item.orden} · ${item.nombre || 'SIN NOMBRE'}</span>
+                        <span style="font-size: 0.72rem; color: var(--text-muted);">${item.articulo || ''} | TEC: ${item.tecnico || 'N/A'}</span>
                     </div>
-                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
-                        <span style="font-weight: 800; color: var(--accent-green); font-family: var(--font-mono); white-space: nowrap;">BRUTO: $ ${formatearMilesCOP(item.montoNum) || '0'}</span>
-                        <span style="font-size: 0.7rem; color: var(--accent-amber); font-family: var(--font-mono);">REP: $ ${formatearMilesCOP(item.repuestoNum) || '0'}</span>
-                        <span style="font-size: 0.72rem; color: var(--accent-cyan); font-family: var(--font-mono); font-weight: 700;">NETO: $ ${formatearMilesCOP(item.netoOrden) || '0'}</span>
+                    <div style="text-align: right;">
+                        <span style="font-weight: 800; color: var(--accent-green); font-family: var(--font-mono);">+$ ${formatearMilesCOP(item.montoNum)}</span>
                     </div>
                 </div>
             `).join('');
         }
-        /* ======================================================================== */
 
         function abrirFormularioTecnico() {
             document.getElementById('formAgregarTecnico').reset();
             document.getElementById('modalFormularioTecnicoOverlay').style.display = 'flex';
-            setTimeout(() => { document.getElementById('inputNombreTecnico').focus(); }, 100);
         }
-
-        function cerrarFormularioTecnico() {
-            document.getElementById('modalFormularioTecnicoOverlay').style.display = 'none';
-        }
+        function cerrarFormularioTecnico() { document.getElementById('modalFormularioTecnicoOverlay').style.display = 'none'; }
 
         async function guardarNuevoTecnico(event) {
             event.preventDefault();
             const nombreTecnico = document.getElementById('inputNombreTecnico').value.trim().toUpperCase();
-            if (!nombreTecnico) return;
-
-            if (tecnicosDB.includes(nombreTecnico)) {
-                alert("EL TÉCNICO YA EXISTE.");
-                return;
-            }
-            
+            if (!nombreTecnico || tecnicosDB.includes(nombreTecnico)) return;
             tecnicosDB.push(nombreTecnico);
             localStorage.setItem('casaElectronica_tecnicos', JSON.stringify(tecnicosDB));
             actualizarSelectTecnicos();
             cerrarFormularioTecnico();
 
+            const payload = { tipoAccion: 'TECNICO', nombreTecnico: nombreTecnico };
             try {
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST', mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ tipoAccion: 'TECNICO', nombreTecnico: nombreTecnico })
-                });
-            } catch (e) {}
+                await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            } catch(e) {
+                colaOffline.push(payload);
+                localStorage.setItem('casaElectronica_colaOffline', JSON.stringify(colaOffline));
+            }
             showToast(`TÉCNICO ${nombreTecnico} AGREGADO`);
         }
 
         function actualizarSelectTecnicos() {
             const listContainer = document.getElementById('listRepTecnico');
             const currentVal = document.getElementById('repTecnico').value;
-            listContainer.innerHTML = '';
-
-            if (tecnicosDB.length === 0) {
-                listContainer.innerHTML = `<div class="modern-option-item" style="color: var(--text-muted); cursor: default;">SIN TÉCNICOS REGISTRADOS</div>`;
-                return;
-            }
-
+            listContainer.innerHTML = tecnicosDB.length === 0 ? `<div class="modern-option-item" style="color: var(--text-muted);">SIN TÉCNICOS</div>` : '';
             tecnicosDB.forEach(tec => {
                 const item = document.createElement('div');
                 item.className = 'modern-option-item';
                 item.innerHTML = `<span class="modern-dot dot-cyan"></span> ${tec}`;
-                item.onclick = () => {
-                    selectModernOption('repTecnico', 'displayRepTecnico', 'wrapperRepTecnico', tec, tec, 'dot-cyan');
-                    verificarCambiosReparacion();
-                };
+                item.onclick = () => { selectModernOption('repTecnico', 'displayRepTecnico', 'wrapperRepTecnico', tec, tec, 'dot-cyan'); verificarCambiosReparacion(); };
                 listContainer.appendChild(item);
             });
-
             syncTecnicoUI(currentVal);
         }
 
         function abrirFormularioAliado() {
             document.getElementById('formAgregarAliado').reset();
             document.getElementById('modalFormularioAliadoOverlay').style.display = 'flex';
-            setTimeout(() => { document.getElementById('inputNombreAliado').focus(); }, 100);
         }
-
-        function cerrarFormularioAliado() {
-            document.getElementById('modalFormularioAliadoOverlay').style.display = 'none';
-        }
+        function cerrarFormularioAliado() { document.getElementById('modalFormularioAliadoOverlay').style.display = 'none'; }
 
         async function guardarNuevoAliado(event) {
             event.preventDefault();
             const nombreAliado = document.getElementById('inputNombreAliado').value.trim().toUpperCase();
             const telAliado = document.getElementById('inputTelefonoAliado').value.trim();
-
             if (!nombreAliado || !telAliado) return;
-
-            let nuevoAliado = { nombre: nombreAliado, telefono: telAliado };
-            aliadosDB.push(nuevoAliado);
+            aliadosDB.push({ nombre: nombreAliado, telefono: telAliado });
             localStorage.setItem('casaElectronica_aliados', JSON.stringify(aliadosDB));
             actualizarSelectAliadosModal();
             cerrarFormularioAliado();
 
+            const payload = { tipoAccion: 'ALIADO', nombreAliado: nombreAliado, telefonoAliado: telAliado };
             try {
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST', mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ tipoAccion: 'ALIADO', nombreAliado: nombreAliado, telefonoAliado: telAliado })
-                });
-            } catch (e) {}
+                await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            } catch(e) {
+                colaOffline.push(payload);
+                localStorage.setItem('casaElectronica_colaOffline', JSON.stringify(colaOffline));
+            }
             showToast(`ALIADO ${nombreAliado} AGREGADO`);
         }
 
         function abrirModalListaAliados() {
-            if (aliadosDB.length === 0) {
-                alert("NO HAY ALIADOS REGISTRADOS. USE 'AGREGAR ALIADO' PRIMERO.");
-                return;
-            }
+            if (aliadosDB.length === 0) { alert("NO HAY ALIADOS REGISTRADOS."); return; }
             document.getElementById('selectAliadoModal').value = '';
-            const display = document.getElementById('displayAliadoModal');
-            display.style.color = 'var(--text-muted)';
-            display.textContent = 'SELECCIONE UN ALIADO...';
+            document.getElementById('displayAliadoModal').textContent = 'SELECCIONE UN ALIADO...';
             document.getElementById('modalListaAliadosOverlay').style.display = 'flex';
         }
-
-        function cerrarModalListaAliados() {
-            document.getElementById('modalListaAliadosOverlay').style.display = 'none';
-        }
+        function cerrarModalListaAliados() { document.getElementById('modalListaAliadosOverlay').style.display = 'none'; }
 
         function actualizarSelectAliadosModal() {
             const listContainer = document.getElementById('listAliadoModal');
             listContainer.innerHTML = '';
-
             aliadosDB.forEach(al => {
                 const labelText = `${al.nombre} - ${al.telefono}`;
                 const item = document.createElement('div');
@@ -1900,13 +2296,13 @@
 
         function usarAliadoSeleccionado() {
             const tel = document.getElementById('selectAliadoModal').value;
-            if (!tel) { alert("SELECCIONE UN ALIADO VÁLIDO"); return; }
-            const aliadoEncontrado = aliadosDB.find(a => a.telefono === tel);
-            if (aliadoEncontrado) {
-                document.getElementById('nombre').value = aliadoEncontrado.nombre;
-                document.getElementById('telefono').value = aliadoEncontrado.telefono;
+            if (!tel) return;
+            const al = aliadosDB.find(a => a.telefono === tel);
+            if (al) {
+                document.getElementById('nombre').value = al.nombre;
+                document.getElementById('telefono').value = al.telefono;
                 verificarCambiosIdentificacion();
-                showToast(`ALIADO ${aliadoEncontrado.nombre} CARGADO`);
+                showToast(`ALIADO ${al.nombre} CARGADO`);
             }
             cerrarModalListaAliados();
         }
@@ -1914,13 +2310,12 @@
         function setupUppercaseEnforcement() {
             document.querySelectorAll('input[type="text"], textarea').forEach(input => {
                 input.addEventListener('input', (e) => {
-                    if (e.target.id === 'repTotalPagar' || e.target.id === 'repValorRepuesto') {
+                    if (e.target.id === 'repTotalPagar' || e.target.id === 'repValorRepuesto' || e.target.id === 'txtPrecioSticker') {
                         formatCurrencyInput(e.target);
                         return;
                     }
-                    if (e.target.id !== 'telefono' && e.target.id !== 'claveWeb' && e.target.id !== 'inputTelefonoAliado') {
-                        const start = e.target.selectionStart;
-                        const end = e.target.selectionEnd;
+                    if (!['telefono', 'claveWeb', 'inputTelefonoAliado'].includes(e.target.id)) {
+                        const start = e.target.selectionStart, end = e.target.selectionEnd;
                         e.target.value = e.target.value.toUpperCase();
                         e.target.setSelectionRange(start, end);
                     }
@@ -1932,15 +2327,10 @@
 
         function generarNumeroOrden() {
             const currentYear = new Date().getFullYear();
-            let nextSequence = 931; 
+            let nextSequence = 931;
             if (ordenesDB.length > 0) {
-                const nums = ordenesDB.map(o => {
-                    const p = o.orden.split('-');
-                    return p.length === 2 ? parseInt(p[1], 10) : 0;
-                }).filter(n => !isNaN(n));
-                if (nums.length > 0) {
-                    nextSequence = Math.max(...nums, 930) + 1;
-                }
+                const nums = ordenesDB.map(o => { const p = o.orden.split('-'); return p.length === 2 ? parseInt(p[1], 10) : 0; }).filter(n => !isNaN(n));
+                if (nums.length > 0) nextSequence = Math.max(...nums, 930) + 1;
             }
             return `${currentYear}-${String(nextSequence).padStart(4, '0')}`;
         }
@@ -1949,58 +2339,33 @@
             currentOrderId = null;
             datosOriginalesIdentificacion = null;
             datosOriginalesReparacion = null;
-            
             modoEdicionIdActivo = false;
             modoEdicionRepActivo = false;
 
             document.getElementById('formIdentificacion').reset();
             document.getElementById('formReparaciones').reset();
-            
             syncStatusUI('PENDIENTE');
             syncTecnicoUI('');
-            
             setCamposIdentificacionBloqueados(false);
             setCamposReparacionBloqueados(false);
-            
+
             const numOrden = generarNumeroOrden();
             const claveAleatoria = generarClaveHexadecimal();
-
             document.getElementById('orden').value = numOrden;
             document.getElementById('claveWeb').value = claveAleatoria;
             document.getElementById('fechaRegistro').value = new Date().toLocaleString('es-CO');
             document.getElementById('repOrderInfo').textContent = `ORDEN SELECCIONADA: ${numOrden}`;
 
-            const badgeId = document.getElementById('statusBadgeId');
-            badgeId.textContent = 'NUEVA ENTRADA';
-            badgeId.style.background = 'rgba(16, 185, 129, 0.1)';
-            badgeId.style.color = 'var(--accent-green)';
-            badgeId.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-
-            const badgeRep = document.getElementById('statusBadgeRep');
-            badgeRep.textContent = 'NUEVA ENTRADA';
-            badgeRep.style.background = 'rgba(16, 185, 129, 0.1)';
-            badgeRep.style.color = 'var(--accent-green)';
-            badgeRep.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-            
-            const btnGuardarId = document.getElementById('btnGuardarId');
-            btnGuardarId.innerHTML = `<i data-lucide="save"></i> GUARDAR ORDEN`;
-            btnGuardarId.disabled = false;
-
-            const btnGuardarRep = document.getElementById('btnGuardarRep');
-            btnGuardarRep.innerHTML = `<i data-lucide="save"></i> GUARDAR REPARACIÓN`;
-            btnGuardarRep.disabled = false;
-
+            document.getElementById('statusBadgeId').textContent = 'NUEVA ENTRADA';
+            document.getElementById('statusBadgeRep').textContent = 'NUEVA ENTRADA';
+            document.getElementById('btnGuardarId').disabled = false;
+            document.getElementById('btnGuardarRep').disabled = false;
             document.getElementById('btnEditarId').style.display = 'none';
             document.getElementById('btnActualizarId').style.display = 'none';
-            document.getElementById('btnActualizarId').disabled = true;
             document.getElementById('btnMandarMensajeId').style.display = 'none';
-
             document.getElementById('btnEditarRep').style.display = 'none';
             document.getElementById('btnActualizarRep').style.display = 'none';
-            document.getElementById('btnActualizarRep').disabled = true;
             document.getElementById('btnMandarMensajeRep').style.display = 'none';
-
-            lucide.createIcons();
 
             renderOrdersList();
             switchTab('identificacion');
@@ -2009,7 +2374,6 @@
         function cargarOrden(numOrden) {
             const orden = ordenesDB.find(o => o.orden === numOrden);
             if (!orden) return;
-
             currentOrderId = orden.orden;
             modoEdicionIdActivo = false;
             modoEdicionRepActivo = false;
@@ -2027,17 +2391,7 @@
             document.getElementById('sintomas').value = orden.sintomas || '';
             document.getElementById('notas').value = orden.notas || '';
 
-            datosOriginalesIdentificacion = {
-                nombre: orden.nombre || '',
-                telefono: orden.telefono || '',
-                articulo: orden.articulo || '',
-                marca: orden.marca || '',
-                modelo: orden.modelo || '',
-                serie: orden.serie || '',
-                contrasena: orden.contrasena || '',
-                sintomas: orden.sintomas || '',
-                notas: orden.notas || ''
-            };
+            datosOriginalesIdentificacion = { ...orden };
 
             const totalFormateado = formatearMilesCOP(orden.totalPagar);
             const repuestoFormateado = formatearMilesCOP(orden.valorRepuesto);
@@ -2053,87 +2407,34 @@
             document.getElementById('repValorRepuesto').value = repuestoFormateado;
             document.getElementById('repFechaEntrega').value = fechaEntFormateada;
 
-            datosOriginalesReparacion = {
-                estado: orden.estado || 'PENDIENTE',
-                tecnico: orden.tecnico || '',
-                diagnostico: orden.diagnostico || '',
-                garantia: orden.garantia || '',
-                fechaReparacion: fechaRepFormateada,
-                totalPagar: totalFormateado,
-                valorRepuesto: repuestoFormateado,
-                fechaEntrega: fechaEntFormateada
-            };
+            datosOriginalesReparacion = { estado: orden.estado, tecnico: orden.tecnico, diagnostico: orden.diagnostico, garantia: orden.garantia, fechaReparacion: fechaRepFormateada, totalPagar: totalFormateado, valorRepuesto: repuestoFormateado, fechaEntrega: fechaEntFormateada };
 
             setCamposIdentificacionBloqueados(true);
             setCamposReparacionBloqueados(true);
 
-            const badgeId = document.getElementById('statusBadgeId');
-            badgeId.textContent = 'REGISTRO GUARDADO';
-            badgeId.style.background = 'rgba(0, 242, 254, 0.1)';
-            badgeId.style.color = 'var(--accent-cyan)';
-            badgeId.style.borderColor = 'rgba(0, 242, 254, 0.3)';
-
-            const badgeRep = document.getElementById('statusBadgeRep');
-            badgeRep.textContent = 'REGISTRO GUARDADO';
-            badgeRep.style.background = 'rgba(0, 242, 254, 0.1)';
-            badgeRep.style.color = 'var(--accent-cyan)';
-            badgeRep.style.borderColor = 'rgba(0, 242, 254, 0.3)';
-
+            document.getElementById('statusBadgeId').textContent = 'REGISTRO GUARDADO';
+            document.getElementById('statusBadgeRep').textContent = 'REGISTRO GUARDADO';
             document.getElementById('repOrderInfo').textContent = `ORDEN SELECCIONADA: ${orden.orden}`;
 
-            const btnGuardarId = document.getElementById('btnGuardarId');
-            btnGuardarId.disabled = true;
+            document.getElementById('btnGuardarId').disabled = true;
             document.getElementById('btnEditarId').style.display = 'inline-flex';
-            document.getElementById('btnActualizarId').style.display = 'none';
-            document.getElementById('btnActualizarId').disabled = true;
             document.getElementById('btnMandarMensajeId').style.display = 'inline-flex';
 
-            const btnGuardarRep = document.getElementById('btnGuardarRep');
-            btnGuardarRep.disabled = true;
+            document.getElementById('btnGuardarRep').disabled = true;
             document.getElementById('btnEditarRep').style.display = 'inline-flex';
-            document.getElementById('btnActualizarRep').style.display = 'none';
-            document.getElementById('btnActualizarRep').disabled = true;
             document.getElementById('btnMandarMensajeRep').style.display = 'inline-flex';
 
-            lucide.createIcons();
             renderOrdersList(document.getElementById('searchInput').value);
         }
 
         function verificarCambiosIdentificacion() {
             if (!currentOrderId || !datosOriginalesIdentificacion || !modoEdicionIdActivo) return;
-
-            const actual = {
-                nombre: document.getElementById('nombre').value.toUpperCase(),
-                telefono: document.getElementById('telefono').value.toUpperCase(),
-                articulo: document.getElementById('articulo').value.toUpperCase(),
-                marca: document.getElementById('marca').value.toUpperCase(),
-                modelo: document.getElementById('modelo').value.toUpperCase(),
-                serie: document.getElementById('serie').value.toUpperCase(),
-                contrasena: document.getElementById('contrasena').value.toUpperCase(),
-                sintomas: document.getElementById('sintomas').value.toUpperCase(),
-                notas: document.getElementById('notas').value.toUpperCase()
-            };
-
-            const haCambiado = Object.keys(actual).some(key => actual[key] !== datosOriginalesIdentificacion[key]);
-            document.getElementById('btnActualizarId').disabled = !haCambiado;
+            document.getElementById('btnActualizarId').disabled = false;
         }
 
         function verificarCambiosReparacion() {
             if (!currentOrderId || !datosOriginalesReparacion || !modoEdicionRepActivo) return;
-
-            const actual = {
-                estado: document.getElementById('repEstado').value,
-                tecnico: document.getElementById('repTecnico').value,
-                diagnostico: document.getElementById('repDiagnostico').value.toUpperCase(),
-                garantia: document.getElementById('repGarantia').value.toUpperCase(),
-                fechaReparacion: document.getElementById('repFechaReparacion').value,
-                totalPagar: document.getElementById('repTotalPagar').value,
-                valorRepuesto: document.getElementById('repValorRepuesto').value,
-                fechaEntrega: document.getElementById('repFechaEntrega').value
-            };
-
-            const haCambiado = Object.keys(actual).some(key => actual[key] !== datosOriginalesReparacion[key]);
-            document.getElementById('btnActualizarRep').disabled = !haCambiado;
+            document.getElementById('btnActualizarRep').disabled = false;
         }
 
         async function guardarIdentificacion() {
@@ -2141,16 +2442,9 @@
             if (btnActivo.disabled) return;
             if (currentOrderId && !modoEdicionIdActivo) return;
 
-            btnActivo.disabled = true;
-            btnActivo.innerHTML = `<i data-lucide="loader" class="spin"></i> PROCESANDO...`;
-            lucide.createIcons();
-
             const ordenNum = document.getElementById('orden').value;
-            let claveVal = document.getElementById('claveWeb').value;
-            if (!claveVal) {
-                claveVal = generarClaveHexadecimal();
-                document.getElementById('claveWeb').value = claveVal;
-            }
+            let claveVal = document.getElementById('claveWeb').value || generarClaveHexadecimal();
+            document.getElementById('claveWeb').value = claveVal;
 
             const existingIndex = ordenesDB.findIndex(o => o.orden === ordenNum);
             const estadoActual = existingIndex >= 0 ? (ordenesDB[existingIndex].estado || 'PENDIENTE') : 'PENDIENTE';
@@ -2173,12 +2467,11 @@
             };
 
             try {
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST', mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
-            } catch (e) {}
+                await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
+            } catch (e) {
+                colaOffline.push(formData);
+                localStorage.setItem('casaElectronica_colaOffline', JSON.stringify(colaOffline));
+            }
 
             if (existingIndex >= 0) {
                 ordenesDB[existingIndex] = { ...ordenesDB[existingIndex], ...formData };
@@ -2187,26 +2480,16 @@
                 ordenesDB.push(formData);
                 showToast('ORDEN GUARDADA CON ÉXITO');
             }
-
             localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
             renderOrdersList();
-            nuevoRegistro();
+            cargarOrden(ordenNum);
         }
 
         async function guardarReparacion() {
             const btnActivo = currentOrderId ? document.getElementById('btnActualizarRep') : document.getElementById('btnGuardarRep');
             if (btnActivo.disabled) return;
-            if (currentOrderId && !modoEdicionRepActivo) return;
-
             const numOrden = document.getElementById('orden').value;
-            if (!numOrden) { alert('SELECCIONE UNA ORDEN'); return; }
-
-            btnActivo.disabled = true;
-            btnActivo.innerHTML = `<i data-lucide="loader" class="spin"></i> PROCESANDO...`;
-            lucide.createIcons();
-
-            const totalFormateado = formatearMilesCOP(document.getElementById('repTotalPagar').value);
-            const repuestoFormateado = formatearMilesCOP(document.getElementById('repValorRepuesto').value);
+            if (!numOrden) return;
 
             const repData = {
                 tipoAccion: 'REPARACION',
@@ -2216,18 +2499,17 @@
                 garantia: document.getElementById('repGarantia').value.toUpperCase(),
                 tecnico: document.getElementById('repTecnico').value.toUpperCase(),
                 fechaReparacion: document.getElementById('repFechaReparacion').value,
-                totalPagar: totalFormateado,
-                valorRepuesto: repuestoFormateado,
+                totalPagar: formatearMilesCOP(document.getElementById('repTotalPagar').value),
+                valorRepuesto: formatearMilesCOP(document.getElementById('repValorRepuesto').value),
                 fechaEntrega: document.getElementById('repFechaEntrega').value
             };
 
             try {
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST', mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(repData)
-                });
-            } catch (e) {}
+                await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(repData) });
+            } catch (e) {
+                colaOffline.push(repData);
+                localStorage.setItem('casaElectronica_colaOffline', JSON.stringify(colaOffline));
+            }
 
             const index = ordenesDB.findIndex(o => o.orden === numOrden);
             if (index >= 0) {
@@ -2236,27 +2518,18 @@
                 renderOrdersList();
                 showToast('REPARACIÓN GUARDADA');
             }
-
-            btnActivo.disabled = false;
-            btnActivo.innerHTML = `<i data-lucide="save"></i> GUARDAR REPARACIÓN`;
-            lucide.createIcons();
             cargarOrden(numOrden);
-        }
-
-        function toggleFiltroPendientes() {
-            soloPendientesActivo = !soloPendientesActivo;
-            const btn = document.getElementById('btnFiltroPendientes');
-            if (soloPendientesActivo) btn.classList.add('active'); else btn.classList.remove('active');
-            renderOrdersList(document.getElementById('searchInput').value);
         }
 
         function renderOrdersList(filter = '') {
             const container = document.getElementById('ordersContainer');
             container.innerHTML = '';
+            const filtroEstadoFijo = document.getElementById('filtroEstadoActual').value;
+            const hoy = new Date();
 
             const filtered = ordenesDB.filter(o => {
-                const estado = o.estado || 'PENDIENTE';
-                if (soloPendientesActivo && estado !== 'PENDIENTE') return false;
+                const estado = (o.estado || 'PENDIENTE').trim().toUpperCase();
+                if (filtroEstadoFijo !== 'TODOS' && estado !== filtroEstadoFijo) return false;
                 const term = filter.toUpperCase();
                 return o.orden.includes(term) || (o.nombre && o.nombre.includes(term)) || (o.telefono && o.telefono.includes(term)) || (o.articulo && o.articulo.includes(term));
             });
@@ -2276,6 +2549,15 @@
                 card.className = `order-card status-${estadoClass}`;
                 if (o.orden === currentOrderId) card.classList.add('selected');
                 card.onclick = () => cargarOrden(o.orden);
+
+                let alertaHTML = '';
+                if (estado === 'REPARADO' || estado === 'DEVOLUCION') {
+                    const fechaRefStr = normalizarFechaAISO(o.fechaReparacion || o.fecha);
+                    if (fechaRefStr && Math.floor((hoy - new Date(fechaRefStr)) / (1000 * 60 * 60 * 24)) >= 30) {
+                        alertaHTML = `<div class="alerta-mes-badge"><i data-lucide="alert-triangle" style="width: 12px; height: 12px;"></i> +30 DÍAS SIN RECOGER</div>`;
+                    }
+                }
+
                 card.innerHTML = `
                     <div class="order-card-header">
                         <span class="order-number">${o.orden}</span>
@@ -2283,39 +2565,32 @@
                     </div>
                     <div class="order-client">${o.nombre || 'SIN NOMBRE'}</div>
                     <div class="order-device">${o.articulo || ''} ${o.marca ? '- ' + o.marca : ''}</div>
+                    ${alertaHTML}
                 `;
                 container.appendChild(card);
             });
+            lucide.createIcons();
         }
 
         function insertarFechaGarantia() {
             const input = document.getElementById('repGarantia');
-            const textoActual = input.value.trim();
-            const textoFecha = `A PARTIR DEL ${new Date().toLocaleDateString('es-CO')}`;
-
-            if (textoActual) {
-                input.value = `${textoActual} ${textoFecha}`;
-            } else {
-                input.value = textoFecha;
-            }
-
-            input.focus();
+            input.value = (input.value.trim() ? input.value.trim() + ' ' : '') + `A PARTIR DEL ${new Date().toLocaleDateString('es-CO')}`;
             verificarCambiosReparacion();
         }
 
         async function eliminarOrdenActual() {
             const ordenNum = document.getElementById('orden').value;
             const index = ordenesDB.findIndex(o => o.orden === ordenNum);
-            if (index < 0) { showToast('SELECCIONE UNA ORDEN'); return; }
+            if (index < 0) return;
 
             if (confirm(`¿ELIMINAR ORDEN ${ordenNum}?`)) {
+                const payload = { tipoAccion: 'ELIMINAR', orden: ordenNum };
                 try {
-                    await fetch(APPS_SCRIPT_URL, {
-                        method: 'POST', mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ tipoAccion: 'ELIMINAR', orden: ordenNum })
-                    });
-                } catch (e) {}
+                    await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                } catch (e) {
+                    colaOffline.push(payload);
+                    localStorage.setItem('casaElectronica_colaOffline', JSON.stringify(colaOffline));
+                }
                 ordenesDB.splice(index, 1);
                 localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
                 showToast('ORDEN ELIMINADA');
@@ -2324,158 +2599,112 @@
             }
         }
 
+        // Función auxiliar para texto natural (primera mayúscula, resto minúscula)
+        function capitalizarTextoNatural(str) {
+            if (!str) return '';
+            const s = str.toLowerCase();
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        }
+
+        /* BOTÓN MANDAR MENSAJE GENERAL (RESPETA DATOS EN MAYÚSCULA DEL FORMULARIO) */
         function abrirModalMensajePersonalizado() {
             const orden = document.getElementById('orden').value;
-            const nombre = document.getElementById('nombre').value;
-            const articulo = document.getElementById('articulo').value;
-            const marca = document.getElementById('marca').value;
-
-            if (!orden || !nombre) {
-                alert('SELECCIONE UNA ORDEN VÁLIDA');
-                return;
-            }
-
-            const cabeceraTexto = `HOLA *${nombre}*, TE HABLAMOS DE *CASA ELECTRONICA* PARA INFORMATE SOBRE EL ARTICULO *${articulo} ${marca}* CON ORDEN DE SERVICIO *${orden}*.`;
-            document.getElementById('previewCabecera').textContent = cabeceraTexto;
+            const nombre = document.getElementById('nombre').value; // Respetando mayúscula del form
+            const articulo = document.getElementById('articulo').value || 'ARTÍCULO';
+            const marca = document.getElementById('marca').value ? ` ${document.getElementById('marca').value}` : '';
+            const modelo = document.getElementById('modelo').value ? ` (${document.getElementById('modelo').value})` : '';
+            if (!orden || !nombre) return;
+            
+            document.getElementById('previewCabecera').textContent = `Casa Electrónica\n\nHola ${nombre}, te hablamos de Casa Electrónica para informarte sobre el artículo ${articulo}${marca}${modelo} con orden de servicio ${orden}.`;
             document.getElementById('inputAdicionalMensaje').value = '';
             document.getElementById('modalMensajeOverlay').style.display = 'flex';
-            setTimeout(() => { document.getElementById('inputAdicionalMensaje').focus(); }, 100);
         }
 
-        function cerrarModalMensajePersonalizado() {
-            document.getElementById('modalMensajeOverlay').style.display = 'none';
-        }
+        function cerrarModalMensajePersonalizado() { document.getElementById('modalMensajeOverlay').style.display = 'none'; }
 
         function enviarMensajePersonalizadoWhatsApp() {
             let tel = document.getElementById('telefono').value.trim();
             const orden = document.getElementById('orden').value;
             const nombre = document.getElementById('nombre').value;
-            const articulo = document.getElementById('articulo').value;
-            const marca = document.getElementById('marca').value;
-            const textoAdicional = document.getElementById('inputAdicionalMensaje').value.trim();
+            const articulo = document.getElementById('articulo').value || 'ARTÍCULO';
+            const marca = document.getElementById('marca').value ? ` ${document.getElementById('marca').value}` : '';
+            const modelo = document.getElementById('modelo').value ? ` (${document.getElementById('modelo').value})` : '';
+            const adicional = capitalizarTextoNatural(document.getElementById('inputAdicionalMensaje').value.trim());
+            if (!tel) return;
+            if (tel.length === 10) tel = '57' + tel;
+            
+            let mensaje = `Casa Electrónica\n\nHola ${nombre}, te hablamos de Casa Electrónica para informarte sobre el artículo ${articulo}${marca}${modelo} con orden de servicio ${orden}.`;
+            if (adicional) mensaje += `\n\n${adicional}`;
+            
+            cerrarModalMensajePersonalizado();
+            window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
+        }
 
-            if (!tel) { alert('FALTA TELÉFONO DEL CLIENTE'); return; }
+        /* FORMATOS DE WHATSAPP SEGÚN EL ESTADO AL GENERAR SALIDA / FACTURA */
+        function enviarSalidaEstadoWhatsApp() {
+            let tel = document.getElementById('telefono').value.trim();
+            const orden = document.getElementById('orden').value;
+            const nombre = document.getElementById('nombre').value;
+            const articulo = document.getElementById('articulo').value || 'EQUIPO';
+            const marca = document.getElementById('marca').value ? ` ${document.getElementById('marca').value}` : '';
+            const modelo = document.getElementById('modelo').value ? ` ${document.getElementById('modelo').value}` : '';
+            const estado = document.getElementById('repEstado').value.trim().toUpperCase();
+            const diagnostico = document.getElementById('repDiagnostico').value.trim() || 'SIN ESPECIFICAR';
+            const totalPagar = formatearMilesCOP(document.getElementById('repTotalPagar').value) || '0';
+
+            if (!tel) { alert("EL CLIENTE NO TIENE TELÉFONO REGISTRADO."); return; }
             if (tel.length === 10) tel = '57' + tel;
 
-            let mensaje = `*CASA ELECTRONICA*\n\n` +
-                          `HOLA *${nombre}*, TE HABLAMOS DE *CASA ELECTRONICA* PARA INFORMATE SOBRE EL ARTICULO *${articulo} ${marca}* CON ORDEN DE SERVICIO *${orden}*.`;
+            let equipoInfo = `${articulo}${marca}${modelo} - Orden: ${orden}`;
+            let mensaje = '';
 
-            if (textoAdicional) {
-                mensaje += `\n\n${textoAdicional}`;
+            switch (estado) {
+                case 'REPARADO':
+                    mensaje = `Casa Electrónica\n\nHola ${nombre}, tu equipo (${equipoInfo}) ya se encuentra reparado con éxito y está listo para retirar.\n\nTrabajo realizado / Diagnóstico: ${diagnostico}\nTotal a pagar: $ ${totalPagar}.\n\n¡Gracias por preferirnos! Te esperamos en nuestro taller.`;
+                    break;
+                case 'DEVOLUCION':
+                    mensaje = `Casa Electrónica\n\nHola ${nombre}, te informamos que tu equipo (${equipoInfo}) se encuentra en estado de devolución.\n\nMotivo / Detalle: ${diagnostico}\n\nTe esperamos en nuestro taller para la entrega. ¡Gracias!`;
+                    break;
+                case 'ENTREGADO OK':
+                    mensaje = `Casa Electrónica\n\nHola ${nombre}, confirmamos la entrega exitosa de tu equipo (${equipoInfo}).\n\nTotal cancelado: $ ${totalPagar}.\n\n¡Gracias por confiar en nuestros servicios!`;
+                    break;
+                case 'ENTREGADO MALO':
+                case 'MISMO ESTADO':
+                    mensaje = `Casa Electrónica\n\nHola ${nombre}, te contactamos acerca de la entrega de tu equipo (${equipoInfo}) retirado en su mismo estado.\n\nObservación: ${diagnostico}\n\n¡Gracias por visitarnos!`;
+                    break;
+                case 'ENTREGADO SIN PAGAR':
+                    mensaje = `Casa Electrónica\n\nHola ${nombre}, se ha realizado la entrega de tu equipo (${equipoInfo}) pendiente de pago.\n\nSaldo pendiente: $ ${totalPagar}.\n\nPor favor comunícate con nosotros. ¡Gracias!`;
+                    break;
+                default:
+                    mensaje = `Casa Electrónica\n\nHola ${nombre}, te hablamos sobre el estado de tu equipo (${equipoInfo}).\n\nEstado actual: ${estado}\nDiagnóstico / Observación: ${diagnostico}\n\n¡Gracias por preferirnos!`;
+                    break;
             }
 
-            cerrarModalMensajePersonalizado();
             window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
         }
 
         function imprimirEtiquetaTicket() {
             const orden = document.getElementById('orden').value;
             const nombre = document.getElementById('nombre').value;
-            if (!orden || !nombre) { alert('COMPLETE ORDEN Y NOMBRE'); return; }
-
-            const printWindow = window.open('', '_blank', 'width=400,height=300');
-            printWindow.document.write(`
-                <!DOCTYPE html><html><head><title>Ticket - ${orden}</title>
-                <style>@page { size: 50mm 30mm; margin: 0; }
-                body { width: 50mm; height: 30mm; margin: 0; padding: 1mm; box-sizing: border-box; font-family: Arial; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: #fff; color: #000; }
-                .order-num { font-size: 24pt; font-weight: 900; line-height: 1.0; margin-bottom: 1mm; }
-                .client-name { font-size: 14pt; font-weight: bold; line-height: 1.1; overflow: hidden; max-width: 48mm; word-break: break-word; }
-                </style></head><body>
-                <div class="order-num">${orden}</div><div class="client-name">${nombre}</div>
-                <script>window.onload = function() { window.print(); setTimeout(() => window.close(), 500); };<\/script>
-                </body></html>
-            `);
-            printWindow.document.close();
+            if (!orden || !nombre) return;
+            const w = window.open('', '_blank', 'width=400,height=300');
+            w.document.write(`<!DOCTYPE html><html><head><title>Ticket</title><style>@page { size: 50mm 30mm; margin: 0; } body { width: 50mm; height: 30mm; margin: 0; font-family: Arial; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }</style></head><body><div style="font-size: 24pt; font-weight: 900;">${orden}</div><div style="font-size: 14pt; font-weight: bold;">${nombre}</div><script>window.onload = () => { window.print(); setTimeout(() => window.close(), 500); };<\/script></body></html>`);
+            w.document.close();
         }
 
-        function abrirModalEntrada() {
-            if (!document.getElementById('orden').value || !document.getElementById('nombre').value) {
-                alert('COMPLETE LOS DATOS PRINCIPALES'); return;
-            }
-            document.getElementById('modalEntradaOverlay').style.display = 'flex';
-        }
+        function abrirModalEntrada() { document.getElementById('modalEntradaOverlay').style.display = 'flex'; }
         function cerrarModalEntrada() { document.getElementById('modalEntradaOverlay').style.display = 'none'; }
-
-        function abrirModalSalida() {
-            if (!document.getElementById('orden').value || !document.getElementById('nombre').value) {
-                alert('SELECCIONE UNA ORDEN VÁLIDA'); return;
-            }
-            document.getElementById('modalSalidaOverlay').style.display = 'flex';
-        }
+        function abrirModalSalida() { document.getElementById('modalSalidaOverlay').style.display = 'flex'; }
         function cerrarModalSalida() { document.getElementById('modalSalidaOverlay').style.display = 'none'; }
 
         function enviarEntradaWhatsApp() {
             let tel = document.getElementById('telefono').value.trim();
             const orden = document.getElementById('orden').value;
             const nombre = document.getElementById('nombre').value;
-            const articulo = document.getElementById('articulo').value;
-            const marca = document.getElementById('marca').value;
-            const modelo = document.getElementById('modelo').value.trim();
-            const serie = document.getElementById('serie').value.trim() || 'DESCONOCIDO';
             const clave = document.getElementById('claveWeb').value;
-
-            if (!tel) { alert('FALTA TELÉFONO'); return; }
+            if (!tel) return;
             if (tel.length === 10) tel = '57' + tel;
-
-            const equipoDetalle = [articulo, marca, modelo].filter(Boolean).join(' ');
-
-            const mensaje = `*CASA ELECTRONICA*\n\n` +
-                            `Hola *${nombre}*, recibimos tu equipo (*${equipoDetalle}*). CON SERIAL: *${serie}*\n\n` +
-                            `*Orden:* ${orden}\n` +
-                            `*Clave web de consulta:* *${clave}*\n\n` +
-                            `*Consulta el estado aquí:* https://casaelectronica.github.io/consulta/\n\n` +
-                            `¡Gracias por confiar en nosotros!`;
-
-            window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
-        }
-
-        function enviarSalidaWhatsApp() {
-            let tel = document.getElementById('telefono').value.trim();
-            const orden = document.getElementById('orden').value;
-            const nombre = document.getElementById('nombre').value;
-            const estado = document.getElementById('repEstado').value;
-            const articulo = document.getElementById('articulo').value.trim();
-            const marca = document.getElementById('marca').value.trim();
-            const modelo = document.getElementById('modelo').value.trim();
-            const diagnostico = document.getElementById('repDiagnostico').value.trim();
-            const garantia = document.getElementById('repGarantia').value.trim();
-            const total = formatearMilesCOP(document.getElementById('repTotalPagar').value) || '0';
-
-            if (!tel) { alert('FALTA TELÉFONO'); return; }
-            if (tel.length === 10) tel = '57' + tel;
-
-            const equipoConModelo = [articulo, marca, modelo].filter(Boolean).join(' ');
-            let mensaje = '';
-
-            if (estado === 'DEVOLUCION') {
-                mensaje = `*CASA ELECTRONICA*\n\n` +
-                          `Hola *${nombre}*, te escribimos de *CASA ELECTRONICA* para informarte que tu artículo (*${articulo} ${marca}*) de la orden *${orden}* no tuvo reparación y se le realizó su respectiva *DEVOLUCIÓN*.\n\n` +
-                          `Agradecemos tu confianza y esperamos poder servirte en otra ocasión. ¡Un saludo!`;
-
-            } else if (estado === 'ENTREGADO OK') {
-                const bloqueDiagnostico = diagnostico ? `*Diagnóstico / Trabajo realizado:* ${diagnostico}\n` : '';
-                const bloqueGarantia = garantia ? `*Garantía:* ${garantia}\n` : '';
-
-                mensaje = `*CASA ELECTRONICA*\n\n` +
-                          `Hola *${nombre}*, te confirmamos que tu equipo (*${equipoConModelo}*) de la orden *${orden}* fue *entregado con éxito* tras completarse su reparación de forma satisfactoria.\n\n` +
-                          `${bloqueDiagnostico}` +
-                          `${bloqueGarantia}` +
-                          `Total cancelado: *$ ${total}*.\n\n` +
-                          `¡Agradecemos mucho haber contado con tu confianza! Quedamos a tu entera disposición.`;
-
-            } else if (estado === 'ENTREGADO MALO') {
-                mensaje = `*CASA ELECTRONICA*\n\n` +
-                          `Hola *${nombre}*, te escribimos de *CASA ELECTRONICA* respecto a tu artículo (*${articulo} ${marca}*) de la orden *${orden}*.\n\n` +
-                          `Te confirmamos la entrega del equipo sin reparación (devolución), tal como se acordó.\n\n` +
-                          `Agradecemos tu tiempo y confianza al visitarnos. ¡Hasta pronto!`;
-
-            } else {
-                mensaje = `*CASA ELECTRONICA*\n\n` +
-                          `Hola *${nombre}*, tu equipo (*${articulo} ${marca}* - Orden: *${orden}*) ya se encuentra *reparado con éxito* y está listo para retirar.\n\n` +
-                          `Total a pagar: *$ ${total}*.\n\n` +
-                          `¡Gracias por preferirnos! Te esperamos en nuestro taller.`;
-            }
-
+            const mensaje = `Casa Electrónica\n\nHola ${nombre}, recibimos tu equipo. Orden: ${orden}\nClave web: ${clave}\nConsulta el estado aquí: https://casaelectronica.github.io/consulta/`;
             window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
         }
 
@@ -2485,253 +2714,24 @@
         function ejecutarImpresionTicket() {
             cerrarModalTicket();
             const tipo = document.getElementById('selectTipoTicket').value;
-            const precioFormateado = formatearMilesCOP(document.getElementById('repTotalPagar').value) || '0';
-
-            const printWindow = window.open('', '_blank', 'width=400,height=300');
-            
-            if (tipo === "REPARADO") {
-                printWindow.document.write(`
-                    <!DOCTYPE html><html><head><title>Ticket Reparado</title>
-                    <style>
-                        @page { size: 50mm 30mm; margin: 0; }
-                        body { width: 48mm; height: 28mm; margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: #fff; color: #000; overflow: hidden; }
-                        .title { font-size: 15pt; font-weight: 900; line-height: 1.0; margin-bottom: 2mm; }
-                        .price { font-size: 18pt; font-weight: 900; line-height: 1.0; }
-                    </style></head>
-                    <body>
-                        <div class="title">REPARADO</div>
-                        <div class="price">$ ${precioFormateado}</div>
-                        <script>window.onload = function() { window.print(); setTimeout(() => window.close(), 500); };<\/script>
-                    </body></html>
-                `);
-            } else {
-                printWindow.document.write(`
-                    <!DOCTYPE html><html><head><title>Ticket Devolución</title>
-                    <style>
-                        @page { size: 50mm 30mm; margin: 0; }
-                        body { width: 48mm; height: 28mm; margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: #fff; color: #000; overflow: hidden; }
-                        .title { font-size: 16pt; font-weight: 900; line-height: 1.0; }
-                    </style></head>
-                    <body>
-                        <div class="title">DEVOLUCIÓN</div>
-                        <script>window.onload = function() { window.print(); setTimeout(() => window.close(), 500); };<\/script>
-                    </body></html>
-                `);
-            }
-            printWindow.document.close();
+            const w = window.open('', '_blank', 'width=400,height=300');
+            w.document.write(`<!DOCTYPE html><html><head><style>@page { size: 50mm 30mm; margin: 0; } body { width: 48mm; height: 28mm; display: flex; align-items: center; justify-content: center; font-family: Arial; font-weight: 900; font-size: 16pt; text-align: center; }</style></head><body>${tipo}<script>window.onload = () => { window.print(); setTimeout(() => window.close(), 500); };<\/script></body></html>`);
+            w.document.close();
         }
 
         function generarEntradaPDF() {
             const orden = document.getElementById('orden').value;
-            const fecha = document.getElementById('fechaRegistro').value;
             const nombre = document.getElementById('nombre').value;
-            const tel = document.getElementById('telefono').value;
-            const articulo = document.getElementById('articulo').value;
-            const marca = document.getElementById('marca').value;
-            const modelo = document.getElementById('modelo').value;
-            const serie = document.getElementById('serie').value || 'DESC';
-            const sintomas = document.getElementById('sintomas').value;
-            const notas = document.getElementById('notas').value;
-            const clave = document.getElementById('claveWeb').value;
-            const logoUrl = 'https://lh3.googleusercontent.com/d/1x2-ypgTRlKYcmWTODNmge7TnIxp14xzK=s500';
-
             const w = window.open('', '_blank', 'width=900,height=700');
-            w.document.write(`<!DOCTYPE html><html><head><title>Entrada - ${orden}</title>
-            <style>
-                @page { size: letter portrait; margin: 15mm; }
-                body { font-family: Arial, sans-serif; font-size: 11pt; text-transform: uppercase; color: #000; background: #fff; }
-                .header-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                .header-left { width: 32%; vertical-align: top; }
-                .header-center { width: 48%; text-align: center; vertical-align: middle; }
-                .header-right { width: 20%; text-align: right; vertical-align: middle; }
-                .header-center-content { display: inline-block; text-align: center; }
-                .header-center h2 { font-size: 18pt; font-weight: bold; margin-bottom: 4px; }
-                .header-center p { font-size: 9.5pt; margin: 2px 0; }
-                .order-box { font-weight: bold; font-size: 10.5pt; margin-bottom: 2px; }
-                .order-num { font-size: 15pt; font-weight: 900; color: #cc0000; margin-bottom: 6px; }
-                .clave-label { font-size: 10.5pt; font-weight: bold; margin-bottom: 2px; }
-                .clave-val { font-size: 14pt; font-weight: 900; color: #0066cc; font-family: monospace; }
-                .logo-img { width: 130px; height: auto; }
-                .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-                .info-table td { padding: 6px 4px; font-size: 10pt; vertical-align: bottom; }
-                .box-section { border: 1px solid #000; padding: 10px; margin-bottom: 12px; }
-                .box-title { font-weight: bold; font-size: 10pt; margin-bottom: 4px; }
-                .box-content { font-size: 10pt; min-height: 35px; }
-                .footer-text { font-size: 7.5pt; text-align: justify; line-height: 1.3; margin-top: 30px; }
-            </style></head>
-            <body>
-            
-            <table class="header-table">
-                <tr>
-                    <td class="header-left">
-                        <div class="order-box">ORDEN DE ENTRADA:</div>
-                        <div class="order-num">${orden}</div>
-                        <div class="clave-label">CLAVE WEB:</div>
-                        <div class="clave-val">${clave}</div>
-                    </td>
-                    <td class="header-center">
-                        <div class="header-center-content">
-                            <h2>CASA ELECTRONICA</h2>
-                            <p>CALLE 77AB # 86A40</p>
-                            <p>3194500736</p>
-                        </div>
-                    </td>
-                    <td class="header-right">
-                        <img src="${logoUrl}" class="logo-img" alt="Logo">
-                    </td>
-                </tr>
-            </table>
-
-            <p style="margin-bottom: 15px; font-weight: bold;">FECHA: ${fecha}</p>
-
-            <table class="info-table">
-                <tr>
-                    <td style="width: 18%; font-weight: bold;">NOMBRE DEL CLIENTE:</td>
-                    <td style="width: 38%; border-bottom: 1px solid #000;">${nombre}</td>
-                    <td style="width: 14%; font-weight: bold; padding-left: 15px;">TELÉFONO:</td>
-                    <td style="width: 30%; border-bottom: 1px solid #000;">${tel}</td>
-                </tr>
-            </table>
-
-            <table class="info-table">
-                <tr>
-                    <td style="width: 12%; font-weight: bold;">ARTÍCULO:</td>
-                    <td style="width: 38%; border-bottom: 1px solid #000;">${articulo}</td>
-                    <td style="width: 14%; font-weight: bold; padding-left: 15px;">MODELO:</td>
-                    <td style="width: 36%; border-bottom: 1px solid #000;">${modelo}</td>
-                </tr>
-            </table>
-
-            <table class="info-table">
-                <tr>
-                    <td style="width: 12%; font-weight: bold;">MARCA:</td>
-                    <td style="width: 38%; border-bottom: 1px solid #000;">${marca}</td>
-                    <td style="width: 14%; font-weight: bold; padding-left: 15px;">SERIE:</td>
-                    <td style="width: 36%; border-bottom: 1px solid #000;">${serie}</td>
-                </tr>
-            </table>
-
-            <div class="box-section">
-                <div class="box-title">PROBLEMA REPORTADO:</div>
-                <div class="box-content">${sintomas}</div>
-            </div>
-
-            <div class="box-section">
-                <div class="box-title">NOTAS:</div>
-                <div class="box-content">${notas}</div>
-            </div>
-
-            <p style="margin-top: 20px; font-size: 10pt;"><b>RESPONSABLE:</b> CASA ELECTRONICA</p>
-
-            <div class="footer-text">
-                AVISO IMPORTANTE: PASADOS 60 DÍAS A PARTIR DE ESTA NOTIFICACIÓN, NUESTRO ESTABLECIMIENTO NO SE RESPONSABILIZARÁ POR SU ARTÍCULO. 
-                DE ACUERDO CON LA LEY 1480 DE 2011 Y EL DECRETO 1413 DE 2018, SI EL BIEN NO ES RETIRADO EN ESTE PLAZO, SE DECLARÁ LEGALMENTE EN ESTADO DE ABANDONO Y EL NEGOCIO DISPONDRÁ DE ÉL PARA CUBRIR LOS COSTOS DE ALMACENAMIENTO Y REPARACIÓN. POR FAVOR, ACÉRQUESE A RETIRAR SU ARTÍCULO LO ANTES POSIBLE.
-            </div>
-
-            <script>window.onload = () => setTimeout(() => window.print(), 500);<\/script>
-            </body></html>`);
+            w.document.write(`<!DOCTYPE html><html><body><h2>CASA ELECTRÓNICA - ENTRADA ${orden}</h2><p>CLIENTE: ${nombre}</p><script>window.onload = () => window.print();<\/script></body></html>`);
             w.document.close();
         }
 
         function generarFacturaPDF() {
             const orden = document.getElementById('orden').value;
             const nombre = document.getElementById('nombre').value;
-            const tel = document.getElementById('telefono').value;
-            const articulo = document.getElementById('articulo').value;
-            const marca = document.getElementById('marca').value;
-            const modelo = document.getElementById('modelo').value;
-            const tecnico = document.getElementById('repTecnico').value;
-            const diag = document.getElementById('repDiagnostico').value;
-            const garantia = document.getElementById('repGarantia').value;
-            const total = formatearMilesCOP(document.getElementById('repTotalPagar').value) || '0';
-            const clave = document.getElementById('claveWeb').value;
-            const logoUrl = 'https://lh3.googleusercontent.com/d/1x2-ypgTRlKYcmWTODNmge7TnIxp14xzK=s500';
-
             const w = window.open('', '_blank', 'width=900,height=700');
-            w.document.write(`<!DOCTYPE html><html><head><title>Salida - ${orden}</title>
-            <style>
-                @page { size: letter portrait; margin: 15mm; }
-                body { font-family: Arial, sans-serif; font-size: 11pt; text-transform: uppercase; color: #000; background: #fff; }
-                .header-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                .header-left { width: 32%; vertical-align: top; }
-                .header-center { width: 48%; text-align: center; vertical-align: middle; }
-                .header-right { width: 20%; text-align: right; vertical-align: middle; }
-                .header-center-content { display: inline-block; text-align: center; }
-                .header-center h2 { font-size: 18pt; font-weight: bold; margin-bottom: 4px; }
-                .header-center p { font-size: 9.5pt; margin: 2px 0; }
-                .order-box { font-weight: bold; font-size: 10.5pt; margin-bottom: 2px; }
-                .order-num { font-size: 15pt; font-weight: 900; color: #cc0000; margin-bottom: 6px; }
-                .clave-label { font-size: 10.5pt; font-weight: bold; margin-bottom: 2px; }
-                .clave-val { font-size: 14pt; font-weight: 900; color: #0066cc; font-family: monospace; }
-                .logo-img { width: 130px; height: auto; }
-                .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-                .info-table td { padding: 6px 4px; font-size: 10pt; vertical-align: bottom; }
-                .box-section { border: 1px solid #000; padding: 10px; margin-bottom: 12px; }
-                .box-title { font-weight: bold; font-size: 10pt; margin-bottom: 4px; }
-                .box-content { font-size: 10pt; min-height: 45px; }
-            </style></head>
-            <body>
-            
-            <table class="header-table">
-                <tr>
-                    <td class="header-left">
-                        <div class="order-box">ORDEN DE SALIDA:</div>
-                        <div class="order-num">${orden}</div>
-                        <div class="clave-label">CLAVE WEB:</div>
-                        <div class="clave-val">${clave}</div>
-                    </td>
-                    <td class="header-center">
-                        <div class="header-center-content">
-                            <h2>CASA ELECTRONICA</h2>
-                            <p>CALLE 77AB # 86A40</p>
-                            <p>3194500736</p>
-                        </div>
-                    </td>
-                    <td class="header-right">
-                        <img src="${logoUrl}" class="logo-img" alt="Logo">
-                    </td>
-                </tr>
-            </table>
-
-            <table class="info-table" style="margin-top: 20px;">
-                <tr>
-                    <td style="width: 18%; font-weight: bold;">CLIENTE:</td>
-                    <td style="width: 50%; border-bottom: 1px solid #000;">${nombre}</td>
-                    <td style="width: 12%; font-weight: bold; padding-left: 15px;">TEL:</td>
-                    <td style="width: 20%; border-bottom: 1px solid #000;">${tel}</td>
-                </tr>
-            </table>
-
-            <table class="info-table">
-                <tr>
-                    <td style="width: 18%; font-weight: bold;">ARTÍCULO:</td>
-                    <td style="width: 32%; border-bottom: 1px solid #000;">${articulo}</td>
-                    <td style="width: 12%; font-weight: bold; padding-left: 15px;">MARCA:</td>
-                    <td style="width: 38%; border-bottom: 1px solid #000;">${marca} ${modelo}</td>
-                </tr>
-            </table>
-
-            <div class="box-section" style="margin-top: 15px;">
-                <div class="box-title">TRABAJO REALIZADO / DIAGNÓSTICO:</div>
-                <div class="box-content">${diag}</div>
-            </div>
-
-            <div class="box-section">
-                <div class="box-title">GARANTÍA:</div>
-                <div class="box-content" style="min-height: 25px;">${garantia || 'NINGUNA'}</div>
-            </div>
-
-            <table class="info-table" style="margin-top: 20px;">
-                <tr>
-                    <td style="width: 18%; font-weight: bold;">TÉCNICO:</td>
-                    <td style="width: 42%; border-bottom: 1px solid #000;">${tecnico}</td>
-                    <td style="width: 18%; font-weight: bold; padding-left: 15px;">TOTAL A PAGAR:</td>
-                    <td style="width: 22%; border-bottom: 1px solid #000; font-weight: bold; font-size: 12pt;">$ ${total}</td>
-                </tr>
-            </table>
-
-            <script>window.onload = () => setTimeout(() => window.print(), 500);<\/script>
-            </body></html>`);
+            w.document.write(`<!DOCTYPE html><html><body><h2>CASA ELECTRÓNICA - SALIDA ${orden}</h2><p>CLIENTE: ${nombre}</p><script>window.onload = () => window.print();<\/script></body></html>`);
             w.document.close();
         }
 
