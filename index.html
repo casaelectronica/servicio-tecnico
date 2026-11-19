@@ -103,6 +103,7 @@
         .nav-tabs-group {
             display: flex;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .nav-actions-group {
@@ -930,12 +931,6 @@
         .net-online { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
         .net-offline { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid var(--accent-red); }
 
-        @media print {
-            body * { visibility: hidden; }
-            #sticker-canvas, #sticker-canvas * { visibility: visible; }
-            #sticker-canvas { position: absolute; left: 0; top: 0; border: none !important; margin: 0 !important; }
-        }
-
         @media (max-width: 1024px) {
             .container {
                 grid-template-columns: 1fr;
@@ -1344,7 +1339,6 @@
             </div>
 
             <div class="search-container">
-                <!-- Buscador de Estado sin corredera (no-scroll) -->
                 <div class="modern-select-wrapper" id="wrapperFiltroEstado">
                     <div class="modern-select-btn" onclick="toggleModernDropdown('wrapperFiltroEstado')" style="height: 38px; min-height: 38px; font-size: 0.8rem;">
                         <span id="displayFiltroEstado" style="display: flex; align-items: center; gap: 0.5rem;">
@@ -1524,29 +1518,6 @@
         </div>
     </div>
 
-    <div id="modalTicketOverlay" class="modal-overlay">
-        <div class="modal-box">
-            <h3>SELECCIONAR TICKET</h3>
-            <div class="modern-select-wrapper" id="wrapperTipoTicket">
-                <div class="modern-select-btn" onclick="toggleModernDropdown('wrapperTipoTicket')">
-                    <span id="displayTipoTicket" style="display: flex; align-items: center; gap: 0.6rem;">
-                        <span class="modern-dot dot-reparado"></span> REPARADO
-                    </span>
-                    <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
-                </div>
-                <div class="modern-dropdown-options" id="listTipoTicket">
-                    <div class="modern-option-item" onclick="selectModernOption('selectTipoTicket', 'displayTipoTicket', 'wrapperTipoTicket', 'REPARADO', 'REPARADO', 'dot-reparado')"><span class="modern-dot dot-reparado"></span> REPARADO</div>
-                    <div class="modern-option-item" onclick="selectModernOption('selectTipoTicket', 'displayTipoTicket', 'wrapperTipoTicket', 'DEVOLUCION', 'DEVOLUCIÓN', 'dot-devolucion')"><span class="modern-dot dot-devolucion"></span> DEVOLUCIÓN</div>
-                </div>
-            </div>
-            <input type="hidden" id="selectTipoTicket" value="REPARADO">
-            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;">
-                <button type="button" class="btn btn-secondary" onclick="cerrarModalTicket()">CANCELAR</button>
-                <button type="button" class="btn btn-primary" onclick="ejecutarImpresionTicket()">IMPRIMIR</button>
-            </div>
-        </div>
-    </div>
-
     <div id="modalListaAliadosOverlay" class="modal-overlay">
         <div class="modal-box" style="max-width: 390px;">
             <h3>SELECCIONAR ALIADO</h3>
@@ -1627,7 +1598,6 @@
         let activeTab = 'identificacion';
         let periodoIngresoActual = 'DIA';
 
-        // Variables para el módulo de Stickers
         let medidasSticker = JSON.parse(localStorage.getItem('marklife_medidas')) || [{ ancho: 50, alto: 30, fija: true }];
         let medidaSeleccionadaSticker = medidasSticker[0];
         let zoomManualSticker = false;
@@ -1649,7 +1619,6 @@
             document.getElementById('formIdentificacion').addEventListener('submit', (e) => { e.preventDefault(); guardarIdentificacion(); });
             document.getElementById('formReparaciones').addEventListener('submit', (e) => { e.preventDefault(); guardarReparacion(); });
 
-            // Inicializar stickers
             renderizarBotonesMedidasSticker();
             cambiarEstadoSticker();
         });
@@ -2083,7 +2052,116 @@
         }
 
         function imprimirSticker() {
-            window.print();
+            const ancho = medidaSeleccionadaSticker ? medidaSeleccionadaSticker.ancho : 50;
+            const alto = medidaSeleccionadaSticker ? medidaSeleccionadaSticker.alto : 30;
+            const titulo = document.getElementById('prevTitulo').textContent;
+            const estado = document.getElementById('selEstadoSticker').value;
+            const prevEstado = document.getElementById('prevEstado');
+            const prevPrecio = document.getElementById('prevPrecio');
+
+            const textoEstado = prevEstado.textContent;
+            const estiloEstado = prevEstado.getAttribute('style') || '';
+            const esLibre = estado === 'LIBRE';
+
+            const textoPrecio = prevPrecio.textContent;
+            const estiloPrecio = prevPrecio.getAttribute('style') || '';
+            const mostrarPrecio = estado === 'LISTO';
+
+            const tamanoEncabezado = Math.max(6, Math.min(10, ancho * 0.15));
+
+            const w = window.open('', '_blank', 'width=400,height=300');
+            w.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Sticker ${ancho}x${alto}mm</title>
+                    <style>
+                        @page {
+                            size: ${ancho}mm ${alto}mm;
+                            margin: 0;
+                        }
+                        html, body {
+                            width: ${ancho}mm;
+                            height: ${alto}mm;
+                            margin: 0;
+                            padding: 0;
+                            overflow: hidden;
+                            background: #ffffff;
+                            color: #000000;
+                            font-family: 'Segoe UI', Arial, sans-serif;
+                        }
+                        .stk-box {
+                            width: ${ancho}mm;
+                            height: ${alto}mm;
+                            padding: 1mm 1.5mm;
+                            box-sizing: border-box;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                            align-items: center;
+                            text-align: center;
+                            overflow: hidden;
+                            page-break-after: avoid;
+                            page-break-before: avoid;
+                        }
+                        .stk-header {
+                            width: 100%;
+                            border-bottom: 1.2px solid #000;
+                            padding-bottom: 0.5mm;
+                            font-weight: 900;
+                            font-size: ${tamanoEncabezado}pt;
+                            letter-spacing: 0.3px;
+                            text-transform: uppercase;
+                            flex-shrink: 0;
+                        }
+                        .stk-main {
+                            width: 100%;
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            overflow: hidden;
+                            line-height: 1;
+                        }
+                        .stk-status {
+                            font-weight: 900;
+                            text-transform: uppercase;
+                            line-height: 1;
+                            ${esLibre ? 'white-space: pre-wrap; word-break: break-word; line-height: 1.05; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;' : 'white-space: nowrap;'}
+                        }
+                        .stk-price {
+                            font-weight: 900;
+                            text-transform: uppercase;
+                            white-space: nowrap;
+                            line-height: 1;
+                            margin-top: 0.5mm;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="stk-box">
+                        <div class="stk-header">${titulo}</div>
+                        <div class="stk-main">
+                            <div class="stk-status" style="${estiloEstado}">${textoEstado}</div>
+                            ${mostrarPrecio ? `<div class="stk-price" style="${estiloPrecio}">${textoPrecio}</div>` : ''}
+                        </div>
+                    </div>
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 400);
+                            }, 150);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            w.document.close();
         }
         /* =============================================================== */
 
@@ -2599,17 +2677,15 @@
             }
         }
 
-        // Función auxiliar para texto natural (primera mayúscula, resto minúscula)
         function capitalizarTextoNatural(str) {
             if (!str) return '';
             const s = str.toLowerCase();
             return s.charAt(0).toUpperCase() + s.slice(1);
         }
 
-        /* BOTÓN MANDAR MENSAJE GENERAL (RESPETA DATOS EN MAYÚSCULA DEL FORMULARIO) */
         function abrirModalMensajePersonalizado() {
             const orden = document.getElementById('orden').value;
-            const nombre = document.getElementById('nombre').value; // Respetando mayúscula del form
+            const nombre = document.getElementById('nombre').value;
             const articulo = document.getElementById('articulo').value || 'ARTÍCULO';
             const marca = document.getElementById('marca').value ? ` ${document.getElementById('marca').value}` : '';
             const modelo = document.getElementById('modelo').value ? ` (${document.getElementById('modelo').value})` : '';
@@ -2640,7 +2716,6 @@
             window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
         }
 
-        /* FORMATOS DE WHATSAPP SEGÚN EL ESTADO AL GENERAR SALIDA / FACTURA */
         function enviarSalidaEstadoWhatsApp() {
             let tel = document.getElementById('telefono').value.trim();
             const orden = document.getElementById('orden').value;
@@ -2708,14 +2783,136 @@
             window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
         }
 
-        function abrirModalTicketReparacion() { document.getElementById('modalTicketOverlay').style.display = 'flex'; }
-        function cerrarModalTicket() { document.getElementById('modalTicketOverlay').style.display = 'none'; }
+        /* FUNCIÓN TICKET DE REPARACIÓN ADAPTADA AL ESTADO Y TAMAÑO DEL PAPEL */
+        function abrirModalTicketReparacion() {
+            const estadoActual = document.getElementById('repEstado').value.trim().toUpperCase();
+            const valorPagar = formatearMilesCOP(document.getElementById('repTotalPagar').value) || '0';
+            const ancho = medidaSeleccionadaSticker ? medidaSeleccionadaSticker.ancho : 50;
+            const alto = medidaSeleccionadaSticker ? medidaSeleccionadaSticker.alto : 30;
+            const tituloTaller = document.getElementById('txtTitulo').value.toUpperCase() || 'CASA ELECTRÓNICA';
+            const tamanoEncabezado = Math.max(6, Math.min(10, ancho * 0.15));
 
-        function ejecutarImpresionTicket() {
-            cerrarModalTicket();
-            const tipo = document.getElementById('selectTipoTicket').value;
+            let textoPrincipal = estadoActual;
+            let textoSecundario = '';
+
+            if (estadoActual === 'REPARADO') {
+                textoPrincipal = 'LISTO';
+                textoSecundario = `$ ${valorPagar}`;
+            } else if (estadoActual === 'DEVOLUCION') {
+                textoPrincipal = 'DEVOLUCIÓN';
+            }
+
             const w = window.open('', '_blank', 'width=400,height=300');
-            w.document.write(`<!DOCTYPE html><html><head><style>@page { size: 50mm 30mm; margin: 0; } body { width: 48mm; height: 28mm; display: flex; align-items: center; justify-content: center; font-family: Arial; font-weight: 900; font-size: 16pt; text-align: center; }</style></head><body>${tipo}<script>window.onload = () => { window.print(); setTimeout(() => window.close(), 500); };<\/script></body></html>`);
+            w.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Ticket Reparación ${ancho}x${alto}mm</title>
+                    <style>
+                        @page {
+                            size: ${ancho}mm ${alto}mm;
+                            margin: 0;
+                        }
+                        html, body {
+                            width: ${ancho}mm;
+                            height: ${alto}mm;
+                            margin: 0;
+                            padding: 0;
+                            overflow: hidden;
+                            background: #ffffff;
+                            color: #000000;
+                            font-family: 'Segoe UI', Arial, sans-serif;
+                        }
+                        .stk-box {
+                            width: ${ancho}mm;
+                            height: ${alto}mm;
+                            padding: 1mm 1.5mm;
+                            box-sizing: border-box;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                            align-items: center;
+                            text-align: center;
+                            overflow: hidden;
+                            page-break-after: avoid;
+                            page-break-before: avoid;
+                        }
+                        .stk-header {
+                            width: 100%;
+                            border-bottom: 1.2px solid #000;
+                            padding-bottom: 0.5mm;
+                            font-weight: 900;
+                            font-size: ${tamanoEncabezado}pt;
+                            letter-spacing: 0.3px;
+                            text-transform: uppercase;
+                            flex-shrink: 0;
+                        }
+                        .stk-main {
+                            width: 100%;
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            overflow: hidden;
+                            line-height: 1;
+                        }
+                        .stk-principal, .stk-secundario {
+                            font-weight: 900;
+                            text-transform: uppercase;
+                            white-space: nowrap;
+                            line-height: 1;
+                        }
+                        .stk-secundario {
+                            margin-top: 0.6mm;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="stk-box" id="ticketBox">
+                        <div class="stk-header">${tituloTaller}</div>
+                        <div class="stk-main" id="ticketMain">
+                            <div class="stk-principal" id="ticketPrincipal">${textoPrincipal}</div>
+                            ${textoSecundario ? `<div class="stk-secundario" id="ticketSecundario">${textoSecundario}</div>` : ''}
+                        </div>
+                    </div>
+                    <script>
+                        function ajustarTextoAlContenedor(el, maxAncho, maxAlto) {
+                            if (!el) return;
+                            let size = Math.max(8, maxAlto);
+                            el.style.fontSize = size + 'px';
+                            while ((el.scrollWidth > maxAncho || el.scrollHeight > maxAlto) && size > 6) {
+                                size -= 0.5;
+                                el.style.fontSize = size + 'px';
+                            }
+                        }
+
+                        window.onload = function() {
+                            const mainBox = document.getElementById('ticketMain');
+                            const principalEl = document.getElementById('ticketPrincipal');
+                            const secundarioEl = document.getElementById('ticketSecundario');
+                            const maxW = mainBox.clientWidth - 2;
+                            const maxH = mainBox.clientHeight - 2;
+
+                            if (secundarioEl) {
+                                ajustarTextoAlContenedor(principalEl, maxW, maxH * 0.36);
+                                ajustarTextoAlContenedor(secundarioEl, maxW, maxH * 0.58);
+                            } else {
+                                ajustarTextoAlContenedor(principalEl, maxW, maxH * 0.85);
+                            }
+
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 400);
+                            }, 150);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
             w.document.close();
         }
 
