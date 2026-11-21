@@ -1129,7 +1129,7 @@
                                     </span>
                                     <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: var(--text-muted);"></i>
                                 </div>
-                                <div class="modern-dropdown-options" id="listRepEstado">
+                                <div class="modern-dropdown-options no-scroll" id="listRepEstado">
                                     <div class="modern-option-item" onclick="selectModernOption('repEstado', 'displayRepEstado', 'wrapperRepEstado', 'PENDIENTE', 'PENDIENTE', 'dot-pendiente')">
                                         <span class="modern-dot dot-pendiente"></span> PENDIENTE
                                     </div>
@@ -1377,7 +1377,7 @@
 
                 <div class="search-box">
                     <i data-lucide="search"></i>
-                    <input type="text" id="searchInput" placeholder="BUSCAR CLIENTE, ORDEN O TEL...">
+                    <input type="text" id="searchInput" placeholder="BUSCAR NOMBRE, TELÉFONO O N° ORDEN...">
                 </div>
             </div>
 
@@ -1434,7 +1434,7 @@
                 <div class="ingreso-repuestos-card">
                     <span class="ingreso-total-label">VALOR REPUESTOS</span>
                     <div class="ingreso-repuestos-amount" id="lblTotalRepuestosCard">$ 0</div>
-                    <span class="ingreso-total-sub">COSTO Insumos</span>
+                    <span class="ingreso-total-sub">COSTO INSUMOS</span>
                 </div>
                 <div class="ingreso-neto-card">
                     <span class="ingreso-total-label">GANANCIA NETA REAL</span>
@@ -1583,6 +1583,7 @@
 
     <script>
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvImjy9wU74oeq4YLCq1r7ksU0_U9UtZ_oHQ-p6cUj0JMNWHOXhNQ8ohBIQ9LcQjPQ/exec';
+        const LOGO_URL_DIRECTA = 'https://drive.google.com/thumbnail?id=1x2-ypgTRlKYcmWTODNmge7TnIxp14xzK&sz=w800';
 
         let ordenesDB = [];
         let tecnicosDB = [];
@@ -1840,7 +1841,7 @@
             }
             actualizarSelectTecnicos();
             actualizarSelectAliadosModal();
-            renderOrdersList();
+            renderOrdersList(document.getElementById('searchInput').value);
         }
 
         function switchTab(tabName) {
@@ -2070,6 +2071,10 @@
             const tamanoEncabezado = Math.max(6, Math.min(10, ancho * 0.15));
 
             const w = window.open('', '_blank', 'width=400,height=300');
+            if (!w) {
+                alert('PERMITE LAS VENTANAS EMERGENTES EN TU NAVEGADOR PARA IMPRIMIR.');
+                return;
+            }
             w.document.write(`
                 <!DOCTYPE html>
                 <html>
@@ -2152,9 +2157,6 @@
                         window.onload = function() {
                             setTimeout(function() {
                                 window.print();
-                                setTimeout(function() {
-                                    window.close();
-                                }, 400);
                             }, 150);
                         };
                     <\/script>
@@ -2407,7 +2409,7 @@
             const currentYear = new Date().getFullYear();
             let nextSequence = 931;
             if (ordenesDB.length > 0) {
-                const nums = ordenesDB.map(o => { const p = o.orden.split('-'); return p.length === 2 ? parseInt(p[1], 10) : 0; }).filter(n => !isNaN(n));
+                const nums = ordenesDB.map(o => { const p = String(o.orden || '').split('-'); return p.length === 2 ? parseInt(p[1], 10) : 0; }).filter(n => !isNaN(n));
                 if (nums.length > 0) nextSequence = Math.max(...nums, 930) + 1;
             }
             return `${currentYear}-${String(nextSequence).padStart(4, '0')}`;
@@ -2445,12 +2447,12 @@
             document.getElementById('btnActualizarRep').style.display = 'none';
             document.getElementById('btnMandarMensajeRep').style.display = 'none';
 
-            renderOrdersList();
+            renderOrdersList(document.getElementById('searchInput').value);
             switchTab('identificacion');
         }
 
         function cargarOrden(numOrden) {
-            const orden = ordenesDB.find(o => o.orden === numOrden);
+            const orden = ordenesDB.find(o => String(o.orden) === String(numOrden));
             if (!orden) return;
             currentOrderId = orden.orden;
             modoEdicionIdActivo = false;
@@ -2524,7 +2526,7 @@
             let claveVal = document.getElementById('claveWeb').value || generarClaveHexadecimal();
             document.getElementById('claveWeb').value = claveVal;
 
-            const existingIndex = ordenesDB.findIndex(o => o.orden === ordenNum);
+            const existingIndex = ordenesDB.findIndex(o => String(o.orden) === String(ordenNum));
             const estadoActual = existingIndex >= 0 ? (ordenesDB[existingIndex].estado || 'PENDIENTE') : 'PENDIENTE';
 
             const formData = {
@@ -2559,7 +2561,7 @@
                 showToast('ORDEN GUARDADA CON ÉXITO');
             }
             localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
-            renderOrdersList();
+            renderOrdersList(document.getElementById('searchInput').value);
             cargarOrden(ordenNum);
         }
 
@@ -2589,14 +2591,22 @@
                 localStorage.setItem('casaElectronica_colaOffline', JSON.stringify(colaOffline));
             }
 
-            const index = ordenesDB.findIndex(o => o.orden === numOrden);
+            const index = ordenesDB.findIndex(o => String(o.orden) === String(numOrden));
             if (index >= 0) {
                 ordenesDB[index] = { ...ordenesDB[index], ...repData };
                 localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
-                renderOrdersList();
+                renderOrdersList(document.getElementById('searchInput').value);
                 showToast('REPARACIÓN GUARDADA');
             }
             cargarOrden(numOrden);
+        }
+
+        function normalizarTextoBusqueda(texto) {
+            return String(texto || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toUpperCase()
+                .trim();
         }
 
         function renderOrdersList(filter = '') {
@@ -2604,12 +2614,24 @@
             container.innerHTML = '';
             const filtroEstadoFijo = document.getElementById('filtroEstadoActual').value;
             const hoy = new Date();
+            const term = normalizarTextoBusqueda(filter);
+            const termSoloDigitos = term.replace(/\D/g, '');
 
             const filtered = ordenesDB.filter(o => {
-                const estado = (o.estado || 'PENDIENTE').trim().toUpperCase();
+                const estado = normalizarTextoBusqueda(o.estado || 'PENDIENTE');
                 if (filtroEstadoFijo !== 'TODOS' && estado !== filtroEstadoFijo) return false;
-                const term = filter.toUpperCase();
-                return o.orden.includes(term) || (o.nombre && o.nombre.includes(term)) || (o.telefono && o.telefono.includes(term)) || (o.articulo && o.articulo.includes(term));
+
+                if (!term) return true;
+
+                const ordenStr = normalizarTextoBusqueda(o.orden);
+                const nombreStr = normalizarTextoBusqueda(o.nombre);
+                const telStr = String(o.telefono || '').replace(/\D/g, '');
+
+                const coincideOrden = ordenStr.includes(term) || (termSoloDigitos && ordenStr.replace(/\D/g, '').includes(termSoloDigitos));
+                const coincideNombre = nombreStr.includes(term);
+                const coincideTelefono = termSoloDigitos ? telStr.includes(termSoloDigitos) : String(o.telefono || '').includes(term);
+
+                return coincideOrden || coincideNombre || coincideTelefono;
             });
 
             const sorted = [...filtered].reverse();
@@ -2625,7 +2647,7 @@
                 const estado = o.estado || 'PENDIENTE';
                 const estadoClass = estado.replace(/\s+/g, '-');
                 card.className = `order-card status-${estadoClass}`;
-                if (o.orden === currentOrderId) card.classList.add('selected');
+                if (String(o.orden) === String(currentOrderId)) card.classList.add('selected');
                 card.onclick = () => cargarOrden(o.orden);
 
                 let alertaHTML = '';
@@ -2658,7 +2680,7 @@
 
         async function eliminarOrdenActual() {
             const ordenNum = document.getElementById('orden').value;
-            const index = ordenesDB.findIndex(o => o.orden === ordenNum);
+            const index = ordenesDB.findIndex(o => String(o.orden) === String(ordenNum));
             if (index < 0) return;
 
             if (confirm(`¿ELIMINAR ORDEN ${ordenNum}?`)) {
@@ -2672,7 +2694,7 @@
                 ordenesDB.splice(index, 1);
                 localStorage.setItem('casaElectronica_ordenes', JSON.stringify(ordenesDB));
                 showToast('ORDEN ELIMINADA');
-                renderOrdersList();
+                renderOrdersList(document.getElementById('searchInput').value);
                 nuevoRegistro();
             }
         }
@@ -2722,7 +2744,7 @@
             const nombre = document.getElementById('nombre').value;
             const articulo = document.getElementById('articulo').value || 'EQUIPO';
             const marca = document.getElementById('marca').value ? ` ${document.getElementById('marca').value}` : '';
-            const modelo = document.getElementById('modelo').value ? ` ${document.getElementById('modelo').value}` : '';
+            const modelo = document.getElementById('modelo').value ? ` (${document.getElementById('modelo').value})` : '';
             const estado = document.getElementById('repEstado').value.trim().toUpperCase();
             const diagnostico = document.getElementById('repDiagnostico').value.trim() || 'SIN ESPECIFICAR';
             const totalPagar = formatearMilesCOP(document.getElementById('repTotalPagar').value) || '0';
@@ -2763,7 +2785,11 @@
             const nombre = document.getElementById('nombre').value;
             if (!orden || !nombre) return;
             const w = window.open('', '_blank', 'width=400,height=300');
-            w.document.write(`<!DOCTYPE html><html><head><title>Ticket</title><style>@page { size: 50mm 30mm; margin: 0; } body { width: 50mm; height: 30mm; margin: 0; font-family: Arial; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }</style></head><body><div style="font-size: 24pt; font-weight: 900;">${orden}</div><div style="font-size: 14pt; font-weight: bold;">${nombre}</div><script>window.onload = () => { window.print(); setTimeout(() => window.close(), 500); };<\/script></body></html>`);
+            if (!w) {
+                alert('PERMITE LAS VENTANAS EMERGENTES EN TU NAVEGADOR PARA IMPRIMIR.');
+                return;
+            }
+            w.document.write(`<!DOCTYPE html><html><head><title>Ticket</title><style>@page { size: 50mm 30mm; margin: 0; } body { width: 50mm; height: 30mm; margin: 0; font-family: Arial; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }</style></head><body><div style="font-size: 24pt; font-weight: 900;">${orden}</div><div style="font-size: 14pt; font-weight: bold;">${nombre}</div><script>window.onload = () => { window.print(); };<\/script></body></html>`);
             w.document.close();
         }
 
@@ -2774,12 +2800,25 @@
 
         function enviarEntradaWhatsApp() {
             let tel = document.getElementById('telefono').value.trim();
-            const orden = document.getElementById('orden').value;
-            const nombre = document.getElementById('nombre').value;
-            const clave = document.getElementById('claveWeb').value;
-            if (!tel) return;
+            const orden = document.getElementById('orden').value.trim();
+            const nombre = document.getElementById('nombre').value.trim();
+            const clave = document.getElementById('claveWeb').value.trim();
+            const articulo = document.getElementById('articulo').value.trim();
+            const marca = document.getElementById('marca').value.trim();
+            const modelo = document.getElementById('modelo').value.trim();
+            const sintomas = document.getElementById('sintomas').value.trim() || 'NO ESPECIFICADOS';
+            const notas = document.getElementById('notas').value.trim() || 'NINGUNA';
+
+            if (!tel) {
+                alert("EL CLIENTE NO TIENE TELÉFONO REGISTRADO.");
+                return;
+            }
             if (tel.length === 10) tel = '57' + tel;
-            const mensaje = `Casa Electrónica\n\nHola ${nombre}, recibimos tu equipo. Orden: ${orden}\nClave web: ${clave}\nConsulta el estado aquí: https://casaelectronica.github.io/consulta/`;
+
+            const equipoDetalle = [articulo, marca, modelo].filter(Boolean).join(', ');
+            const textoEquipo = equipoDetalle ? ` ${equipoDetalle}` : '';
+
+            const mensaje = `Casa Electrónica\n\nHola ${nombre}, recibimos tu equipo${textoEquipo}\nOrden de servicio: ${orden}.\nClave web: ${clave}.\nSíntomas reportados: ${sintomas}\nNotas de recepción: ${notas}\nConsulta el estado aquí: https://casaelectronica.github.io/consulta/`;
             window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
         }
 
@@ -2803,6 +2842,10 @@
             }
 
             const w = window.open('', '_blank', 'width=400,height=300');
+            if (!w) {
+                alert('PERMITE LAS VENTANAS EMERGENTES EN TU NAVEGADOR PARA IMPRIMIR.');
+                return;
+            }
             w.document.write(`
                 <!DOCTYPE html>
                 <html>
@@ -2904,9 +2947,6 @@
 
                             setTimeout(function() {
                                 window.print();
-                                setTimeout(function() {
-                                    window.close();
-                                }, 400);
                             }, 150);
                         };
                     <\/script>
@@ -2916,19 +2956,409 @@
             w.document.close();
         }
 
+        function formatearFechaComprobante(fechaRaw) {
+            const d = fechaRaw ? new Date(fechaRaw) : new Date();
+            if (isNaN(d.getTime())) {
+                return fechaRaw || new Date().toLocaleString('es-CO');
+            }
+            const meses = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'sep.', 'oct.', 'nov.', 'dic.'];
+            const dia = String(d.getDate()).padStart(2, '0');
+            const mes = meses[d.getMonth()];
+            const anio = d.getFullYear();
+            const horas = String(d.getHours()).padStart(2, '0');
+            const minutos = String(d.getMinutes()).padStart(2, '0');
+            return `${dia}-${mes}-${anio} ${horas}:${minutos}`;
+        }
+
+        function escaparHTML(texto) {
+            return String(texto || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
         function generarEntradaPDF() {
-            const orden = document.getElementById('orden').value;
-            const nombre = document.getElementById('nombre').value;
-            const w = window.open('', '_blank', 'width=900,height=700');
-            w.document.write(`<!DOCTYPE html><html><body><h2>CASA ELECTRÓNICA - ENTRADA ${orden}</h2><p>CLIENTE: ${nombre}</p><script>window.onload = () => window.print();<\/script></body></html>`);
+            const orden = escaparHTML(document.getElementById('orden').value || '');
+            const nombre = escaparHTML(document.getElementById('nombre').value || '');
+            const telefono = escaparHTML(document.getElementById('telefono').value || '');
+            const articulo = escaparHTML(document.getElementById('articulo').value || '');
+            const marca = escaparHTML(document.getElementById('marca').value || '');
+            const modelo = escaparHTML(document.getElementById('modelo').value || '');
+            const serie = escaparHTML(document.getElementById('serie').value || '');
+            const sintomas = escaparHTML(document.getElementById('sintomas').value || '');
+            const notas = escaparHTML(document.getElementById('notas').value || '');
+            const fechaTexto = escaparHTML(formatearFechaComprobante(document.getElementById('fechaRegistro').value));
+
+            const w = window.open('', '_blank', 'width=920,height=720');
+            if (!w) {
+                alert('NO SE PUDO ABRIR LA VENTANA DE IMPRESIÓN. REVISA SI EL NAVEGADOR BLOQUEÓ LAS VENTANAS EMERGENTES.');
+                return;
+            }
+
+            w.document.write(`
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Orden de Entrada - ${orden}</title>
+                    <style>
+                        @page {
+                            size: letter portrait;
+                            margin: 10mm 12mm;
+                        }
+                        * {
+                            box-sizing: border-box;
+                            margin: 0;
+                            padding: 0;
+                        }
+                        body {
+                            background: #ffffff;
+                            color: #000000;
+                            font-family: "Times New Roman", Georgia, serif;
+                            font-size: 11.5pt;
+                            line-height: 1.25;
+                            padding: 6px;
+                        }
+                        .sheet {
+                            width: 100%;
+                            max-width: 760px;
+                            margin: 0 auto;
+                        }
+                        .top-header {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-start;
+                            margin-bottom: 8px;
+                        }
+                        .company-center {
+                            flex: 1;
+                            text-align: center;
+                            padding-top: 2px;
+                        }
+                        .company-name {
+                            font-size: 15pt;
+                            font-weight: 500;
+                            letter-spacing: 0.6px;
+                        }
+                        .company-address {
+                            font-size: 9pt;
+                            margin-top: 2px;
+                            letter-spacing: 0.4px;
+                        }
+                        .company-phone {
+                            font-size: 10pt;
+                            margin-top: 2px;
+                        }
+                        .logo-box {
+                            width: 150px;
+                            height: 66px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            flex-shrink: 0;
+                            margin-left: 10px;
+                        }
+                        .logo-box img {
+                            max-width: 100%;
+                            max-height: 100%;
+                            object-fit: contain;
+                            display: block;
+                        }
+                        .meta-row {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 6px;
+                            font-size: 10.5pt;
+                        }
+                        .meta-label {
+                            font-weight: 700;
+                        }
+                        .email-center {
+                            font-size: 10pt;
+                            text-align: center;
+                            margin-right: 12%;
+                        }
+                        .order-row {
+                            margin-bottom: 8px;
+                            font-size: 11.5pt;
+                        }
+                        .order-row .meta-label {
+                            font-weight: 700;
+                            margin-right: 12px;
+                        }
+                        .order-number-bold {
+                            font-weight: 800;
+                            font-size: 12pt;
+                        }
+                        .client-grid {
+                            width: 100%;
+                            border-top: 1.5px solid #000;
+                            border-bottom: 1.5px solid #000;
+                            padding: 6px 2px;
+                            display: grid;
+                            grid-template-columns: 1.25fr 0.75fr;
+                            row-gap: 5px;
+                            column-gap: 16px;
+                            font-size: 10.5pt;
+                        }
+                        .field-item {
+                            display: flex;
+                            gap: 8px;
+                            align-items: baseline;
+                        }
+                        .field-lbl {
+                            font-weight: 700;
+                            min-width: 118px;
+                        }
+                        .field-val {
+                            font-weight: 400;
+                            word-break: break-word;
+                        }
+                        .detail-box {
+                            width: 100%;
+                            border-left: 1.2px solid #000;
+                            border-right: 1.2px solid #000;
+                            border-bottom: 1.2px solid #000;
+                        }
+                        .problem-row {
+                            display: flex;
+                            border-bottom: 1.2px solid #000;
+                            min-height: 44px;
+                            padding: 5px 8px;
+                            gap: 14px;
+                            font-size: 10.5pt;
+                        }
+                        .problem-lbl {
+                            font-weight: 700;
+                            width: 92px;
+                            flex-shrink: 0;
+                            line-height: 1.15;
+                        }
+                        .problem-val {
+                            flex: 1;
+                            white-space: pre-wrap;
+                            word-break: break-word;
+                        }
+                        .notes-row {
+                            display: flex;
+                            border-bottom: 1.2px solid #000;
+                            min-height: 28px;
+                            padding: 5px 8px;
+                            gap: 14px;
+                            font-size: 10.5pt;
+                        }
+                        .notes-lbl {
+                            font-weight: 700;
+                            width: 92px;
+                            flex-shrink: 0;
+                        }
+                        .notes-val {
+                            flex: 1;
+                            white-space: pre-wrap;
+                            word-break: break-word;
+                        }
+                        .responsible-row {
+                            padding: 5px 8px 18px 8px;
+                            font-size: 10pt;
+                        }
+                        .responsible-row span {
+                            font-weight: 700;
+                        }
+                        .footer-sign-row {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-end;
+                            padding: 4px 8px 6px 8px;
+                            font-size: 10.5pt;
+                            gap: 10px;
+                        }
+                        .sign-lbl {
+                            font-weight: 700;
+                        }
+                        .legal-notice {
+                            margin-top: 8px;
+                            font-size: 10.2pt;
+                            line-height: 1.22;
+                            text-align: left;
+                        }
+                        .legal-notice p {
+                            margin-bottom: 4px;
+                        }
+                        .legal-title {
+                            font-weight: 500;
+                        }
+                        @media print {
+                            body {
+                                padding: 0;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="sheet">
+                        <div class="top-header">
+                            <div class="company-center">
+                                <div class="company-name">CASA ELECTRONICA</div>
+                                <div class="company-address">CALLE 77AB #86A 40</div>
+                                <div class="company-phone">3194500736</div>
+                            </div>
+                            <div class="logo-box">
+                                <img id="logoImg" src="${LOGO_URL_DIRECTA}" alt="LOGO CASA ELECTRONICA">
+                            </div>
+                        </div>
+
+                        <div class="meta-row">
+                            <div><span class="meta-label">Fecha:</span> ${fechaTexto}</div>
+                            <div class="email-center">casaelectronica01@gmail.com</div>
+                            <div style="width: 80px;"></div>
+                        </div>
+
+                        <div class="order-row">
+                            <span class="meta-label">Orden de entrada:</span>
+                            <span class="order-number-bold">${orden}</span>
+                        </div>
+
+                        <div class="client-grid">
+                            <div class="field-item">
+                                <span class="field-lbl">Nombre del cliente:</span>
+                                <span class="field-val">${nombre}</span>
+                            </div>
+                            <div class="field-item">
+                                <span class="field-lbl">Teléfono:</span>
+                                <span class="field-val">${telefono}</span>
+                            </div>
+
+                            <div class="field-item">
+                                <span class="field-lbl">Artículo:</span>
+                                <span class="field-val">${articulo}</span>
+                            </div>
+                            <div class="field-item">
+                                <span class="field-lbl">Modelo:</span>
+                                <span class="field-val">${modelo}</span>
+                            </div>
+
+                            <div class="field-item">
+                                <span class="field-lbl">Marca:</span>
+                                <span class="field-val">${marca}</span>
+                            </div>
+                            <div class="field-item">
+                                <span class="field-lbl">Serie:</span>
+                                <span class="field-val">${serie}</span>
+                            </div>
+                        </div>
+
+                        <div class="detail-box">
+                            <div class="problem-row">
+                                <div class="problem-lbl">Problema<br>reportado:</div>
+                                <div class="problem-val">${sintomas}</div>
+                            </div>
+                            <div class="notes-row">
+                                <div class="notes-lbl">Notas:</div>
+                                <div class="notes-val">${notas}</div>
+                            </div>
+                            <div class="responsible-row">
+                                <span>Responsable:</span> CASA ELECTRONICA
+                            </div>
+                            <div class="footer-sign-row">
+                                <div><span class="sign-lbl">Fecha probable de reparación:</span></div>
+                                <div>Hr</div>
+                                <div><span class="sign-lbl">Firma del Cliente:</span> ______________________</div>
+                            </div>
+                        </div>
+
+                        <div class="legal-notice">
+                            <p><span class="legal-title">AVISO IMPORTANTE:</span> Pasados 60 días a partir de esta notificación, nuestro establecimiento no se responsabilizará por su artículo.</p>
+                            <p>De acuerdo con la Ley 1480 de 2011 y el Decreto 1413 de 2018, si el bien no es retirado en este plazo, se declarará legalmente en estado de abandono y el negocio dispondrá de él para cubrir los costos de almacenamiento y reparación. Por favor, acérquese a retirar su artículo lo antes posible.</p>
+                        </div>
+                    </div>
+
+                    <script>
+                        (function() {
+                            let yaImprimio = false;
+                            function dispararImpresion() {
+                                if (yaImprimio) return;
+                                yaImprimio = true;
+                                setTimeout(function() {
+                                    window.print();
+                                }, 150);
+                            }
+
+                            const img = document.getElementById('logoImg');
+                            if (img) {
+                                if (img.complete) {
+                                    dispararImpresion();
+                                } else {
+                                    img.addEventListener('load', dispararImpresion);
+                                    img.addEventListener('error', dispararImpresion);
+                                    setTimeout(dispararImpresion, 1500);
+                                }
+                            } else {
+                                window.onload = dispararImpresion;
+                            }
+                        })();
+                    <\/script>
+                </body>
+                </html>
+            `);
             w.document.close();
         }
 
         function generarFacturaPDF() {
-            const orden = document.getElementById('orden').value;
-            const nombre = document.getElementById('nombre').value;
-            const w = window.open('', '_blank', 'width=900,height=700');
-            w.document.write(`<!DOCTYPE html><html><body><h2>CASA ELECTRÓNICA - SALIDA ${orden}</h2><p>CLIENTE: ${nombre}</p><script>window.onload = () => window.print();<\/script></body></html>`);
+            const orden = escaparHTML(document.getElementById('orden').value || '');
+            const nombre = escaparHTML(document.getElementById('nombre').value || '');
+            const telefono = escaparHTML(document.getElementById('telefono').value || '');
+            const articulo = escaparHTML(document.getElementById('articulo').value || '');
+            const marca = escaparHTML(document.getElementById('marca').value || '');
+            const modelo = escaparHTML(document.getElementById('modelo').value || '');
+            const estado = escaparHTML(document.getElementById('repEstado').value || '');
+            const diagnostico = escaparHTML(document.getElementById('repDiagnostico').value || '');
+            const garantia = escaparHTML(document.getElementById('repGarantia').value || 'SIN GARANTÍA');
+            const totalPagar = escaparHTML(formatearMilesCOP(document.getElementById('repTotalPagar').value) || '0');
+
+            const w = window.open('', '_blank', 'width=850,height=700');
+            if (!w) {
+                alert('NO SE PUDO ABRIR LA VENTANA DE IMPRESIÓN.');
+                return;
+            }
+            w.document.write(`
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Salida / Comprobante - ${orden}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 28px; color: #000; }
+                        .encabezado { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 18px; }
+                        .encabezado img { max-height: 60px; max-width: 140px; object-fit: contain; }
+                        .bloque { margin-bottom: 14px; font-size: 14px; }
+                        .caja { border: 1px solid #000; padding: 12px; margin: 14px 0; }
+                    </style>
+                </head>
+                <body>
+                    <div class="encabezado">
+                        <div>
+                            <h2>CASA ELECTRONICA</h2>
+                            <p>CALLE 77AB #86A 40 · TEL: 3194500736</p>
+                        </div>
+                        <img src="${LOGO_URL_DIRECTA}" alt="LOGO">
+                    </div>
+                    <div class="bloque"><strong>ORDEN DE SERVICIO:</strong> ${orden} &nbsp;|&nbsp; <strong>ESTADO:</strong> ${estado}</div>
+                    <div class="bloque"><strong>CLIENTE:</strong> ${nombre} &nbsp;|&nbsp; <strong>TELÉFONO:</strong> ${telefono}</div>
+                    <div class="bloque"><strong>EQUIPO:</strong> ${articulo} ${marca} ${modelo}</div>
+                    <div class="caja">
+                        <strong>DIAGNÓSTICO / TRABAJO REALIZADO:</strong><br><br>
+                        ${diagnostico || 'SIN OBSERVACIONES'}
+                    </div>
+                    <div class="bloque"><strong>GARANTÍA:</strong> ${garantia}</div>
+                    <div class="bloque" style="font-size: 18px;"><strong>TOTAL A PAGAR:</strong> $ ${totalPagar}</div>
+                    <script>
+                        window.onload = () => setTimeout(() => window.print(), 300);
+                    <\/script>
+                </body>
+                </html>
+            `);
             w.document.close();
         }
 
