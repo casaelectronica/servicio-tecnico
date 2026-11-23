@@ -2806,6 +2806,7 @@
             const articulo = document.getElementById('articulo').value.trim();
             const marca = document.getElementById('marca').value.trim();
             const modelo = document.getElementById('modelo').value.trim();
+            const serie = document.getElementById('serie').value.trim() || 'DESCONOCIDO';
             const sintomas = document.getElementById('sintomas').value.trim() || 'NO ESPECIFICADOS';
             const notas = document.getElementById('notas').value.trim() || 'NINGUNA';
 
@@ -2818,7 +2819,7 @@
             const equipoDetalle = [articulo, marca, modelo].filter(Boolean).join(', ');
             const textoEquipo = equipoDetalle ? ` ${equipoDetalle}` : '';
 
-            const mensaje = `Casa Electrónica\n\nHola ${nombre}, recibimos tu equipo${textoEquipo}\nOrden de servicio: ${orden}.\nClave web: ${clave}.\nSíntomas reportados: ${sintomas}\nNotas de recepción: ${notas}\nConsulta el estado aquí: https://casaelectronica.github.io/consulta/`;
+            const mensaje = `Casa Electrónica\n\nHola ${nombre}, recibimos tu equipo${textoEquipo}\nOrden de servicio: ${orden}.\nClave web: ${clave}.\nSerial: ${serie}.\nSíntomas reportados: ${sintomas}\nNotas de recepción: ${notas}\nConsulta el estado aquí: https://casaelectronica.github.io/consulta/`;
             window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`, '_blank');
         }
 
@@ -3371,3 +3372,4 @@
     </script>
 </body>
 </html>
+```[cite: 1]
