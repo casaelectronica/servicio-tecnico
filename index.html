@@ -2747,6 +2747,7 @@
             const modelo = document.getElementById('modelo').value ? ` (${document.getElementById('modelo').value})` : '';
             const estado = document.getElementById('repEstado').value.trim().toUpperCase();
             const diagnostico = document.getElementById('repDiagnostico').value.trim() || 'SIN ESPECIFICAR';
+            const garantia = document.getElementById('repGarantia').value.trim();
             const totalPagar = formatearMilesCOP(document.getElementById('repTotalPagar').value) || '0';
 
             if (!tel) { alert("EL CLIENTE NO TIENE TELÉFONO REGISTRADO."); return; }
@@ -2756,9 +2757,11 @@
             let mensaje = '';
 
             switch (estado) {
-                case 'REPARADO':
-                    mensaje = `Casa Electrónica\n\nHola ${nombre}, tu equipo (${equipoInfo}) ya se encuentra reparado con éxito y está listo para retirar.\n\nTrabajo realizado / Diagnóstico: ${diagnostico}\nTotal a pagar: $ ${totalPagar}.\n\n¡Gracias por preferirnos! Te esperamos en nuestro taller.`;
+                case 'REPARADO': {
+                    const lineaGarantia = garantia ? `\nGarantía: ${garantia}.` : '';
+                    mensaje = `Casa Electrónica\n\nHola ${nombre}, tu equipo (${equipoInfo}) ya se encuentra reparado con éxito y está listo para retirar.\n\nTrabajo realizado / Diagnóstico: ${diagnostico}\nTotal a pagar: $ ${totalPagar}.${lineaGarantia}\n\n¡Gracias por preferirnos! Te esperamos en nuestro taller.`;
                     break;
+                }
                 case 'DEVOLUCION':
                     mensaje = `Casa Electrónica\n\nHola ${nombre}, te informamos que tu equipo (${equipoInfo}) se encuentra en estado de devolución.\n\nMotivo / Detalle: ${diagnostico}\n\nTe esperamos en nuestro taller para la entrega. ¡Gracias!`;
                     break;
